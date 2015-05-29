@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3C80EF7E-5A02-429D-86E7-542F9A88933D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
+    <AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\OneDriveAudioFacet.cs" />
+    <Compile Include="Entities\OneDriveRequestShare.cs" />
+    <Compile Include="Entities\OneDriveFileFacet.cs" />
+    <Compile Include="Entities\OneDriveFolderFacet.cs" />
+    <Compile Include="Entities\OneDriveHashesFacet.cs" />
+    <Compile Include="Entities\OneDriveImageFacet.cs" />
+    <Compile Include="Entities\OneDriveLocationFacet.cs" />
+    <Compile Include="Entities\OneDriveAsyncTask.cs" />
+    <Compile Include="Entities\OneDriveAsyncTaskStatus.cs" />
+    <Compile Include="Entities\OneDriveCollectionResponse.cs" />
+    <Compile Include="Entities\OneDriveDrive.cs" />
+    <Compile Include="Entities\OneDriveError.cs" />
+    <Compile Include="Entities\OneDriveItemCollection.cs" />
+    <Compile Include="Entities\OneDriveItemReference.cs" />
+    <Compile Include="Entities\OneDrivePermission.cs" />
+    <Compile Include="Entities\OneDriveThumbnail.cs" />
+    <Compile Include="Entities\OneDriveThumbnailSet.cs" />
+    <Compile Include="Entities\OneDriveCreateFolder.cs" />
+    <Compile Include="Entities\OneDriveUploadSession.cs" />
+    <Compile Include="Entities\OneDriveUploadSessionDescriptor.cs" />
+    <Compile Include="Entities\OneDriveUserProfile.cs" />
+    <Compile Include="Entities\OneDriveViewChangesResult.cs" />
+    <Compile Include="Entities\OneDriveErrorDetail.cs" />
+    <Compile Include="Entities\OneDriveIdentity.cs" />
+    <Compile Include="Entities\OneDriveIdentitySet.cs" />
+    <Compile Include="Entities\OneDriveItem.cs" />
+    <Compile Include="Entities\OneDriveItemBase.cs" />
+    <Compile Include="Entities\OneDrivePhotoFacet.cs" />
+    <Compile Include="Entities\OneDriveQuotaFacet.cs" />
+    <Compile Include="Entities\OneDriveSharingLinkFacet.cs" />
+    <Compile Include="Entities\OneDriveSpecialFolderFacet.cs" />
+    <Compile Include="Entities\OneDriveTombstoneFacet.cs" />
+    <Compile Include="Entities\OneDriveVideoFacet.cs" />
+    <Compile Include="Enums\NameConflictBehavior.cs" />
+    <Compile Include="Enums\OneDriveAsyncJobStatus.cs" />
+    <Compile Include="Enums\OneDriveAsyncJobType.cs" />
+    <Compile Include="Enums\OneDriveDriveType.cs" />
+    <Compile Include="Enums\OneDriveKnownFolder.cs" />
+    <Compile Include="Enums\OneDriveLinkType.cs" />
+    <Compile Include="Enums\OneDriveQuotaState.cs" />
+    <Compile Include="Enums\OneDriveResyncLogic.cs" />
+    <Compile Include="Helpers\QueryStringBuilder.cs" />
+    <Compile Include="Entities\OneDriveAccessToken.cs" />
+    <Compile Include="OneDriveApi.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KoenZomers.OneDrive.Api.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
