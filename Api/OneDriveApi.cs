@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 
-//Ck6QcWx9eiqjNwir*lKaVFl22zmnIE2a6bhX*6sWTw!cBkXgz6OJ8buDYHC5F5A3kqQZKRMU!kymYrSt2QINB70*oRFyGZOMjKqZW5gg0ow7laTU*bM5y7poVq2ljawsEzDfu!U0MPgo2Czt*h0NStRkZkXCutQ*joRdaCr!0xve7eTkmq05AvIQYkO9lHRtbgA!92OTY3PanUkERRfcDa0TLJqGlT267kpn1RRI2z5CXSFuJYiO34Aoce0b71uXELeVAqWPvuFJhT4LO3HQnlUGb1JBS8NJMey0FdCIGXfV4MF3faSoLtRB5qZZCuApWIro!lqPUJaujaEEiKugLsHSJrTVIo9RdEluaknvSzLmgDLHLvcppatcXRvL6hObaYZhr*Mf2WDqwoNNqgWcm6Q$
 namespace KoenZomers.OneDrive.Sync.BusinessLogic
 {
     public class OneDriveApi
@@ -18,12 +17,13 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
 
         /// <summary>
         /// The oAuth 2.0 Application Client ID
-        /// See https://account.live.com/developers/applications/appsettings/0000000044145a66
+        /// Create one at https://account.live.com/developers/applications/index
         /// </summary>
         public readonly string ClientId;
 
         /// <summary>
         /// The oAuth 2.0 Application Client Secret
+        /// Create one at https://account.live.com/developers/applications/index
         /// </summary>
         public readonly string ClientSecret;
 
