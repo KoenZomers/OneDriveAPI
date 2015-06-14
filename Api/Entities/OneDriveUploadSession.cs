@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     internal class OneDriveUploadSession : OneDriveItemBase
     {

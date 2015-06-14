@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Enums
+namespace KoenZomers.OneDrive.Api.Enums
 {
     public enum OneDriveAsyncJobType
     {

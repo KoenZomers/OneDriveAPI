@@ -7,9 +7,12 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using KoenZomers.OneDrive.Api.Entities;
+using KoenZomers.OneDrive.Api.Enums;
+using KoenZomers.OneDrive.Api.Helpers;
 using Newtonsoft.Json;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic
+namespace KoenZomers.OneDrive.Api
 {
     public class OneDriveApi
     {
@@ -35,7 +38,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <summary>
         /// Access Token for communicating with OneDrive
         /// </summary>
-        public Entities.OneDriveAccessToken AccessToken { get; private set; }
+        public OneDriveAccessToken AccessToken { get; private set; }
 
         /// <summary>
         /// Date and time until which the access token should be valid based on the information provided by the oAuth provider
@@ -159,7 +162,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// Tries to retrieve an access token based on the tokens already available in this OneDrive instance
         /// </summary>
         /// <returns>OneDrive access token or NULL if unable to get an access token</returns>
-        public async Task<Entities.OneDriveAccessToken> GetAccessToken()
+        public async Task<OneDriveAccessToken> GetAccessToken()
         {
             // Check if we have an access token
             if (AccessToken != null)
@@ -212,25 +215,25 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <summary>
         /// Retrieves the OneDrive drive information
         /// </summary>
-        public async Task<Entities.OneDriveDrive> GetDrive()
+        public async Task<OneDriveDrive> GetDrive()
         {
-            return await GetData<Entities.OneDriveDrive>("drive");
+            return await GetData<OneDriveDrive>("drive");
         }
 
         /// <summary>
         /// Retrieves the OneDrive root folder
         /// </summary>
-        public async Task<Entities.OneDriveItemCollection> GetDriveRoot()
+        public async Task<OneDriveItemCollection> GetDriveRoot()
         {
-            return await GetData<Entities.OneDriveItemCollection>("drive/root");
+            return await GetData<OneDriveItemCollection>("drive/root");
         }
 
         /// <summary>
         /// Retrieves the children under the OneDrive root folder
         /// </summary>
-        public async Task<Entities.OneDriveItemCollection> GetDriveRootChildren()
+        public async Task<OneDriveItemCollection> GetDriveRootChildren()
         {
-            return await GetData<Entities.OneDriveItemCollection>("drive/root/children");
+            return await GetData<OneDriveItemCollection>("drive/root/children");
         }
 
         /// <summary>
@@ -238,9 +241,9 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="path">Path within OneDrive to retrieve the child items of</param>
         /// <returns></returns>
-        public async Task<Entities.OneDriveItemCollection> GetChildrenByPath(string path)
+        public async Task<OneDriveItemCollection> GetChildrenByPath(string path)
         {
-            return await GetData<Entities.OneDriveItemCollection>(string.Concat("drive/root:/", path, ":/children"));
+            return await GetData<OneDriveItemCollection>(string.Concat("drive/root:/", path, ":/children"));
         }
 
         /// <summary>
@@ -248,9 +251,9 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="item">OneDrive item to retrieve the child items of</param>
         /// <returns></returns>
-        public async Task<Entities.OneDriveItemCollection> GetChildrenByParentItem(Entities.OneDriveItem item)
+        public async Task<OneDriveItemCollection> GetChildrenByParentItem(OneDriveItem item)
         {
-            return await GetData<Entities.OneDriveItemCollection>(string.Concat("drive/items/", item.Id, "/children"));
+            return await GetData<OneDriveItemCollection>(string.Concat("drive/items/", item.Id, "/children"));
         }
 
         /// <summary>
@@ -258,9 +261,9 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="path">Path of the OneDrive item to retrieve</param>
         /// <returns></returns>
-        public async Task<Entities.OneDriveItem> GetItem(string path)
+        public async Task<OneDriveItem> GetItem(string path)
         {
-            return await GetData<Entities.OneDriveItem>(string.Concat("drive/root:/", path));
+            return await GetData<OneDriveItem>(string.Concat("drive/root:/", path));
         }
 
         /// <summary>
@@ -268,10 +271,10 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="path">Path of the OneDrive folder to retrieve or create</param>
         /// <returns></returns>
-        public async Task<Entities.OneDriveItem> GetFolderOrCreate(string path)
+        public async Task<OneDriveItem> GetFolderOrCreate(string path)
         {            
             // Try to get the folder
-            var folder = await GetData<Entities.OneDriveItem>(string.Concat("drive/root:/", path));
+            var folder = await GetData<OneDriveItem>(string.Concat("drive/root:/", path));
 
             if (folder != null)
             {
@@ -290,33 +293,33 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <summary>
         /// Retrieves the items in the CameraRoll folder
         /// </summary>
-        public async Task<Entities.OneDriveItemCollection> GetDriveCameraRollFolder()
+        public async Task<OneDriveItemCollection> GetDriveCameraRollFolder()
         {
-            return await GetData<Entities.OneDriveItemCollection>("drive/special/cameraroll");
+            return await GetData<OneDriveItemCollection>("drive/special/cameraroll");
         }
 
         /// <summary>
         /// Retrieves the items in the Documents folder
         /// </summary>
-        public async Task<Entities.OneDriveItemCollection> GetDriveDocumentsFolder()
+        public async Task<OneDriveItemCollection> GetDriveDocumentsFolder()
         {
-            return await GetData<Entities.OneDriveItemCollection>("drive/special/documents");
+            return await GetData<OneDriveItemCollection>("drive/special/documents");
         }
 
         /// <summary>
         /// Retrieves the items in the Photos folder
         /// </summary>
-        public async Task<Entities.OneDriveItemCollection> GetDrivePhotosFolder()
+        public async Task<OneDriveItemCollection> GetDrivePhotosFolder()
         {
-            return await GetData<Entities.OneDriveItemCollection>("drive/special/photos");
+            return await GetData<OneDriveItemCollection>("drive/special/photos");
         }
 
         /// <summary>
         /// Retrieves the items in the Public folder
         /// </summary>
-        public async Task<Entities.OneDriveItemCollection> GetDrivePublicFolder()
+        public async Task<OneDriveItemCollection> GetDrivePublicFolder()
         {
-            return await GetData<Entities.OneDriveItemCollection>("drive/special/public");
+            return await GetData<OneDriveItemCollection>("drive/special/public");
         }
 
         /// <summary>
@@ -324,7 +327,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="query">Search query to use</param>
         /// <returns>All OneDrive items resulting from the search</returns>
-        public async Task<IList<Entities.OneDriveItem>> Search(string query)
+        public async Task<IList<OneDriveItem>> Search(string query)
         {
             return await SearchInternal(string.Concat("drive/root/view.search?q=", query));
         }
@@ -335,7 +338,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="query">Search query to use</param>
         /// <param name="path">OneDrive path where to search in</param>
         /// <returns>All OneDrive items resulting from the search</returns>
-        public async Task<IList<Entities.OneDriveItem>> Search(string query, string path)
+        public async Task<IList<OneDriveItem>> Search(string query, string path)
         {
             return await SearchInternal(string.Concat("drive/root:/", path, "/view.search?q=", query));
         }
@@ -346,7 +349,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="query">Search query to use</param>
         /// <param name="oneDriveItem">OneDrive item representing a folder to search in</param>
         /// <returns>All OneDrive items resulting from the search</returns>
-        public async Task<IList<Entities.OneDriveItem>> Search(string query, Entities.OneDriveItem oneDriveItem)
+        public async Task<IList<OneDriveItem>> Search(string query, OneDriveItem oneDriveItem)
         {
             return await SearchInternal(string.Concat("drive/items/", oneDriveItem.Id, "/view.search?q=", query));
         }
@@ -355,7 +358,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// Deletes the provided OneDriveItem from OneDrive
         /// </summary>
         /// <param name="oneDriveItem">The OneDriveItem reference to delete from OneDrive</param>
-        public async Task<bool> Delete(Entities.OneDriveItem oneDriveItem)
+        public async Task<bool> Delete(OneDriveItem oneDriveItem)
         {
             return await DeleteItemInternal(string.Concat("drive/items/", oneDriveItem.Id));
         }
@@ -387,7 +390,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="item">OneDriveItem to download its contents of</param>
         /// <param name="saveTo">Path where to save the file to</param>
         /// <returns>True if download was successful, false if it failed</returns>
-        public async Task<bool> DownloadItem(Entities.OneDriveItem item, string saveTo)
+        public async Task<bool> DownloadItem(OneDriveItem item, string saveTo)
         {
             return await DownloadItemInternal(item, saveTo);
         }
@@ -398,7 +401,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="filePath">Full path to the file to upload</param>
         /// <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
         /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        public async Task<Entities.OneDriveItem> UploadFile(string filePath, string oneDriveFolder)
+        public async Task<OneDriveItem> UploadFile(string filePath, string oneDriveFolder)
         {
             var oneDriveItem = await GetItem(oneDriveFolder);
             return await UploadFile(filePath, oneDriveItem);
@@ -410,7 +413,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="filePath">Full path to the file to upload</param>
         /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
         /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        public async Task<Entities.OneDriveItem> UploadFile(string filePath, Entities.OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFile(string filePath, OneDriveItem oneDriveItem)
         {
             if (!File.Exists(filePath))
             {
@@ -443,7 +446,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="parentPath">The path to the OneDrive folder under which the folder should be created</param>
         /// <param name="folderName">Name to assign to the new folder</param>
         /// <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
-        public async Task<Entities.OneDriveItem> CreateFolder(string parentPath, string folderName)
+        public async Task<OneDriveItem> CreateFolder(string parentPath, string folderName)
         {
             return await CreateFolderInternal(string.Concat("drive/root:/", parentPath, ":/children"), folderName);
         }
@@ -454,7 +457,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="parentItem">The OneDrive item under which the folder should be created</param>
         /// <param name="folderName">Name to assign to the new folder</param>
         /// <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
-        public async Task<Entities.OneDriveItem> CreateFolder(Entities.OneDriveItem parentItem, string folderName)
+        public async Task<OneDriveItem> CreateFolder(OneDriveItem parentItem, string folderName)
         {
             return await CreateFolderInternal(string.Concat("drive/items/", parentItem.Id, "/children"), folderName);
         }
@@ -465,7 +468,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="itemPath">The path to the OneDrive item to share</param>
         /// <param name="linkType">Type of sharing to request</param>
         /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        public async Task<Entities.OneDrivePermission> ShareItem(string itemPath, Enums.OneDriveLinkType linkType)
+        public async Task<OneDrivePermission> ShareItem(string itemPath, OneDriveLinkType linkType)
         {
             return await ShareItemInternal(string.Concat("drive/root:/", itemPath, ":/action.createLink"), linkType);
         }
@@ -476,7 +479,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="item">The OneDrive item to share</param>
         /// <param name="linkType">Type of sharing to request</param>
         /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        public async Task<Entities.OneDrivePermission> ShareItem(Entities.OneDriveItem item, Enums.OneDriveLinkType linkType)
+        public async Task<OneDrivePermission> ShareItem(OneDriveItem item, OneDriveLinkType linkType)
         {
             return await ShareItemInternal(string.Concat("drive/items/", item.Id, "/action.createLink"), linkType);
         }
@@ -491,7 +494,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="oneDriveRequestUrl">The OneDrive request url which creates the share</param>
         /// <param name="linkType">Type of sharing to request</param>
         /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        private async Task<Entities.OneDrivePermission> ShareItemInternal(string oneDriveRequestUrl, Enums.OneDriveLinkType linkType)
+        private async Task<OneDrivePermission> ShareItemInternal(string oneDriveRequestUrl, OneDriveLinkType linkType)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -507,7 +510,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
             request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
 
             // Construct the JSON to send in the POST message
-            var newFolder = new Entities.OneDriveRequestShare { SharingType = linkType };
+            var newFolder = new OneDriveRequestShare { SharingType = linkType };
             var settings = new JsonSerializerSettings();
             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             var bodyText = JsonConvert.SerializeObject(newFolder, settings);
@@ -531,7 +534,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
             // Parse the JSON response into an entity
             var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
             var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var result = JsonConvert.DeserializeObject<Entities.OneDrivePermission>(responseBody);
+            var result = JsonConvert.DeserializeObject<OneDrivePermission>(responseBody);
             result.OriginalJson = responseBody;
 
             return result;
@@ -543,7 +546,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="oneDriveRequestUrl">The OneDrive request url which creates a new folder</param>
         /// <param name="folderName">Name to assign to the new folder</param>
         /// <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
-        private async Task<Entities.OneDriveItem> CreateFolderInternal(string oneDriveRequestUrl, string folderName)
+        private async Task<OneDriveItem> CreateFolderInternal(string oneDriveRequestUrl, string folderName)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -559,7 +562,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
             request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
 
             // Construct the JSON to send in the POST message
-            var newFolder = new Entities.OneDriveCreateFolder { Name = folderName, Folder = new object()};
+            var newFolder = new OneDriveCreateFolder { Name = folderName, Folder = new object()};
             var settings = new JsonSerializerSettings();
             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             var bodyText = JsonConvert.SerializeObject(newFolder, settings);
@@ -583,7 +586,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
             // Parse the JSON response into an entity
             var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
             var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var result = JsonConvert.DeserializeObject<Entities.OneDriveItem>(responseBody);
+            var result = JsonConvert.DeserializeObject<OneDriveItem>(responseBody);
             result.OriginalJson = responseBody;
 
             return result;
@@ -594,10 +597,10 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="searchUrl">OneDrive API url representing the search to execute</param>
         /// <returns>List with OneDriveItem objects resulting from the search query</returns>
-        private async Task<IList<Entities.OneDriveItem>> SearchInternal(string searchUrl)
+        private async Task<IList<OneDriveItem>> SearchInternal(string searchUrl)
         {
             // Create a list to contain all the search results
-            var allResults = new List<Entities.OneDriveItem>();
+            var allResults = new List<OneDriveItem>();
 
             // Set the URL to execute against the OneDrive API to execute the query
             var nextSearchUrl = searchUrl;
@@ -606,7 +609,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
             do
             {
                 // Execute the search query against the OneDrive API
-                var results = await GetData<Entities.OneDriveItemCollection>(nextSearchUrl);
+                var results = await GetData<OneDriveItemCollection>(nextSearchUrl);
 
                 // Add the retrieved results to the list
                 allResults.AddRange(results.Collection);
@@ -632,7 +635,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="item">OneDriveItem to download its contents of</param>
         /// <param name="saveTo">Path where to save the file to</param>
         /// <returns>True if download was successful, false if it failed</returns>
-        private async Task<bool> DownloadItemInternal(Entities.OneDriveItem item, string saveTo)
+        private async Task<bool> DownloadItemInternal(OneDriveItem item, string saveTo)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -671,7 +674,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="file">File reference to the file to upload</param>
         /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
         /// <returns>The resulting OneDrive item representing the uploaded file</returns>
-        public async Task<Entities.OneDriveItem> UploadFileViaSimpleUpload(FileInfo file, Entities.OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFileViaSimpleUpload(FileInfo file, OneDriveItem oneDriveItem)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -709,7 +712,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
                                 var result = await reader.ReadToEndAsync();
 
                                 // Convert the JSON results to its appropriate type
-                                var content = JsonConvert.DeserializeObject<Entities.OneDriveItem>(result);
+                                var content = JsonConvert.DeserializeObject<OneDriveItem>(result);
                                 content.OriginalJson = result;
 
                                 return content;
@@ -753,7 +756,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="filePath">Path to the file to upload</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
         /// <returns></returns>
-        public async Task<Entities.OneDriveItem> UploadFileViaResumableUpload(string filePath, Entities.OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(string filePath, OneDriveItem oneDriveItem)
         {
             var file = new FileInfo(filePath);
             return await UploadFileViaResumableUpload(file, oneDriveItem);
@@ -767,7 +770,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
         /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
         /// <returns></returns>
-        public async Task<Entities.OneDriveItem> UploadFileViaResumableUpload(FileInfo file, Entities.OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -785,9 +788,9 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
                 request.Accept = "application/json";
                 request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
 
-                var uploadSession = new Entities.OneDriveUploadSessionDescriptor
+                var uploadSession = new OneDriveUploadSessionDescriptor
                 {
-                    FilenameConflictBehavior = Enums.NameConflictBehavior.Replace
+                    FilenameConflictBehavior = NameConflictBehavior.Replace
                 };
 
                 var settings = new JsonSerializerSettings();
@@ -807,7 +810,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
                     return null;
                 }
 
-                var uploadSessionResult = await ParseJsonResponse<Entities.OneDriveUploadSession>(httpResponse);
+                var uploadSessionResult = await ParseJsonResponse<OneDriveUploadSession>(httpResponse);
 
                 // Start sending the file from the first byte
                 long currentPosition = 0;
@@ -888,7 +891,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
                                     case HttpStatusCode.OK:
                                     // All fragments have been received, the file has been created
                                     case HttpStatusCode.Created:
-                                        var content = await ParseJsonResponse<Entities.OneDriveItem>(uploadFragmentResponseHttpResponse);
+                                        var content = await ParseJsonResponse<OneDriveItem>(uploadFragmentResponseHttpResponse);
                                         return content;
 
                                     // All other status codes are considered to indicate a failed fragment transmission and will be retried
@@ -915,7 +918,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <typeparam name="T">OneDrive entity type to parse the JSON response into</typeparam>
         /// <param name="webResponse">WebResponse containing the OneDrive JSON response</param>
         /// <returns>Typed OneDrive entity based on the JSON contained in the WebResponse</returns>
-        private static async Task<T> ParseJsonResponse<T>(WebResponse webResponse) where T : Entities.OneDriveItemBase
+        private static async Task<T> ParseJsonResponse<T>(WebResponse webResponse) where T : OneDriveItemBase
         {
             using (var stream = webResponse.GetResponseStream())
             {
@@ -964,9 +967,9 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="authorizationToken">Authorization token</param>
         /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        private async Task<Entities.OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken)
+        private async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken)
         {
-            var queryBuilder = new Helpers.QueryStringBuilder();
+            var queryBuilder = new QueryStringBuilder();
             queryBuilder.Add("client_id", ClientId);
             queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
             queryBuilder.Add("client_secret", ClientSecret);
@@ -980,9 +983,9 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="refreshToken">Refresh token</param>
         /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        private async Task<Entities.OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
+        private async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
         {
-            var queryBuilder = new Helpers.QueryStringBuilder();
+            var queryBuilder = new QueryStringBuilder();
             queryBuilder.Add("client_id", ClientId);
             queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
             queryBuilder.Add("client_secret", ClientSecret);
@@ -997,7 +1000,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
         /// <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
         /// <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
-        private async Task<T> GetData<T>(string url) where T : Entities.OneDriveItemBase
+        private async Task<T> GetData<T>(string url) where T : OneDriveItemBase
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -1035,7 +1038,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
         /// </summary>
         /// <param name="queryBuilder">The querystring parameters to send in the POST body</param>
         /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        private async Task<Entities.OneDriveAccessToken> PostToTokenEndPoint(Helpers.QueryStringBuilder queryBuilder)
+        private async Task<OneDriveAccessToken> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
         {
             var request = WebRequest.CreateHttp(AccessTokenUri);
             request.Method = "POST";
@@ -1055,7 +1058,7 @@ namespace KoenZomers.OneDrive.Sync.BusinessLogic
           
             var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
             var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var appTokenResult = JsonConvert.DeserializeObject<Entities.OneDriveAccessToken>(responseBody);
+            var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
 
             AccessToken = appTokenResult;
             AccessTokenValidUntil = DateTime.Now.AddSeconds(appTokenResult.AccessTokenExpirationDuration);

@@ -1,8 +1,8 @@
-﻿using KoenZomers.OneDrive.Sync.BusinessLogic.Enums;
+﻿using KoenZomers.OneDrive.Api.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     /// <summary>
     /// The Drive resource represents a drive in OneDrive. It provides information about the owner of the drive, total and available storage space, and exposes a collection of all the Items contained within the drive.

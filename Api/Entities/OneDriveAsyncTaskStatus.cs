@@ -1,8 +1,7 @@
-﻿using System.Runtime.Serialization;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveAsyncTaskStatus : OneDriveItemBase
     {

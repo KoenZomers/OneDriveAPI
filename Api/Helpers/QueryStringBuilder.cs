@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Helpers
+namespace KoenZomers.OneDrive.Api.Helpers
 {
     public class QueryStringBuilder
     {

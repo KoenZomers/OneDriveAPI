@@ -1,8 +1,8 @@
 ﻿using System;
-using KoenZomers.OneDrive.Sync.BusinessLogic.Enums;
+using KoenZomers.OneDrive.Api.Enums;
 using Newtonsoft.Json;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     /// <summary>
     /// The Item resource type represents metadata for an item in OneDrive. All top-level filesystem objects in OneDrive are Item resources. If an item is a Folder or File facet, the Item resource will contain a value for either the folder or file property, respectively.

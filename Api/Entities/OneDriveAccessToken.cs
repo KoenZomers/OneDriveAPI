@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     /// <summary>
     /// Contains information regarding an access token to OneDrive

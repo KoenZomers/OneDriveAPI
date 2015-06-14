@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     /// <summary>
     /// The IdentitySet type is a keyed collection of Identity objects. It is used to represent a set of identities associated with various events for an item, such as created by or last modified by.

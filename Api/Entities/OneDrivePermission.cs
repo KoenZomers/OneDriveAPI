@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     /// <summary>
     /// Represents a permission on a OneDrive item

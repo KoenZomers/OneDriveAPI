@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
 
     public class OneDriveAsyncTask

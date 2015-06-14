@@ -1,8 +1,8 @@
-﻿using KoenZomers.OneDrive.Sync.BusinessLogic.Enums;
+﻿using KoenZomers.OneDrive.Api.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace KoenZomers.OneDrive.Sync.BusinessLogic.Entities
+namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveSharingLinkFacet
     {
