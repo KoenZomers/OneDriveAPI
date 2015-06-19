@@ -431,12 +431,26 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Uploads the provided file to OneDrive
+        /// Uploads the provided file to OneDrive using the provided filename
         /// </summary>
         /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(string filePath, string fileName, string oneDriveFolder)
+        {
+            var oneDriveItem = await GetItem(oneDriveFolder);
+            return await UploadFileAs(filePath, fileName, oneDriveItem);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
         /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
         /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        public async Task<OneDriveItem> UploadFile(string filePath, OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFileAs(string filePath, string fileName, OneDriveItem oneDriveItem)
         {
             if (!File.Exists(filePath))
             {
@@ -446,8 +460,14 @@ namespace KoenZomers.OneDrive.Api
             // Get a reference to the file to upload
             var fileToUpload = new FileInfo(filePath);
 
+            // If no filename has been provided, use the same filename as the original file has
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = fileToUpload.Name;
+            }
+
             // Verify if the filename does not contain any for OneDrive illegal characters
-            if (!ValidFilename(fileToUpload.Name))
+            if (!ValidFilename(fileName))
             {
                 throw new ArgumentException("Provided file contains illegal characters in its filename", "filePath");
             }
@@ -456,11 +476,22 @@ namespace KoenZomers.OneDrive.Api
             if (fileToUpload.Length <= MaximumBasicFileUploadSizeInBytes)
             {
                 // Use the basic upload method                
-                return await UploadFileViaSimpleUpload(fileToUpload, oneDriveItem);
+                return await UploadFileViaSimpleUpload(fileToUpload, fileName, oneDriveItem);
             }
-            
+
             // Use the resumable upload method
-            return await UploadFileViaResumableUpload(fileToUpload, oneDriveItem);
+            return await UploadFileViaResumableUpload(fileToUpload, fileName, oneDriveItem);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive keeping the original filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFile(string filePath, OneDriveItem oneDriveItem)
+        {
+            return await UploadFileAs(filePath, null, oneDriveItem);
         }
 
         /// <summary>
@@ -695,15 +726,16 @@ namespace KoenZomers.OneDrive.Api
         /// Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
         /// </summary>
         /// <param name="file">File reference to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
         /// <returns>The resulting OneDrive item representing the uploaded file</returns>
-        public async Task<OneDriveItem> UploadFileViaSimpleUpload(FileInfo file, OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFileViaSimpleUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
             // Construct the complete URL to call
-            var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, "/children/", file.Name, "/content");
+            var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
 
             // Read the file to upload
             using (var fileStream = file.OpenRead())
@@ -777,12 +809,13 @@ namespace KoenZomers.OneDrive.Api
         /// Uploads a file to OneDrive using the resumable method. Better for large files or unstable network connections.
         /// </summary>
         /// <param name="filePath">Path to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
         /// <returns></returns>
-        public async Task<OneDriveItem> UploadFileViaResumableUpload(string filePath, OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(string filePath, string fileName, OneDriveItem oneDriveItem)
         {
             var file = new FileInfo(filePath);
-            return await UploadFileViaResumableUpload(file, oneDriveItem);
+            return await UploadFileViaResumableUpload(file, fileName, oneDriveItem);
         }
 
 
@@ -790,16 +823,17 @@ namespace KoenZomers.OneDrive.Api
         /// Uploads a file to OneDrive using the resumable file upload method
         /// </summary>
         /// <param name="file">FileInfo instance pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
         /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
         /// <returns></returns>
-        public async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
             // Construct the URL to initiate the upload
-            var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, ":/", file.Name, ":/upload.createSession");
+            var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
 
             // Open the source file for reading
             using (var source = file.OpenRead())
