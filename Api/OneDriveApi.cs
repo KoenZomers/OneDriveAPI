@@ -373,26 +373,49 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Downloads the contents of the item on OneDrive at the provided path to the location provided
+        /// Downloads the contents of the item on OneDrive at the provided path to the folder provided keeping the original filename
         /// </summary>
         /// <param name="path">Path to an item on OneDrive to download its contents of</param>
-        /// <param name="saveTo">Path where to save the file to</param>
+        /// <param name="saveTo">Path where to save the file to. The same filename as used on OneDrive will be used to save the file under.</param>
         /// <returns>True if download was successful, false if it failed</returns>
         public async Task<bool> DownloadItem(string path, string saveTo)
         {
             var oneDriveItem = await GetItem(path);
-            return await DownloadItem(oneDriveItem, saveTo);
+            return await DownloadItemInternal(oneDriveItem, Path.Combine(saveTo, oneDriveItem.Name));
         }
 
         /// <summary>
-        /// Downloads the contents of the provided OneDriveItem to the location provided
+        /// Downloads the contents of the provided OneDriveItem to the folder provided keeping the original filename
+        /// </summary>
+        /// <param name="oneDriveItem">OneDriveItem to download its contents of</param>
+        /// <param name="saveTo">Path where to save the file to. The same filename as used on OneDrive will be used to save the file under.</param>
+        /// <returns>True if download was successful, false if it failed</returns>
+        public async Task<bool> DownloadItem(OneDriveItem oneDriveItem, string saveTo)
+        {
+            return await DownloadItemInternal(oneDriveItem, Path.Combine(saveTo, oneDriveItem.Name));
+        }
+
+        /// <summary>
+        /// Downloads the contents of the item on OneDrive at the provided path to the full path provided
+        /// </summary>
+        /// <param name="path">Path to an item on OneDrive to download its contents of</param>
+        /// <param name="saveAs">Full path including filename where to store the downloaded file</param>
+        /// <returns>True if download was successful, false if it failed</returns>
+        public async Task<bool> DownloadItemAndSaveAs(string path, string saveAs)
+        {
+            var oneDriveItem = await GetItem(path);
+            return await DownloadItem(oneDriveItem, saveAs);
+        }
+
+        /// <summary>
+        /// Downloads the contents of the provided OneDriveItem to the full path provided
         /// </summary>
         /// <param name="item">OneDriveItem to download its contents of</param>
-        /// <param name="saveTo">Path where to save the file to</param>
+        /// <param name="saveAs">Full path including filename where to store the downloaded file</param>
         /// <returns>True if download was successful, false if it failed</returns>
-        public async Task<bool> DownloadItem(OneDriveItem item, string saveTo)
+        public async Task<bool> DownloadItemAndSaveAs(OneDriveItem item, string saveAs)
         {
-            return await DownloadItemInternal(item, saveTo);
+            return await DownloadItemInternal(item, saveAs);
         }
 
         /// <summary>
@@ -633,9 +656,9 @@ namespace KoenZomers.OneDrive.Api
         /// Downloads the contents of the provided OneDriveItem to the location provided
         /// </summary>
         /// <param name="item">OneDriveItem to download its contents of</param>
-        /// <param name="saveTo">Path where to save the file to</param>
+        /// <param name="saveAs">Full path including filename where to store the downloaded file</param>
         /// <returns>True if download was successful, false if it failed</returns>
-        private async Task<bool> DownloadItemInternal(OneDriveItem item, string saveTo)
+        private async Task<bool> DownloadItemInternal(OneDriveItem item, string saveAs)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -660,7 +683,7 @@ namespace KoenZomers.OneDrive.Api
             // Download the file from OneDrive
             using (var downloadStream = await response.Content.ReadAsStreamAsync())
             {
-                using (var outputStream = new FileStream(Path.Combine(saveTo, item.Name), FileMode.Create))
+                using (var outputStream = new FileStream(saveAs, FileMode.Create))
                 {
                     await downloadStream.CopyToAsync(outputStream);
                 }
