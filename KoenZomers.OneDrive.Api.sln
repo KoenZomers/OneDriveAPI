@@ -5,16 +5,9 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{3C80EF7E-5A02-429D-86E7-542F9A88933D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApplication", "Demo\DemoApplication.csproj", "{6BC98275-D540-42C6-996D-15D0A5BF2110}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://koenzomers.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Api\\Api.csproj
-		SccProjectName1 = Api
-		SccLocalPath1 = Api
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -24,6 +17,10 @@ Global
 		{3C80EF7E-5A02-429D-86E7-542F9A88933D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C80EF7E-5A02-429D-86E7-542F9A88933D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C80EF7E-5A02-429D-86E7-542F9A88933D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC98275-D540-42C6-996D-15D0A5BF2110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC98275-D540-42C6-996D-15D0A5BF2110}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC98275-D540-42C6-996D-15D0A5BF2110}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC98275-D540-42C6-996D-15D0A5BF2110}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
