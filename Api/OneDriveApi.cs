@@ -223,9 +223,9 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Retrieves the OneDrive root folder
         /// </summary>
-        public async Task<OneDriveItemCollection> GetDriveRoot()
+        public async Task<OneDriveItem> GetDriveRoot()
         {
-            return await GetData<OneDriveItemCollection>("drive/root");
+            return await GetData<OneDriveItem>("drive/root");
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace KoenZomers.OneDrive.Api
 
             // Folder not found, create it
             var folderName = path.Contains("/") ? path.Remove(0, path.LastIndexOf("/", StringComparison.Ordinal) + 1) : path;
-            var parentPath = path.Remove(path.Length - folderName.Length - 1);
+            var parentPath = path.Contains("/") ? path.Remove(path.Length - folderName.Length - 1) : "";
             folder = await CreateFolder(parentPath, folderName);
             
             return folder;
