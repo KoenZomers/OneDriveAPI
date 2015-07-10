@@ -845,14 +845,18 @@ namespace KoenZomers.OneDrive.Api
                 request.Accept = "application/json";
                 request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
 
-                var uploadSession = new OneDriveUploadSessionDescriptor
+                // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
+                var uploadItemContainer = new OneDriveUploadSessionItemContainer
                 {
-                    FilenameConflictBehavior = NameConflictBehavior.Replace
+                    Item = new OneDriveUploadSessionItem
+                    {
+                        FilenameConflictBehavior = NameConflictBehavior.Replace
+                    }
                 };
 
                 var settings = new JsonSerializerSettings();
                 settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                var bodyText = JsonConvert.SerializeObject(uploadSession, settings);
+                var bodyText = JsonConvert.SerializeObject(uploadItemContainer, settings);
 
                 var requestStream = await request.GetRequestStreamAsync();
                 var writer = new StreamWriter(requestStream, Encoding.UTF8, 1024*1024, true);

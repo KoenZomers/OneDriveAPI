@@ -75,7 +75,8 @@
     <Compile Include="Entities\OneDriveThumbnailSet.cs" />
     <Compile Include="Entities\OneDriveCreateFolder.cs" />
     <Compile Include="Entities\OneDriveUploadSession.cs" />
-    <Compile Include="Entities\OneDriveUploadSessionDescriptor.cs" />
+    <Compile Include="Entities\OneDriveUploadSessionItemContainer.cs" />
+    <Compile Include="Entities\OneDriveUploadSessionItem.cs" />
     <Compile Include="Entities\OneDriveUserProfile.cs" />
     <Compile Include="Entities\OneDriveViewChangesResult.cs" />
     <Compile Include="Entities\OneDriveErrorDetail.cs" />

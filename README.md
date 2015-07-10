@@ -8,3 +8,16 @@ You can also pull this API in as a NuGet package by adding the following NuGet r
 http://nuget.koenzomers.nl/nuget or running the following line from the NuGet Package Manager Console in Visual Studio:
 
 Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/NuGet
+
+## Version History
+
+1.1.0.0 - July 10, 2015
+
+- Fixed incorrect conflictBehavior tag when using Resumable Upload. It is now set to always overwrite the file if it already exists on OneDrive.
+
+## Feedback
+
+Feedback is very welcome. If you believe something is not working well or could be improved, feel free to drop me an e-mail.
+
+Koen Zomers
+mail@koenzomers.nl
