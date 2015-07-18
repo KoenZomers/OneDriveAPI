@@ -25,6 +25,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.1.1.0 - July 18, 2015
+
+- Added an overload of GetAuthenticationUri where you can provide a custom security scope to request
+
 1.1.0.0 - July 10, 2015
 
 - Fixed incorrect conflictBehavior tag when using Resumable Upload. It is now set to always overwrite the file if it already exists on OneDrive.

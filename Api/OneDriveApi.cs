@@ -124,6 +124,17 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Returns the Uri that needs to be called to authenticate to the OneDrive API
         /// </summary>
+        /// <param name="scopes">String with one or more scopes separated with a space to which you want to request access. See https://msdn.microsoft.com/en-us/library/office/dn631845.aspx for the scopes that you can use.</param>
+        /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
+        public Uri GetAuthenticationUri(string scopes)
+        {
+            var uri = string.Format(AuthenticateUri, ClientId, scopes);
+            return new Uri(uri);
+        }
+
+        /// <summary>
+        /// Returns the Uri that needs to be called to authenticate to the OneDrive API using the default scope of "wl.signin wl.offline_access onedrive.readwrite"
+        /// </summary>
         /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
         public Uri GetAuthenticationUri()
         {
