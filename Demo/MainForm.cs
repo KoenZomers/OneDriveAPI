@@ -202,9 +202,31 @@ namespace AuthenticatorApp
             var item = await OneDriveApi.GetItem("Test.txt");
             if (item != null)
             {
+                using (var stream = await OneDriveApi.DownloadItem(item))
+                {
+                    using (var writer = new StreamReader(stream))
+                    {
+                        JsonResultTextBox.Text = await writer.ReadToEndAsync();
+                    }
+                }
+            }
+            else
+            {
+                JsonResultTextBox.Text = "Unable to find Test.txt in the OneDrive root";
+            }
+        }
+        private async void DownloadToButton_Click(object sender, EventArgs e)
+        {
+            var item = await OneDriveApi.GetItem("Test.txt");
+            if (item != null)
+            {
                 var localFolder = new FileInfo(Application.ExecutablePath).DirectoryName;
                 var success = await OneDriveApi.DownloadItem(item, localFolder);
-                MessageBox.Show(success ? "Download successful" : "Download failed", "Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                JsonResultTextBox.Text = success ? "Download successful to " + localFolder : "Download failed";
+            }
+            else
+            {
+                JsonResultTextBox.Text = "Unable to find Test.txt in the OneDrive root";
             }
         }
 

@@ -392,7 +392,7 @@ namespace KoenZomers.OneDrive.Api
         public async Task<bool> DownloadItem(string path, string saveTo)
         {
             var oneDriveItem = await GetItem(path);
-            return await DownloadItemInternal(oneDriveItem, Path.Combine(saveTo, oneDriveItem.Name));
+            return await DownloadItem(oneDriveItem, saveTo);
         }
 
         /// <summary>
@@ -403,7 +403,14 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if download was successful, false if it failed</returns>
         public async Task<bool> DownloadItem(OneDriveItem oneDriveItem, string saveTo)
         {
-            return await DownloadItemInternal(oneDriveItem, Path.Combine(saveTo, oneDriveItem.Name));
+            using (var stream = await DownloadItemInternal(oneDriveItem))
+            {
+                using (var outputStream = new FileStream(Path.Combine(saveTo, oneDriveItem.Name), FileMode.Create))
+                {
+                    await stream.CopyToAsync(outputStream);
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -426,7 +433,28 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if download was successful, false if it failed</returns>
         public async Task<bool> DownloadItemAndSaveAs(OneDriveItem item, string saveAs)
         {
-            return await DownloadItemInternal(item, saveAs);
+            return await DownloadItem(item, saveAs);
+        }
+
+        /// <summary>
+        /// Downloads the contents of the item on OneDrive at the provided path and returns the contents as a stream
+        /// </summary>
+        /// <param name="path">Path to an item on OneDrive to download its contents of</param>
+        /// <returns>Stream with the contents of the item on OneDrive</returns>
+        public async Task<Stream> DownloadItem(string path)
+        {
+            var oneDriveItem = await GetItem(path);
+            return await DownloadItem(oneDriveItem);
+        }
+
+        /// <summary>
+        /// Downloads the contents of the provided OneDriveItem and returns the contents as a stream
+        /// </summary>
+        /// <param name="oneDriveItem">OneDriveItem to download its contents of</param>
+        /// <returns>Stream with the contents of the item on OneDrive</returns>
+        public async Task<Stream> DownloadItem(OneDriveItem oneDriveItem)
+        {
+            return await DownloadItemInternal(oneDriveItem);
         }
 
         /// <summary>
@@ -698,9 +726,8 @@ namespace KoenZomers.OneDrive.Api
         /// Downloads the contents of the provided OneDriveItem to the location provided
         /// </summary>
         /// <param name="item">OneDriveItem to download its contents of</param>
-        /// <param name="saveAs">Full path including filename where to store the downloaded file</param>
-        /// <returns>True if download was successful, false if it failed</returns>
-        private async Task<bool> DownloadItemInternal(OneDriveItem item, string saveAs)
+        /// <returns>Stream with the downloaded content</returns>
+        private async Task<Stream> DownloadItemInternal(OneDriveItem item)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -719,18 +746,12 @@ namespace KoenZomers.OneDrive.Api
 
             if (!response.IsSuccessStatusCode)
             {
-                return false;
+                return null;
             }
 
-            // Download the file from OneDrive
-            using (var downloadStream = await response.Content.ReadAsStreamAsync())
-            {
-                using (var outputStream = new FileStream(saveAs, FileMode.Create))
-                {
-                    await downloadStream.CopyToAsync(outputStream);
-                }
-            }
-            return true;
+            // Download the file from OneDrive and return the stream
+            var downloadStream = await response.Content.ReadAsStreamAsync();
+            return downloadStream;
         }
 
         /// <summary>
