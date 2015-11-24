@@ -403,14 +403,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if download was successful, false if it failed</returns>
         public async Task<bool> DownloadItem(OneDriveItem oneDriveItem, string saveTo)
         {
-            using (var stream = await DownloadItemInternal(oneDriveItem))
-            {
-                using (var outputStream = new FileStream(Path.Combine(saveTo, oneDriveItem.Name), FileMode.Create))
-                {
-                    await stream.CopyToAsync(outputStream);
-                }
-            }
-            return true;
+            return await DownloadItemAndSaveAs(oneDriveItem, Path.Combine(saveTo, oneDriveItem.Name));
         }
 
         /// <summary>
@@ -422,18 +415,25 @@ namespace KoenZomers.OneDrive.Api
         public async Task<bool> DownloadItemAndSaveAs(string path, string saveAs)
         {
             var oneDriveItem = await GetItem(path);
-            return await DownloadItem(oneDriveItem, saveAs);
+            return await DownloadItemAndSaveAs(oneDriveItem, saveAs);
         }
 
         /// <summary>
         /// Downloads the contents of the provided OneDriveItem to the full path provided
         /// </summary>
-        /// <param name="item">OneDriveItem to download its contents of</param>
+        /// <param name="oneDriveItem">OneDriveItem to download its contents of</param>
         /// <param name="saveAs">Full path including filename where to store the downloaded file</param>
         /// <returns>True if download was successful, false if it failed</returns>
-        public async Task<bool> DownloadItemAndSaveAs(OneDriveItem item, string saveAs)
+        public async Task<bool> DownloadItemAndSaveAs(OneDriveItem oneDriveItem, string saveAs)
         {
-            return await DownloadItem(item, saveAs);
+            using (var stream = await DownloadItemInternal(oneDriveItem))
+            {
+                using (var outputStream = new FileStream(saveAs, FileMode.Create))
+                {
+                    await stream.CopyToAsync(outputStream);
+                }
+            }
+            return true;
         }
 
         /// <summary>

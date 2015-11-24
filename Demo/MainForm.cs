@@ -222,7 +222,7 @@ namespace AuthenticatorApp
             {
                 var localFolder = new FileInfo(Application.ExecutablePath).DirectoryName;
                 var success = await OneDriveApi.DownloadItem(item, localFolder);
-                JsonResultTextBox.Text = success ? "Download successful to " + localFolder : "Download failed";
+                JsonResultTextBox.Text = success ? "Downloaded successfully to " + localFolder : "Download failed";
             }
             else
             {
