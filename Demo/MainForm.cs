@@ -223,7 +223,7 @@ namespace AuthenticatorApp
 
         private async void CreateFolderButton_Click(object sender, EventArgs e)
         {
-            var data = await OneDriveApi.CreateFolder("", "Test");
+            var data = await OneDriveApi.GetFolderOrCreate("Test");
             JsonResultTextBox.Text = data.OriginalJson;
         }
 
