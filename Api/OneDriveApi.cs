@@ -709,7 +709,7 @@ namespace KoenZomers.OneDrive.Api
             var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", item.Id, "/content");
 
             // Create an HTTPClient instance to communicate with the REST API of OneDrive
-            var client = new HttpClient();
+            var client = CreateHttpClient();
 
             // Provide the access token through a bearer authorization header
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken.AccessToken);
@@ -1081,7 +1081,7 @@ namespace KoenZomers.OneDrive.Api
             var completeUrl = string.Concat(OneDriveApiBasicUrl, url);
 
             // Create an HTTPClient instance to communicate with the REST API of OneDrive
-            var client = new HttpClient();
+            var client = CreateHttpClient();
 
             // Provide the access token through a bearer authorization header
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken.AccessToken);
@@ -1158,6 +1158,16 @@ namespace KoenZomers.OneDrive.Api
             var httpResponse = response as HttpWebResponse;
 
             return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.NoContent;
+        }
+
+        /// <summary>
+        /// Instantiates a new HttpClient preconfigured for use
+        /// </summary>
+        /// <returns>HttpClient instance</returns>
+        private HttpClient CreateHttpClient()
+        {
+            var httpClient = new HttpClient(new HttpClientHandler {UseDefaultCredentials = true});
+            return httpClient;
         }
 
         #endregion
