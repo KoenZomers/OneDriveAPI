@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\OneDriveAudioFacet.cs" />
+    <Compile Include="Entities\OneDriveParentItemReference.cs" />
     <Compile Include="Entities\OneDriveRequestShare.cs" />
     <Compile Include="Entities\OneDriveFileFacet.cs" />
     <Compile Include="Entities\OneDriveFolderFacet.cs" />

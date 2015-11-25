@@ -59,6 +59,9 @@
             this.GetRoodFolderButton = new System.Windows.Forms.Button();
             this.GetDriveButton = new System.Windows.Forms.Button();
             this.DownloadToButton = new System.Windows.Forms.Button();
+            this.CopyButton = new System.Windows.Forms.Button();
+            this.MoveButton = new System.Windows.Forms.Button();
+            this.RenameButton = new System.Windows.Forms.Button();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,11 +70,11 @@
             this.AuthenticationBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthenticationBrowser.Location = new System.Drawing.Point(12, 114);
+            this.AuthenticationBrowser.Location = new System.Drawing.Point(12, 156);
             this.AuthenticationBrowser.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthenticationBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.AuthenticationBrowser.Name = "AuthenticationBrowser";
-            this.AuthenticationBrowser.Size = new System.Drawing.Size(1016, 391);
+            this.AuthenticationBrowser.Size = new System.Drawing.Size(1016, 349);
             this.AuthenticationBrowser.TabIndex = 0;
             this.AuthenticationBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.AuthenticationBrowser_Navigated);
             // 
@@ -152,11 +155,11 @@
             this.JsonResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.JsonResultTextBox.Location = new System.Drawing.Point(12, 114);
+            this.JsonResultTextBox.Location = new System.Drawing.Point(12, 156);
             this.JsonResultTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.JsonResultTextBox.Multiline = true;
             this.JsonResultTextBox.Name = "JsonResultTextBox";
-            this.JsonResultTextBox.Size = new System.Drawing.Size(1015, 390);
+            this.JsonResultTextBox.Size = new System.Drawing.Size(1015, 348);
             this.JsonResultTextBox.TabIndex = 10;
             this.JsonResultTextBox.Visible = false;
             // 
@@ -215,6 +218,9 @@
             // 
             this.OneDriveCommandsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.OneDriveCommandsPanel.Controls.Add(this.RenameButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.MoveButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.CopyButton);
             this.OneDriveCommandsPanel.Controls.Add(this.DownloadToButton);
             this.OneDriveCommandsPanel.Controls.Add(this.ShareButton);
             this.OneDriveCommandsPanel.Controls.Add(this.CreateFolderButton);
@@ -235,7 +241,7 @@
             this.OneDriveCommandsPanel.Location = new System.Drawing.Point(124, 11);
             this.OneDriveCommandsPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
-            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(903, 96);
+            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(903, 141);
             this.OneDriveCommandsPanel.TabIndex = 17;
             // 
             // ShareButton
@@ -414,6 +420,39 @@
             this.DownloadToButton.UseVisualStyleBackColor = true;
             this.DownloadToButton.Click += new System.EventHandler(this.DownloadToButton_Click);
             // 
+            // CopyButton
+            // 
+            this.CopyButton.Location = new System.Drawing.Point(3, 92);
+            this.CopyButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.CopyButton.Name = "CopyButton";
+            this.CopyButton.Size = new System.Drawing.Size(107, 41);
+            this.CopyButton.TabIndex = 28;
+            this.CopyButton.Text = "Copy";
+            this.CopyButton.UseVisualStyleBackColor = true;
+            this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
+            // 
+            // MoveButton
+            // 
+            this.MoveButton.Location = new System.Drawing.Point(116, 92);
+            this.MoveButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MoveButton.Name = "MoveButton";
+            this.MoveButton.Size = new System.Drawing.Size(107, 41);
+            this.MoveButton.TabIndex = 29;
+            this.MoveButton.Text = "Move";
+            this.MoveButton.UseVisualStyleBackColor = true;
+            this.MoveButton.Click += new System.EventHandler(this.MoveButton_Click);
+            // 
+            // RenameButton
+            // 
+            this.RenameButton.Location = new System.Drawing.Point(227, 92);
+            this.RenameButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.RenameButton.Name = "RenameButton";
+            this.RenameButton.Size = new System.Drawing.Size(107, 41);
+            this.RenameButton.TabIndex = 30;
+            this.RenameButton.Text = "Rename";
+            this.RenameButton.UseVisualStyleBackColor = true;
+            this.RenameButton.Click += new System.EventHandler(this.RenameButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -478,6 +517,9 @@
         private System.Windows.Forms.Button CreateFolderButton;
         private System.Windows.Forms.Button ShareButton;
         private System.Windows.Forms.Button DownloadToButton;
+        private System.Windows.Forms.Button CopyButton;
+        private System.Windows.Forms.Button MoveButton;
+        private System.Windows.Forms.Button RenameButton;
     }
 }
 

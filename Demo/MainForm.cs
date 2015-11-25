@@ -254,6 +254,24 @@ namespace AuthenticatorApp
             var data = await OneDriveApi.ShareItem("Test", OneDriveLinkType.Edit);
             JsonResultTextBox.Text = data.OriginalJson;
         }
+
+        private async void CopyButton_Click(object sender, EventArgs e)
+        {
+            var success = await OneDriveApi.Copy("Test.txt", "Documents", "Copied Test.txt");
+            JsonResultTextBox.Text = success ? "Copy Successfull" : "Copy Failed";
+        }
+
+        private async void MoveButton_Click(object sender, EventArgs e)
+        {
+            var success = await OneDriveApi.Move("Test.txt", "Documents");
+            JsonResultTextBox.Text = success ? "Move Successfull" : "Move Failed";
+        }
+
+        private async void RenameButton_Click(object sender, EventArgs e)
+        {
+            var success = await OneDriveApi.Rename("Test.txt", "Renamed Test.txt");
+            JsonResultTextBox.Text = success ? "Rename Successfull" : "Rename Failed";
+        }
     }
 }
 

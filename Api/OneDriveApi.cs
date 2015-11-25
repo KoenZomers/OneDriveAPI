@@ -384,6 +384,79 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
+        /// Copies the provided OneDriveItem to the provided destination on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSourceItemPath">The path to the OneDrive Item to be copied</param>
+        /// <param name="oneDriveDestinationItemPath">The path to the OneDrive parent item to copy the item into</param>
+        /// <param name="destinationName">The name of the item at the destination where it will be copied to. Omit to use the source name.</param>
+        /// <returns>True if successful, false if failed</returns>
+        public async Task<bool> Copy(string oneDriveSourceItemPath, string oneDriveDestinationItemPath, string destinationName = null)
+        {
+            var oneDriveSourceItem = await GetItem(oneDriveSourceItemPath);
+            var oneDriveDestinationItem = await GetItem(oneDriveDestinationItemPath);
+            return await Copy(oneDriveSourceItem, oneDriveDestinationItem, destinationName);
+        }
+
+        /// <summary>
+        /// Copies the provided OneDriveItem to the provided destination on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSourceItem">The path to the OneDrive Item to be copied</param>
+        /// <param name="oneDriveDestinationItem">The path tothe OneDrive parent item to copy the item into</param>
+        /// <param name="destinationName">The name of the item at the destination where it will be copied to. Omit to use the source name.</param>
+        /// <returns>True if successful, false if failed</returns>
+        public async Task<bool> Copy(OneDriveItem oneDriveSourceItem, OneDriveItem oneDriveDestinationItem, string destinationName = null)
+        {
+            return await CopyItemInternal(oneDriveSourceItem, oneDriveDestinationItem, destinationName);
+        }
+
+        /// <summary>
+        /// Moves the provided OneDriveItem to the provided destination on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSourceItemPath">The path to the OneDrive Item to be moved</param>
+        /// <param name="oneDriveDestinationItemPath">The path to the OneDrive parent item to move the item into</param>
+        /// <returns>True if successful, false if failed</returns>
+        public async Task<bool> Move(string oneDriveSourceItemPath, string oneDriveDestinationItemPath)
+        {
+            var oneDriveSourceItem = await GetItem(oneDriveSourceItemPath);
+            var oneDriveDestinationItem = await GetItem(oneDriveDestinationItemPath);
+            return await Move(oneDriveSourceItem, oneDriveDestinationItem);
+        }
+
+        /// <summary>
+        /// Moves the provided OneDriveItem to the provided destination on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSourceItem">The OneDrive Item to be moved</param>
+        /// <param name="oneDriveDestinationItem">The OneDrive parent item to move the item into</param>
+        /// <returns>True if successful, false if failed</returns>
+        public async Task<bool> Move(OneDriveItem oneDriveSourceItem, OneDriveItem oneDriveDestinationItem)
+        {
+            return await MoveItemInternal(oneDriveSourceItem, oneDriveDestinationItem);
+        }
+
+        /// <summary>
+        /// Renames the provided OneDriveItem to the provided name
+        /// </summary>
+        /// <param name="oneDriveItemPath">The path to the OneDrive Item to be renamed</param>
+        /// <param name="name">The new name to assign to the OneDrive item</param>
+        /// <returns>True if successful, false if failed</returns>
+        public async Task<bool> Rename(string oneDriveItemPath, string name)
+        {
+            var oneDriveItem = await GetItem(oneDriveItemPath);
+            return await Rename(oneDriveItem, name);
+        }
+
+        /// <summary>
+        /// Renames the provided OneDriveItem to the provided name
+        /// </summary>
+        /// <param name="oneDriveItemPath">The OneDrive Item to be renamed</param>
+        /// <param name="name">The new name to assign to the OneDrive item</param>
+        /// <returns>True if successful, false if failed</returns>
+        public async Task<bool> Rename(OneDriveItem oneDriveItemPath, string name)
+        {
+            return await RenameItemInternal(oneDriveItemPath, name);
+        }
+
+        /// <summary>
         /// Downloads the contents of the item on OneDrive at the provided path to the folder provided keeping the original filename
         /// </summary>
         /// <param name="path">Path to an item on OneDrive to download its contents of</param>
@@ -813,7 +886,6 @@ namespace KoenZomers.OneDrive.Api
         private static async Task<long> CopyWithProgressAsync(Stream source, Stream destination, long sourceLength = 0, int bufferSize = 64 * 1024)
         {
             long bytesWritten = 0;
-            long totalBytesToWrite = sourceLength;
 
             byte[] copyBuffer = new byte[bufferSize];
             int read;
@@ -821,15 +893,6 @@ namespace KoenZomers.OneDrive.Api
             {
                 await destination.WriteAsync(copyBuffer, 0, read);
                 bytesWritten += read;
-
-                //System.Diagnostics.Debug.WriteLine("CopyWithProgress: {0} / {1}", bytesWritten, totalBytesToWrite);
-                //if (null != progressReport)
-                //{
-                //    int percentComplete = 0;
-                //    if (sourceLength > 0)
-                //        percentComplete = (int)((bytesWritten / (double)totalBytesToWrite) * 100);
-                //    progressReport(percentComplete, bytesWritten, totalBytesToWrite);
-                //}
             }
 
             await destination.FlushAsync();
@@ -1031,30 +1094,6 @@ namespace KoenZomers.OneDrive.Api
             }
         }
 
-        //internal async Task<ODDataModel> PutFileFragment(Uri serviceUri, byte[] fragment, ContentRange requestRange)
-        //{
-        //    var request = await CreateHttpRequestAsync(serviceUri, ApiConstants.HttpPut);
-        //    request.ContentRange = requestRange.ToContentRangeHeaderValue();
-
-        //    var stream = await request.GetRequestStreamAsync();
-        //    await stream.WriteAsync(fragment, 0, (int)requestRange.BytesInRange);
-
-        //    var response = await request.GetResponseAsync();
-        //    if (response.StatusCode == HttpStatusCode.Accepted)
-        //    {
-        //        return await response.ConvertToDataModel<ODUploadSession>();
-        //    }
-        //    else if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
-        //    {
-        //        return await response.ConvertToDataModel<ODItem>();
-        //    }
-        //    else
-        //    {
-        //        var exception = await response.ToException();
-        //        throw exception;
-        //    }
-        //}
-
         /// <summary>
         /// Gets an access token from the provided authorization token
         /// </summary>
@@ -1141,6 +1180,7 @@ namespace KoenZomers.OneDrive.Api
             var requestWriter = new StreamWriter(stream);
             await requestWriter.WriteAsync(queryBuilder.ToString());
             await requestWriter.FlushAsync();
+
             var response = await request.GetResponseAsync();
             var httpResponse = response as HttpWebResponse;
             
@@ -1179,6 +1219,144 @@ namespace KoenZomers.OneDrive.Api
             var httpResponse = response as HttpWebResponse;
 
             return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.NoContent;
+        }
+
+        /// <summary>
+        /// Sends a HTTP POST to OneDrive to copy an item on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSource">The OneDrive Item to be copied</param>
+        /// <param name="oneDriveDestinationParent">The OneDrive parent item to copy the item into</param>
+        /// <param name="destinationName">The name of the item at the destination where it will be copied to</param>
+        /// <returns>True if successful, false if failed</returns>
+        private async Task<bool> CopyItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent, string destinationName)
+        {
+            // Get an access token to perform the request to OneDrive
+            var accessToken = await GetAccessToken();
+
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveSource.Id, "/action.copy");
+
+            var request = WebRequest.CreateHttp(completeUrl);
+            request.Method = "POST";
+            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+            request.Headers["Prefer"] = "respond-async";
+            request.ContentType = "application/json";
+
+            // Construct the POST body
+            var requestBody = new OneDriveParentItemReference
+            {
+                ParentReference = new OneDriveItemReference
+                {
+                  Id  = oneDriveDestinationParent.Id
+                },
+                Name = destinationName
+            };
+
+            // Serialize the POST body to JSON
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var bodyText = JsonConvert.SerializeObject(requestBody, settings);
+
+            // Add the JSON to the message request body
+            var stream = await request.GetRequestStreamAsync();
+            var requestWriter = new StreamWriter(stream);
+            await requestWriter.WriteAsync(bodyText);
+            await requestWriter.FlushAsync();
+
+            // Get the response
+            var response = await request.GetResponseAsync();
+            var httpResponse = response as HttpWebResponse;
+
+            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.Accepted;
+        }
+
+        /// <summary>
+        /// Sends a HTTP PATCH to OneDrive to move an item on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSource">The OneDrive Item to be moved</param>
+        /// <param name="oneDriveDestinationParent">The OneDrive parent item to move the item to</param>
+        /// <returns>True if successful, false if failed</returns>
+        private async Task<bool> MoveItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent)
+        {
+            // Get an access token to perform the request to OneDrive
+            var accessToken = await GetAccessToken();
+
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveSource.Id);
+
+            var request = WebRequest.CreateHttp(completeUrl);
+            request.Method = "PATCH";
+            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+            request.ContentType = "application/json";
+
+            // Construct the POST body
+            var requestBody = new OneDriveParentItemReference
+            {
+                ParentReference = new OneDriveItemReference
+                {
+                    Id = oneDriveDestinationParent.Id
+                },
+            };
+
+            // Serialize the POST body to JSON
+            var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
+            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var bodyText = JsonConvert.SerializeObject(requestBody, settings);
+
+            // Add the JSON to the message request body
+            var stream = await request.GetRequestStreamAsync();
+            var requestWriter = new StreamWriter(stream);
+            await requestWriter.WriteAsync(bodyText);
+            await requestWriter.FlushAsync();
+
+            // Get the response
+            var response = await request.GetResponseAsync();
+            var httpResponse = response as HttpWebResponse;
+
+            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.OK;
+        }
+
+        /// <summary>
+        /// Sends a HTTP PATCH to OneDrive to rename an item on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSource">The OneDrive Item to be renamed</param>
+        /// <param name="name">The new name to give to the OneDrive item</param>
+        /// <returns>True if successful, false if failed</returns>
+        private async Task<bool> RenameItemInternal(OneDriveItem oneDriveSource, string name)
+        {
+            // Get an access token to perform the request to OneDrive
+            var accessToken = await GetAccessToken();
+
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveSource.Id);
+
+            var request = WebRequest.CreateHttp(completeUrl);
+            request.Method = "PATCH";
+            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+            request.ContentType = "application/json";
+
+            // Construct the POST body
+            var requestBody = new OneDriveItem
+            {
+                Name = name
+            };
+
+            // Serialize the POST body to JSON
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var bodyText = JsonConvert.SerializeObject(requestBody, settings);
+
+            // Add the JSON to the message request body
+            var stream = await request.GetRequestStreamAsync();
+            var requestWriter = new StreamWriter(stream);
+            await requestWriter.WriteAsync(bodyText);
+            await requestWriter.FlushAsync();
+
+            // Get the response
+            var response = await request.GetResponseAsync();
+            var httpResponse = response as HttpWebResponse;
+
+            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.OK;
         }
 
         /// <summary>
