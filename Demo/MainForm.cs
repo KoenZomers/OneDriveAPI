@@ -93,7 +93,7 @@ namespace AuthenticatorApp
 
             // First sign the current user out to make sure he/she needs to authenticate again
             var signoutUri = OneDriveApi.GetSignOutUri();
-            AuthenticationBrowser.Navigate("http://ipaddress.com"); //signoutUri);
+            AuthenticationBrowser.Navigate(signoutUri);
         }
 
         private async void RefreshTokenButton_Click(object sender, EventArgs e)
@@ -104,8 +104,11 @@ namespace AuthenticatorApp
                 return;
             }
 
+            // Create a new instance of the OneDriveApi framework
+            OneDriveApi = new OneDriveApi(ClientId, ClientSecret) { UseProxy = UseProxyCheckBox.Checked };
+
             // Get a new access token based on the refresh token entered in the textbox
-            OneDriveApi = await OneDriveApi.GetOneDriveApiFromRefreshToken(ClientId, ClientSecret, RefreshTokenTextBox.Text);
+            await OneDriveApi.AuthenticateUsingRefreshToken(RefreshTokenTextBox.Text);
 
             if (OneDriveApi.AccessToken != null)
             {

@@ -114,12 +114,22 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="clientId">OneDrive Client ID to use to connect</param>
         /// <param name="clientSecret">OneDrive Client Secret to use to connect</param>
         /// <param name="refreshToken">Refreshtoken to use to get an access token</param>
+        [Obsolete("Use AuthenticateUsingRefreshToken instead")]
         public static async Task<OneDriveApi> GetOneDriveApiFromRefreshToken(string clientId, string clientSecret, string refreshToken)
         {
             var oneDriveApi = new OneDriveApi(clientId, clientSecret);
             oneDriveApi.AccessToken = await oneDriveApi.GetAccessTokenFromRefreshToken(refreshToken);
 
             return oneDriveApi;
+        }
+
+        /// <summary>
+        /// Authenticates to OneDrive using the provided Refresh Token
+        /// </summary>
+        /// <param name="refreshToken">Refreshtoken to use to authenticate to OneDrive</param>
+        public async Task AuthenticateUsingRefreshToken(string refreshToken)
+        {
+            AccessToken = await GetAccessTokenFromRefreshToken(refreshToken);
         }
 
         /// <summary>

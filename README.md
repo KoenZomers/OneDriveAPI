@@ -25,6 +25,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.3.1.0 - November 25, 2015
+
+- Deprecated GetOneDriveApiFromRefreshToken which has been replaced with AuthenticateUsingRefreshToken so it can be used with a proxy
+
 1.3.0.0 - November 25, 2015
 
 - Added support for using HTTP/HTTPS proxies
