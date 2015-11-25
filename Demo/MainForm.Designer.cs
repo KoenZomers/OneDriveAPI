@@ -43,6 +43,9 @@
             this.AccessTokenValidLabel = new System.Windows.Forms.Label();
             this.AccessTokenValidTextBox = new System.Windows.Forms.TextBox();
             this.OneDriveCommandsPanel = new System.Windows.Forms.Panel();
+            this.MoveButton = new System.Windows.Forms.Button();
+            this.CopyButton = new System.Windows.Forms.Button();
+            this.DownloadToButton = new System.Windows.Forms.Button();
             this.ShareButton = new System.Windows.Forms.Button();
             this.CreateFolderButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
@@ -58,10 +61,7 @@
             this.GetRootChildren = new System.Windows.Forms.Button();
             this.GetRoodFolderButton = new System.Windows.Forms.Button();
             this.GetDriveButton = new System.Windows.Forms.Button();
-            this.DownloadToButton = new System.Windows.Forms.Button();
-            this.CopyButton = new System.Windows.Forms.Button();
-            this.MoveButton = new System.Windows.Forms.Button();
-            this.RenameButton = new System.Windows.Forms.Button();
+            this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -218,7 +218,6 @@
             // 
             this.OneDriveCommandsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OneDriveCommandsPanel.Controls.Add(this.RenameButton);
             this.OneDriveCommandsPanel.Controls.Add(this.MoveButton);
             this.OneDriveCommandsPanel.Controls.Add(this.CopyButton);
             this.OneDriveCommandsPanel.Controls.Add(this.DownloadToButton);
@@ -243,6 +242,39 @@
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
             this.OneDriveCommandsPanel.Size = new System.Drawing.Size(903, 141);
             this.OneDriveCommandsPanel.TabIndex = 17;
+            // 
+            // MoveButton
+            // 
+            this.MoveButton.Location = new System.Drawing.Point(116, 92);
+            this.MoveButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MoveButton.Name = "MoveButton";
+            this.MoveButton.Size = new System.Drawing.Size(107, 41);
+            this.MoveButton.TabIndex = 29;
+            this.MoveButton.Text = "Move";
+            this.MoveButton.UseVisualStyleBackColor = true;
+            this.MoveButton.Click += new System.EventHandler(this.MoveButton_Click);
+            // 
+            // CopyButton
+            // 
+            this.CopyButton.Location = new System.Drawing.Point(3, 92);
+            this.CopyButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.CopyButton.Name = "CopyButton";
+            this.CopyButton.Size = new System.Drawing.Size(107, 41);
+            this.CopyButton.TabIndex = 28;
+            this.CopyButton.Text = "Copy";
+            this.CopyButton.UseVisualStyleBackColor = true;
+            this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
+            // 
+            // DownloadToButton
+            // 
+            this.DownloadToButton.Location = new System.Drawing.Point(561, 47);
+            this.DownloadToButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.DownloadToButton.Name = "DownloadToButton";
+            this.DownloadToButton.Size = new System.Drawing.Size(107, 41);
+            this.DownloadToButton.TabIndex = 27;
+            this.DownloadToButton.Text = "Download To";
+            this.DownloadToButton.UseVisualStyleBackColor = true;
+            this.DownloadToButton.Click += new System.EventHandler(this.DownloadToButton_Click);
             // 
             // ShareButton
             // 
@@ -409,55 +441,22 @@
             this.GetDriveButton.UseVisualStyleBackColor = true;
             this.GetDriveButton.Click += new System.EventHandler(this.GetDriveButton_Click);
             // 
-            // DownloadToButton
+            // UseProxyCheckBox
             // 
-            this.DownloadToButton.Location = new System.Drawing.Point(561, 47);
-            this.DownloadToButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.DownloadToButton.Name = "DownloadToButton";
-            this.DownloadToButton.Size = new System.Drawing.Size(107, 41);
-            this.DownloadToButton.TabIndex = 27;
-            this.DownloadToButton.Text = "Download To";
-            this.DownloadToButton.UseVisualStyleBackColor = true;
-            this.DownloadToButton.Click += new System.EventHandler(this.DownloadToButton_Click);
-            // 
-            // CopyButton
-            // 
-            this.CopyButton.Location = new System.Drawing.Point(3, 92);
-            this.CopyButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.CopyButton.Name = "CopyButton";
-            this.CopyButton.Size = new System.Drawing.Size(107, 41);
-            this.CopyButton.TabIndex = 28;
-            this.CopyButton.Text = "Copy";
-            this.CopyButton.UseVisualStyleBackColor = true;
-            this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
-            // 
-            // MoveButton
-            // 
-            this.MoveButton.Location = new System.Drawing.Point(116, 92);
-            this.MoveButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MoveButton.Name = "MoveButton";
-            this.MoveButton.Size = new System.Drawing.Size(107, 41);
-            this.MoveButton.TabIndex = 29;
-            this.MoveButton.Text = "Move";
-            this.MoveButton.UseVisualStyleBackColor = true;
-            this.MoveButton.Click += new System.EventHandler(this.MoveButton_Click);
-            // 
-            // RenameButton
-            // 
-            this.RenameButton.Location = new System.Drawing.Point(227, 92);
-            this.RenameButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.RenameButton.Name = "RenameButton";
-            this.RenameButton.Size = new System.Drawing.Size(107, 41);
-            this.RenameButton.TabIndex = 30;
-            this.RenameButton.Text = "Rename";
-            this.RenameButton.UseVisualStyleBackColor = true;
-            this.RenameButton.Click += new System.EventHandler(this.RenameButton_Click);
+            this.UseProxyCheckBox.AutoSize = true;
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(11, 114);
+            this.UseProxyCheckBox.Name = "UseProxyCheckBox";
+            this.UseProxyCheckBox.Size = new System.Drawing.Size(94, 21);
+            this.UseProxyCheckBox.TabIndex = 18;
+            this.UseProxyCheckBox.Text = "Use Proxy";
+            this.UseProxyCheckBox.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 761);
+            this.Controls.Add(this.UseProxyCheckBox);
             this.Controls.Add(this.AccessTokenValidLabel);
             this.Controls.Add(this.AccessTokenValidTextBox);
             this.Controls.Add(this.RefreshTokenLabel);
@@ -519,7 +518,7 @@
         private System.Windows.Forms.Button DownloadToButton;
         private System.Windows.Forms.Button CopyButton;
         private System.Windows.Forms.Button MoveButton;
-        private System.Windows.Forms.Button RenameButton;
+        private System.Windows.Forms.CheckBox UseProxyCheckBox;
     }
 }
 

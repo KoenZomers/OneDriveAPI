@@ -89,11 +89,11 @@ namespace AuthenticatorApp
         private void Step1Button_Click(object sender, EventArgs e)
         {
             // Create a new instance of the OneDriveApi framework
-            OneDriveApi = new OneDriveApi(ClientId, ClientSecret);
+            OneDriveApi = new OneDriveApi(ClientId, ClientSecret) {UseProxy = UseProxyCheckBox.Checked};
 
             // First sign the current user out to make sure he/she needs to authenticate again
             var signoutUri = OneDriveApi.GetSignOutUri();
-            AuthenticationBrowser.Navigate(signoutUri);
+            AuthenticationBrowser.Navigate("http://ipaddress.com"); //signoutUri);
         }
 
         private async void RefreshTokenButton_Click(object sender, EventArgs e)

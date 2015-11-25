@@ -25,6 +25,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.3.0.0 - November 25, 2015
+
+- Added support for using HTTP/HTTPS proxies
+
 1.2.0.0 - November 25, 2015
 
 - Added functionality for copying, moving and renaming files within OneDrive

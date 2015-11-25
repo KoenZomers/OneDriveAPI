@@ -45,6 +45,16 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         public DateTime? AccessTokenValidUntil { get; private set; }
 
+        /// <summary>
+        /// Defines if a proxy should be used to connect to the OneDrive API
+        /// </summary>
+        public bool UseProxy { get; set; }
+
+        /// <summary>
+        /// If provided, this proxy will be used for communication with the OneDrive API. If not provided but UseProxy is set to true, the default system proxy will be used.
+        /// </summary>
+        public WebProxy ProxyConfiguration { get; set; }
+
         #endregion
 
         #region Constants
@@ -1365,7 +1375,24 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>HttpClient instance</returns>
         private HttpClient CreateHttpClient()
         {
-            var httpClient = new HttpClient(new HttpClientHandler {UseDefaultCredentials = true});
+            // Define the HttpClient settings
+            var httpClientHandler = new HttpClientHandler
+            {
+                UseDefaultCredentials = true,
+            };
+
+            // Attach a proxy if set on this API instance
+            if (ProxyConfiguration != null || UseProxy)
+            {                
+                httpClientHandler.UseProxy = true;
+            }
+            if (ProxyConfiguration != null)
+            {
+                httpClientHandler.Proxy = ProxyConfiguration;
+            }
+
+            // Create the new HTTP Client
+            var httpClient = new HttpClient(httpClientHandler);
             return httpClient;
         }
 
