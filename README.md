@@ -25,6 +25,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.3.1.1 - November 30, 2015
+
+- Upgraded NewtonSoft.JSON NuGet package to v7.0.1
+
 1.3.1.0 - November 25, 2015
 
 - Deprecated GetOneDriveApiFromRefreshToken which has been replaced with AuthenticateUsingRefreshToken so it can be used with a proxy
