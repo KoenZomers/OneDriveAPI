@@ -11,9 +11,8 @@ The code contains a fully working demo Windows Forms application which shows you
 
 In order to get a new access token from the refresh token you already got from authenticating to OneDrive, use the following code:
 
-_var oneDriveApi = new OneDriveApi(ClientId, ClientSecret);
-
-await oneDriveApi.AuthenticateUsingRefreshToken(RefreshToken);_
+_var oneDriveApi = new OneDriveApi(ClientId, ClientSecret);_
+_await oneDriveApi.AuthenticateUsingRefreshToken(RefreshToken);_
 
 This oneDriveApi will have an access token again which is valid for 60 minutes. You can validate how long the access token is valid for by querying:
 
