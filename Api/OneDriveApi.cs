@@ -14,36 +14,22 @@ using Newtonsoft.Json;
 
 namespace KoenZomers.OneDrive.Api
 {
-    public class OneDriveApi
+    /// <summary>
+    /// Base OneDrive API functionality that is valid for either the Consumer OneDrive or the OneDrive for Business platform
+    /// </summary>
+    public abstract class OneDriveApi
     {
         #region Properties
 
         /// <summary>
         /// The oAuth 2.0 Application Client ID
-        /// Create one at https://account.live.com/developers/applications/index
         /// </summary>
-        public readonly string ClientId;
+        public string ClientId { get; protected set; }
 
         /// <summary>
         /// The oAuth 2.0 Application Client Secret
-        /// Create one at https://account.live.com/developers/applications/index
         /// </summary>
-        public readonly string ClientSecret;
-
-        /// <summary>
-        /// Authorization token used for requesting tokens
-        /// </summary>
-        public string AuthorizationToken { get; private set; }
-
-        /// <summary>
-        /// Access Token for communicating with OneDrive
-        /// </summary>
-        public OneDriveAccessToken AccessToken { get; private set; }
-
-        /// <summary>
-        /// Date and time until which the access token should be valid based on the information provided by the oAuth provider
-        /// </summary>
-        public DateTime? AccessTokenValidUntil { get; private set; }
+        public string ClientSecret { get; protected set; }
 
         /// <summary>
         /// Defines if a proxy should be used to connect to the OneDrive API
@@ -55,34 +41,25 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         public WebProxy ProxyConfiguration { get; set; }
 
-        #endregion
-
-        #region Constants
+        /// <summary>
+        /// Authorization token used for requesting tokens
+        /// </summary>
+        public string AuthorizationToken { get; private set; }
 
         /// <summary>
-        /// The url to provide as the redirect URL after successful authentication
+        /// Access Token for communicating with OneDrive
         /// </summary>
-        private const string AuthenticationRedirectUrl = "https://login.live.com/oauth20_desktop.srf";
+        public OneDriveAccessToken AccessToken { get; protected set; }
 
         /// <summary>
-        /// String formatted Uri that needs to be called to authenticate
+        /// Date and time until which the access token should be valid based on the information provided by the oAuth provider
         /// </summary>
-        private const string AuthenticateUri = "https://login.live.com/oauth20_authorize.srf?client_id={0}&scope={1}&response_type=code&redirect_uri=" + AuthenticationRedirectUrl;
-
-        /// <summary>
-        /// String formatted Uri that can be called to sign out from the OneDrive API
-        /// </summary>
-        private const string SignoutUri = "https://login.live.com/oauth20_logout.srf?client_id={0}&redirect_uri=" + AuthenticationRedirectUrl;
-
-        /// <summary>
-        /// The url where an access token can be obtained
-        /// </summary>
-        private const string AccessTokenUri = "https://login.live.com/oauth20_token.srf";
+        public DateTime? AccessTokenValidUntil { get; protected set; }
 
         /// <summary>
         /// Base URL of the OneDrive API
         /// </summary>
-        private const string OneDriveApiBasicUrl = "https://api.onedrive.com/v1.0/";
+        protected string OneDriveApiBasicUrl { get; set; }
 
         /// <summary>
         /// Defines the maximum allowed file size that can be used for basic uploads
@@ -91,14 +68,38 @@ namespace KoenZomers.OneDrive.Api
 
         #endregion
 
+        #region Abstract Properties
+
+        /// <summary>
+        /// The url to provide as the redirect URL after successful authentication
+        /// </summary>
+        protected abstract string AuthenticationRedirectUrl { get; }
+
+        /// <summary>
+        /// String formatted Uri that needs to be called to authenticate
+        /// </summary>
+        protected abstract string AuthenticateUri { get; }
+
+        /// <summary>
+        /// The url where an access token can be obtained
+        /// </summary>
+        protected abstract string AccessTokenUri { get; }
+
+        /// <summary>
+        /// String formatted Uri that can be called to sign out from the OneDrive API
+        /// </summary>
+        public abstract string SignoutUri { get; }
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
-        /// Instantiates a new instance of the OneDriveApi
+        /// Instantiates a new instance of a OneDrive API
         /// </summary>
         /// <param name="clientId">OneDrive Client ID to use to connect</param>
         /// <param name="clientSecret">OneDrive Client Secret to use to connect</param>
-        public OneDriveApi(string clientId, string clientSecret)
+        protected OneDriveApi(string clientId, string clientSecret)
         {
             ClientId = clientId;
             ClientSecret = clientSecret;
@@ -109,58 +110,10 @@ namespace KoenZomers.OneDrive.Api
         #region Public Methods - Authentication
 
         /// <summary>
-        /// Instantiates a new instance of the OneDriveApi
-        /// </summary>
-        /// <param name="clientId">OneDrive Client ID to use to connect</param>
-        /// <param name="clientSecret">OneDrive Client Secret to use to connect</param>
-        /// <param name="refreshToken">Refreshtoken to use to get an access token</param>
-        [Obsolete("Use AuthenticateUsingRefreshToken instead")]
-        public static async Task<OneDriveApi> GetOneDriveApiFromRefreshToken(string clientId, string clientSecret, string refreshToken)
-        {
-            var oneDriveApi = new OneDriveApi(clientId, clientSecret);
-            oneDriveApi.AccessToken = await oneDriveApi.GetAccessTokenFromRefreshToken(refreshToken);
-
-            return oneDriveApi;
-        }
-
-        /// <summary>
-        /// Authenticates to OneDrive using the provided Refresh Token
-        /// </summary>
-        /// <param name="refreshToken">Refreshtoken to use to authenticate to OneDrive</param>
-        public async Task AuthenticateUsingRefreshToken(string refreshToken)
-        {
-            AccessToken = await GetAccessTokenFromRefreshToken(refreshToken);
-        }
-
-        /// <summary>
-        /// Returns the Uri that needs to be called to sign the current user out of the OneDrive API
-        /// </summary>
-        /// <returns>Uri that needs to be called to sign the current user out of the OneDrive API</returns>
-        public Uri GetSignOutUri()
-        {
-            return new Uri(string.Format(SignoutUri, ClientId));
-        }
-
-        /// <summary>
         /// Returns the Uri that needs to be called to authenticate to the OneDrive API
         /// </summary>
-        /// <param name="scopes">String with one or more scopes separated with a space to which you want to request access. See https://msdn.microsoft.com/en-us/library/office/dn631845.aspx for the scopes that you can use.</param>
         /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
-        public Uri GetAuthenticationUri(string scopes)
-        {
-            var uri = string.Format(AuthenticateUri, ClientId, scopes);
-            return new Uri(uri);
-        }
-
-        /// <summary>
-        /// Returns the Uri that needs to be called to authenticate to the OneDrive API using the default scope of "wl.signin wl.offline_access onedrive.readwrite"
-        /// </summary>
-        /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
-        public Uri GetAuthenticationUri()
-        {
-            var uri = string.Format(AuthenticateUri, ClientId, "wl.signin wl.offline_access onedrive.readwrite");
-            return new Uri(uri);
-        }
+        public abstract Uri GetAuthenticationUri();
 
         /// <summary>
         /// Returns the authorization token from the provided URL to which the OneDrive API authentication request was sent after succesful authentication
@@ -209,7 +162,7 @@ namespace KoenZomers.OneDrive.Api
                 if (!string.IsNullOrEmpty(AccessToken.RefreshToken))
                 {
                     // We have a refresh token, request a new access token using it
-                    return await GetAccessTokenFromRefreshToken(AccessToken.RefreshToken);
+                    AccessToken = await GetAccessTokenFromRefreshToken(AccessToken.RefreshToken);
                 }
             }
 
@@ -221,8 +174,79 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // No access token but we have an authorization token, request the access token
-            return await GetAccessTokenFromAuthorizationToken(AuthorizationToken);
+            AccessToken = await GetAccessTokenFromAuthorizationToken(AuthorizationToken);
+            AccessTokenValidUntil = DateTime.Now.AddSeconds(AccessToken.AccessTokenExpirationDuration);
+            return AccessToken;
         }
+
+        /// <summary>
+        /// Returns the Uri that needs to be called to sign the current user out of the OneDrive API
+        /// </summary>
+        /// <returns>Uri that needs to be called to sign the current user out of the OneDrive API</returns>
+        public Uri GetSignOutUri()
+        {
+            return new Uri(string.Format(SignoutUri, ClientId));
+        }
+
+        /// <summary>
+        /// Sends a HTTP POST to the OneDrive Token EndPoint
+        /// </summary>
+        /// <param name="queryBuilder">The querystring parameters to send in the POST body</param>
+        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
+        protected async Task<OneDriveAccessToken> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
+        {
+            if (string.IsNullOrEmpty(AccessTokenUri))
+            {
+                throw new InvalidOperationException("AccessTokenUri has not been set");
+            }
+
+            var request = WebRequest.CreateHttp(AccessTokenUri);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            var stream = await request.GetRequestStreamAsync();
+            var requestWriter = new StreamWriter(stream);
+            await requestWriter.WriteAsync(queryBuilder.ToString());
+            await requestWriter.FlushAsync();
+
+            var response = await request.GetResponseAsync();
+            var httpResponse = response as HttpWebResponse;
+
+            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
+            var responseBody = await responseBodyStreamReader.ReadToEndAsync();
+            var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
+
+            return appTokenResult;
+        }
+
+        /// <summary>
+        /// Authenticates to OneDrive using the provided Refresh Token
+        /// </summary>
+        /// <param name="refreshToken">Refreshtoken to use to authenticate to OneDrive</param>
+        public async Task AuthenticateUsingRefreshToken(string refreshToken)
+        {
+            AccessToken = await GetAccessTokenFromRefreshToken(refreshToken);
+            AccessTokenValidUntil = DateTime.Now.AddSeconds(AccessToken.AccessTokenExpirationDuration);
+        }
+
+        /// <summary>
+        /// Gets an access token from the provided authorization token
+        /// </summary>
+        /// <param name="authorizationToken">Authorization token</param>
+        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
+        protected abstract Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken);
+
+        /// <summary>
+        /// Gets an access token from the provided refresh token
+        /// </summary>
+        /// <param name="refreshToken">Refresh token</param>
+        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
+        protected abstract Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken);
 
         #endregion
 
@@ -235,8 +259,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if filename is valid to be used, false if it isn't</returns>
         public static bool ValidFilename(string filename)
         {
-            char[] restrictedCharacters = { '\\', '/', ':', '*', '?', '<', '>', '|' };
-            return filename.IndexOfAny(restrictedCharacters) == -1;
+            return true;
         }
 
         #endregion
@@ -303,7 +326,7 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="path">Path of the OneDrive folder to retrieve or create</param>
         /// <returns></returns>
         public async Task<OneDriveItem> GetFolderOrCreate(string path)
-        {            
+        {
             // Try to get the folder
             var folder = await GetData<OneDriveItem>(string.Concat("drive/root:/", path));
 
@@ -317,7 +340,7 @@ namespace KoenZomers.OneDrive.Api
             var folderName = path.Contains("/") ? path.Remove(0, path.LastIndexOf("/", StringComparison.Ordinal) + 1) : path;
             var parentPath = path.Contains("/") ? path.Remove(path.Length - folderName.Length - 1) : "";
             folder = await CreateFolder(parentPath, folderName);
-            
+
             return folder;
         }
 
@@ -748,11 +771,11 @@ namespace KoenZomers.OneDrive.Api
             request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
 
             // Construct the JSON to send in the POST message
-            var newFolder = new OneDriveCreateFolder { Name = folderName, Folder = new object()};
+            var newFolder = new OneDriveCreateFolder { Name = folderName, Folder = new object() };
             var settings = new JsonSerializerSettings();
             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             var bodyText = JsonConvert.SerializeObject(newFolder, settings);
-            
+
             // Add the JSON to the message request body
             var stream = await request.GetRequestStreamAsync();
             var requestWriter = new StreamWriter(stream);
@@ -806,7 +829,7 @@ namespace KoenZomers.OneDrive.Api
                     // No more search results
                     break;
                 }
-                
+
                 // There are more search results. Use the link provided in the response to fetch the next results. Cut off the basic OneDrive API url.
                 nextSearchUrl = results.NextLink.Remove(0, OneDriveApiBasicUrl.Length);
 
@@ -974,7 +997,7 @@ namespace KoenZomers.OneDrive.Api
                 var bodyText = JsonConvert.SerializeObject(uploadItemContainer, settings);
 
                 var requestStream = await request.GetRequestStreamAsync();
-                var writer = new StreamWriter(requestStream, Encoding.UTF8, 1024*1024, true);
+                var writer = new StreamWriter(requestStream, Encoding.UTF8, 1024 * 1024, true);
                 await writer.WriteAsync(bodyText);
                 await writer.FlushAsync();
 
@@ -993,18 +1016,18 @@ namespace KoenZomers.OneDrive.Api
 
                 // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
                 var fragmentBuffer = new byte[fragmentSizeInKiloByte * 1000];
-                
+
                 // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
                 while (currentPosition < source.Length)
                 {
                     // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
                     var endPosition = currentPosition + fragmentBuffer.LongLength;
-                    
+
                     // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
                     if (endPosition > source.Length) endPosition = source.Length;
 
                     // Define how many bytes should be read from the source file
-                    var amountOfBytesToSend = (int) (endPosition - currentPosition);
+                    var amountOfBytesToSend = (int)(endPosition - currentPosition);
 
                     // Copy the bytes from the source file into the buffer
                     await source.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
@@ -1016,10 +1039,10 @@ namespace KoenZomers.OneDrive.Api
 
                     // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
                     uploadFragmentRequest.Headers["Content-Range"] = string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", source.Length);
-                    
+
                     // Provide the access token to authorize this request
                     uploadFragmentRequest.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-                    
+
                     // Used for retrying failed fragment transmissions
                     var fragmentSuccessful = false;
                     var fragmentAttemptCount = 0;
@@ -1029,7 +1052,7 @@ namespace KoenZomers.OneDrive.Api
                     {
                         // Keep a counter how many times it has been attempted to send this fragment
                         fragmentAttemptCount++;
-          
+
                         // Copy the buffer contents to the HTTP stream
                         using (var uploadFragmentRequestStream = await uploadFragmentRequest.GetRequestStreamAsync())
                         {
@@ -1070,7 +1093,7 @@ namespace KoenZomers.OneDrive.Api
                                         var content = await ParseJsonResponse<OneDriveItem>(uploadFragmentResponseHttpResponse);
                                         return content;
 
-                                    // All other status codes are considered to indicate a failed fragment transmission and will be retried
+                                        // All other status codes are considered to indicate a failed fragment transmission and will be retried
                                 }
                             }
                         }
@@ -1115,38 +1138,6 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Gets an access token from the provided authorization token
-        /// </summary>
-        /// <param name="authorizationToken">Authorization token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        private async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken)
-        {
-            var queryBuilder = new QueryStringBuilder();
-            queryBuilder.Add("client_id", ClientId);
-            queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
-            queryBuilder.Add("client_secret", ClientSecret);
-            queryBuilder.Add("code", authorizationToken);
-            queryBuilder.Add("grant_type", "authorization_code");
-            return await PostToTokenEndPoint(queryBuilder);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided refresh token
-        /// </summary>
-        /// <param name="refreshToken">Refresh token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        private async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
-        {
-            var queryBuilder = new QueryStringBuilder();
-            queryBuilder.Add("client_id", ClientId);
-            queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
-            queryBuilder.Add("client_secret", ClientSecret);
-            queryBuilder.Add("refresh_token", refreshToken);
-            queryBuilder.Add("grant_type", "refresh_token");
-            return await PostToTokenEndPoint(queryBuilder);
-        }
-
-        /// <summary>
         /// Retrieves data from the OneDrive API
         /// </summary>
         /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
@@ -1156,7 +1147,7 @@ namespace KoenZomers.OneDrive.Api
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
-            
+
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, url);
 
@@ -1165,7 +1156,7 @@ namespace KoenZomers.OneDrive.Api
 
             // Provide the access token through a bearer authorization header
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken.AccessToken);
-            
+
             // Send the request to the OneDrive API
             var response = await client.GetAsync(completeUrl);
 
@@ -1177,46 +1168,12 @@ namespace KoenZomers.OneDrive.Api
 
             // Retrieve the results from the OneDrive API
             var result = await response.Content.ReadAsStringAsync();
-            
+
             // Convert the JSON results to its appropriate type
             var content = JsonConvert.DeserializeObject<T>(result);
             content.OriginalJson = result;
-            
+
             return content;
-        }
-
-        /// <summary>
-        /// Sends a HTTP POST to the OneDrive Token EndPoint
-        /// </summary>
-        /// <param name="queryBuilder">The querystring parameters to send in the POST body</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        private async Task<OneDriveAccessToken> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
-        {
-            var request = WebRequest.CreateHttp(AccessTokenUri);
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(queryBuilder.ToString());
-            await requestWriter.FlushAsync();
-
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-            
-            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.OK)
-            {
-                return null;
-            }
-          
-            var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
-            var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
-
-            AccessToken = appTokenResult;
-            AccessTokenValidUntil = DateTime.Now.AddSeconds(appTokenResult.AccessTokenExpirationDuration);
-
-            return appTokenResult;
         }
 
         /// <summary>
@@ -1267,7 +1224,7 @@ namespace KoenZomers.OneDrive.Api
             {
                 ParentReference = new OneDriveItemReference
                 {
-                  Id  = oneDriveDestinationParent.Id
+                    Id = oneDriveDestinationParent.Id
                 },
                 Name = destinationName
             };
@@ -1319,7 +1276,7 @@ namespace KoenZomers.OneDrive.Api
             };
 
             // Serialize the POST body to JSON
-            var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             var bodyText = JsonConvert.SerializeObject(requestBody, settings);
 
@@ -1383,7 +1340,7 @@ namespace KoenZomers.OneDrive.Api
         /// Instantiates a new HttpClient preconfigured for use
         /// </summary>
         /// <returns>HttpClient instance</returns>
-        private HttpClient CreateHttpClient()
+        protected HttpClient CreateHttpClient()
         {
             // Define the HttpClient settings
             var httpClientHandler = new HttpClientHandler
@@ -1393,7 +1350,7 @@ namespace KoenZomers.OneDrive.Api
 
             // Attach a proxy if set on this API instance
             if (ProxyConfiguration != null || UseProxy)
-            {                
+            {
                 httpClientHandler.UseProxy = true;
             }
             if (ProxyConfiguration != null)
@@ -1407,6 +1364,5 @@ namespace KoenZomers.OneDrive.Api
         }
 
         #endregion
-
     }
 }

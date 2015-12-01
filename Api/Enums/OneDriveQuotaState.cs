@@ -17,6 +17,9 @@ namespace KoenZomers.OneDrive.Api.Enums
         Critical,
 
         [EnumMember(Value = "exceeded")]
-        Exceeded
+        Exceeded,
+
+        [EnumMember(Value = "Ok")]
+        Ok
     }
 }

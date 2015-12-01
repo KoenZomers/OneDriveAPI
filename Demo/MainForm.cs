@@ -22,16 +22,6 @@ namespace AuthenticatorApp
         public OneDriveApi OneDriveApi;
 
         /// <summary>
-        /// The client ID of the OneDrive API as registered with Microsoft
-        /// </summary>
-        public string ClientId;
-
-        /// <summary>
-        /// The client secret of the OneDrive API as registered with Microsoft
-        /// </summary>
-        public string ClientSecret;
-
-        /// <summary>
         /// The refresh token stored in the App Config
         /// </summary>
         public string RefreshToken;
@@ -43,11 +33,30 @@ namespace AuthenticatorApp
             InitializeComponent();
             _configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            ClientId = _configuration.AppSettings.Settings["OneDriveApiClientID"].Value;
-            ClientSecret = _configuration.AppSettings.Settings["OneDriveApiClientSecret"].Value;
             RefreshToken = _configuration.AppSettings.Settings["OneDriveApiRefreshToken"].Value;
 
             RefreshTokenTextBox.Text = RefreshToken;
+            OneDriveTypeCombo.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Creates a new instance of the OneDrive API
+        /// </summary>
+        private void InitiateOneDriveApi()
+        {
+            // Define the type of OneDrive API to instantiate based on the dropdown list selection    
+            switch (OneDriveTypeCombo.SelectedIndex)
+            {
+                case 0:
+                    OneDriveApi = new OneDriveConsumerApi(_configuration.AppSettings.Settings["OneDriveConsumerApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveConsumerApiClientSecret"].Value);
+                    break;
+
+                case 1:
+                    OneDriveApi = new OneDriveForBusinessO365Api(_configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientSecret"].Value);
+                    break;
+            }
+
+            OneDriveApi.UseProxy = UseProxyCheckBox.Checked;
         }
 
         private async void AuthenticationBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
@@ -57,7 +66,6 @@ namespace AuthenticatorApp
 
             // Check if the current URL contains the authorization token
             AuthorizationCodeTextBox.Text = OneDriveApi.GetAuthorizationTokenFromUrl(e.Url.ToString());
-
 
             // Verify if an authorization token was successfully extracted
             if (!string.IsNullOrEmpty(AuthorizationCodeTextBox.Text))
@@ -79,9 +87,9 @@ namespace AuthenticatorApp
             }
 
             // If we're on this page, but we didn't get an authorization token, it means that we just signed out, proceed with signing in again
-            if (CurrentUrlTextBox.Text.StartsWith("https://login.live.com/oauth20_desktop.srf"))
+            if (CurrentUrlTextBox.Text.StartsWith(OneDriveApi.SignoutUri))
             {
-                var authenticateUri = OneDriveApi.GetAuthenticationUri("wl.offline_access wl.skydrive_update");
+                var authenticateUri = OneDriveApi.GetAuthenticationUri();
                 AuthenticationBrowser.Navigate(authenticateUri);
             }
         }
@@ -89,7 +97,7 @@ namespace AuthenticatorApp
         private void Step1Button_Click(object sender, EventArgs e)
         {
             // Create a new instance of the OneDriveApi framework
-            OneDriveApi = new OneDriveApi(ClientId, ClientSecret) {UseProxy = UseProxyCheckBox.Checked};
+            InitiateOneDriveApi();
 
             // First sign the current user out to make sure he/she needs to authenticate again
             var signoutUri = OneDriveApi.GetSignOutUri();
@@ -105,7 +113,7 @@ namespace AuthenticatorApp
             }
 
             // Create a new instance of the OneDriveApi framework
-            OneDriveApi = new OneDriveApi(ClientId, ClientSecret) { UseProxy = UseProxyCheckBox.Checked };
+            InitiateOneDriveApi();
 
             // Get a new access token based on the refresh token entered in the textbox
             await OneDriveApi.AuthenticateUsingRefreshToken(RefreshTokenTextBox.Text);
@@ -130,50 +138,50 @@ namespace AuthenticatorApp
         private async void GetDriveButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDrive();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetRoodFolderButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDriveRoot();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetRootChildren_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDriveRootChildren();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetDocumentsButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDriveDocumentsFolder();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetCameraRollButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDriveCameraRollFolder();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetPhotos_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDrivePhotosFolder();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetPublicButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetDrivePublicFolder();
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void UploadButton_Click(object sender, EventArgs e)
         {
             var fileToUpload = SelectLocalFile();
             var data = await OneDriveApi.UploadFile(fileToUpload, "");
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private string SelectLocalFile()
@@ -189,8 +197,8 @@ namespace AuthenticatorApp
 
         private async void GetByPathButton_Click(object sender, EventArgs e)
         {            
-            var data = await OneDriveApi.GetChildrenByPath("E-books");
-            JsonResultTextBox.Text = data.OriginalJson;
+            var data = await OneDriveApi.GetChildrenByPath("Demo");
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void GetByIdButton_Click(object sender, EventArgs e)
@@ -249,13 +257,13 @@ namespace AuthenticatorApp
         private async void CreateFolderButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetFolderOrCreate("Test");
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void ShareButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.ShareItem("Test", OneDriveLinkType.Edit);
-            JsonResultTextBox.Text = data.OriginalJson;
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
         private async void CopyButton_Click(object sender, EventArgs e)

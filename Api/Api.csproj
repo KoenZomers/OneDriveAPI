@@ -91,6 +91,8 @@
     <Compile Include="Entities\OneDriveSpecialFolderFacet.cs" />
     <Compile Include="Entities\OneDriveTombstoneFacet.cs" />
     <Compile Include="Entities\OneDriveVideoFacet.cs" />
+    <Compile Include="Entities\ServiceDiscoveryItem.cs" />
+    <Compile Include="Entities\ServiceDiscoverySet.cs" />
     <Compile Include="Enums\NameConflictBehavior.cs" />
     <Compile Include="Enums\OneDriveAsyncJobStatus.cs" />
     <Compile Include="Enums\OneDriveAsyncJobType.cs" />
@@ -101,7 +103,9 @@
     <Compile Include="Enums\OneDriveResyncLogic.cs" />
     <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Entities\OneDriveAccessToken.cs" />
+    <Compile Include="OneDriveConsumerApi.cs" />
     <Compile Include="OneDriveApi.cs" />
+    <Compile Include="OneDriveForBusinessO365Api.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
