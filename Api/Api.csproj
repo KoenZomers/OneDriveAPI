@@ -103,8 +103,8 @@
     <Compile Include="Enums\OneDriveResyncLogic.cs" />
     <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Entities\OneDriveAccessToken.cs" />
-    <Compile Include="OneDriveConsumerApi.cs" />
     <Compile Include="OneDriveApi.cs" />
+    <Compile Include="OneDriveConsumerApi.cs" />
     <Compile Include="OneDriveForBusinessO365Api.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
