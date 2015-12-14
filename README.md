@@ -31,7 +31,7 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 1.4.0.0 - December 1, 2015
 
 - Added support for OneDrive for Business on Office 365 through the OneDrive API v2.0. It does NOT work against an On Premises SharePoint farm.
-  NOTE: The OneDrive API v2.0 currently has a bug where downloading files doesn't work when used against OneDrive for Business. It will return a 404 Not Found. The implementation of the API in this code is fine. It has been reported to Microsoft.
+  NOTE: The bug in the OneDrive API v2.0 is fixed and will now also work against OneDrive for Business.
 
 1.3.1.1 - November 30, 2015
 
