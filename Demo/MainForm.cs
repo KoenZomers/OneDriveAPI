@@ -96,6 +96,9 @@ namespace AuthenticatorApp
 
         private void Step1Button_Click(object sender, EventArgs e)
         {
+            // Reset any possible access tokens we may already have
+            AccessTokenTextBox.Text = string.Empty;
+
             // Create a new instance of the OneDriveApi framework
             InitiateOneDriveApi();
 
