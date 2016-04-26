@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="KoenZomers.OneDrive.Api.snk" />
+    <None Include="LICENSE.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
