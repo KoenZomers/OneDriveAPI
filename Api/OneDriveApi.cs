@@ -601,6 +601,19 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Uploads the provided file to OneDrive using the provided filename
         /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(Stream fileStream, string fileName, string oneDriveFolder)
+        {
+            var oneDriveItem = await GetItem(oneDriveFolder);
+            return await UploadFileAs(fileStream, fileName, oneDriveItem);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
         /// <param name="filePath">Full path to the file to upload</param>
         /// <param name="fileName">Filename to assign to the file on OneDrive</param>
         /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
@@ -636,6 +649,45 @@ namespace KoenZomers.OneDrive.Api
 
             // Use the resumable upload method
             return await UploadFileViaResumableUpload(fileToUpload, fileName, oneDriveItem);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(Stream fileStream, string fileName, OneDriveItem oneDriveItem)
+        {
+            if (fileStream == null || fileStream == Stream.Null)
+            {
+                throw new ArgumentNullException(nameof(fileStream));
+            }
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+            if (oneDriveItem == null)
+            {
+                throw new ArgumentNullException(nameof(oneDriveItem));
+            }
+
+            // Verify if the filename does not contain any for OneDrive illegal characters
+            if (!ValidFilename(fileName))
+            {
+                throw new ArgumentException("Provided file contains illegal characters in its filename", "filePath");
+            }
+
+            // Verify which upload method should be used
+            if (fileStream.Length <= MaximumBasicFileUploadSizeInBytes)
+            {
+                // Use the basic upload method                
+                return await UploadFileViaSimpleUpload(fileStream, fileName, oneDriveItem);
+            }
+
+            // Use the resumable upload method
+            return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem);
         }
 
         /// <summary>
@@ -873,11 +925,11 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
         /// </summary>
-        /// <param name="file">File reference to the file to upload</param>
+        /// <param name="fileStream">Stream to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
         /// <returns>The resulting OneDrive item representing the uploaded file</returns>
-        public async Task<OneDriveItem> UploadFileViaSimpleUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem)
+        public async Task<OneDriveItem> UploadFileViaSimpleUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -885,44 +937,56 @@ namespace KoenZomers.OneDrive.Api
             // Construct the complete URL to call
             var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
 
-            // Read the file to upload
-            using (var fileStream = file.OpenRead())
+            // Create the PUT request to push the file
+            var request = WebRequest.CreateHttp(oneDriveUrl);
+            request.ContentType = "application/octet-stream";
+            request.Method = "PUT";
+            request.Accept = "application/json";
+            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+
+            // Construct the request body with the file contents
+            using (var requestStream = await request.GetRequestStreamAsync())
             {
-                // Create the PUT request to push the file
-                var request = WebRequest.CreateHttp(oneDriveUrl);
-                request.ContentType = "application/octet-stream";
-                request.Method = "PUT";
-                request.Accept = "application/json";
-                request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+                await CopyWithProgressAsync(fileStream, requestStream);
 
-                // Construct the request body with the file contents
-                using (var requestStream = await request.GetRequestStreamAsync())
+                // Await the server response
+                using (var httpResponse = await request.GetResponseAsync())
                 {
-                    await CopyWithProgressAsync(fileStream, requestStream);
-
-                    // Await the server response
-                    using (var httpResponse = await request.GetResponseAsync())
+                    using (var stream = httpResponse.GetResponseStream())
                     {
-                        using (var stream = httpResponse.GetResponseStream())
+                        if (stream == null)
                         {
-                            if (stream == null)
-                            {
-                                return null;
-                            }
+                            return null;
+                        }
 
-                            using (var reader = new StreamReader(stream))
-                            {
-                                var result = await reader.ReadToEndAsync();
+                        using (var reader = new StreamReader(stream))
+                        {
+                            var result = await reader.ReadToEndAsync();
 
-                                // Convert the JSON results to its appropriate type
-                                var content = JsonConvert.DeserializeObject<OneDriveItem>(result);
-                                content.OriginalJson = result;
+                            // Convert the JSON results to its appropriate type
+                            var content = JsonConvert.DeserializeObject<OneDriveItem>(result);
+                            content.OriginalJson = result;
 
-                                return content;
-                            }
+                            return content;
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+        /// </summary>
+        /// <param name="file">File reference to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <returns>The resulting OneDrive item representing the uploaded file</returns>
+        public async Task<OneDriveItem> UploadFileViaSimpleUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem)
+        {          
+            // Read the file to upload
+            using (var fileStream = file.OpenRead())
+            {
+                return await UploadFileViaSimpleUpload(fileStream, fileName, oneDriveItem);
             }
         }
 
@@ -956,7 +1020,6 @@ namespace KoenZomers.OneDrive.Api
             return await UploadFileViaResumableUpload(file, fileName, oneDriveItem);
         }
 
-
         /// <summary>
         /// Uploads a file to OneDrive using the resumable file upload method
         /// </summary>
@@ -967,144 +1030,157 @@ namespace KoenZomers.OneDrive.Api
         /// <returns></returns>
         public async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
         {
+            // Open the source file for reading
+            using (var fileStream = file.OpenRead())
+            {
+                return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem, fragmentSizeInKiloByte);
+            }
+        }
+
+        /// <summary>
+        /// Uploads a file to OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="fileStream">Stream pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <returns></returns>
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
             // Construct the URL to initiate the upload
             var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
 
-            // Open the source file for reading
-            using (var source = file.OpenRead())
+            // Create the inintial POST request to the OneDrive service to announce the upload
+            var request = WebRequest.CreateHttp(oneDriveUrl);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+
+            // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
+            var uploadItemContainer = new OneDriveUploadSessionItemContainer
             {
-                // Create the inintial POST request to the OneDrive service to announce the upload
-                var request = WebRequest.CreateHttp(oneDriveUrl);
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.Accept = "application/json";
-                request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-
-                // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
-                var uploadItemContainer = new OneDriveUploadSessionItemContainer
+                Item = new OneDriveUploadSessionItem
                 {
-                    Item = new OneDriveUploadSessionItem
-                    {
-                        FilenameConflictBehavior = NameConflictBehavior.Replace
-                    }
-                };
-
-                var settings = new JsonSerializerSettings();
-                settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                var bodyText = JsonConvert.SerializeObject(uploadItemContainer, settings);
-
-                var requestStream = await request.GetRequestStreamAsync();
-                var writer = new StreamWriter(requestStream, Encoding.UTF8, 1024 * 1024, true);
-                await writer.WriteAsync(bodyText);
-                await writer.FlushAsync();
-
-                var response = await request.GetResponseAsync();
-                var httpResponse = response as HttpWebResponse;
-
-                if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.OK)
-                {
-                    return null;
+                    FilenameConflictBehavior = NameConflictBehavior.Replace
                 }
+            };
 
-                var uploadSessionResult = await ParseJsonResponse<OneDriveUploadSession>(httpResponse);
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var bodyText = JsonConvert.SerializeObject(uploadItemContainer, settings);
 
-                // Start sending the file from the first byte
-                long currentPosition = 0;
+            var requestStream = await request.GetRequestStreamAsync();
+            var writer = new StreamWriter(requestStream, Encoding.UTF8, 1024*1024, true);
+            await writer.WriteAsync(bodyText);
+            await writer.FlushAsync();
 
-                // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
-                var fragmentBuffer = new byte[fragmentSizeInKiloByte * 1000];
+            var response = await request.GetResponseAsync();
+            var httpResponse = response as HttpWebResponse;
 
-                // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
-                while (currentPosition < source.Length)
+            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var uploadSessionResult = await ParseJsonResponse<OneDriveUploadSession>(httpResponse);
+
+            // Start sending the file from the first byte
+            long currentPosition = 0;
+
+            // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
+            var fragmentBuffer = new byte[fragmentSizeInKiloByte*1000];
+
+            // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
+            while (currentPosition < fileStream.Length)
+            {
+                // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
+                var endPosition = currentPosition + fragmentBuffer.LongLength;
+
+                // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
+                if (endPosition > fileStream.Length) endPosition = fileStream.Length;
+
+                // Define how many bytes should be read from the source file
+                var amountOfBytesToSend = (int) (endPosition - currentPosition);
+
+                // Copy the bytes from the source file into the buffer
+                await fileStream.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
+
+                // Create the PUT HTTP request to upload the fragment
+                var uploadFragmentRequest = WebRequest.CreateHttp(uploadSessionResult.UploadUrl);
+                uploadFragmentRequest.Method = "PUT";
+                uploadFragmentRequest.ContentLength = amountOfBytesToSend;
+
+                // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
+                uploadFragmentRequest.Headers["Content-Range"] = string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", fileStream.Length);
+
+                // Provide the access token to authorize this request
+                uploadFragmentRequest.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+
+                // Used for retrying failed fragment transmissions
+                var fragmentSuccessful = false;
+                var fragmentAttemptCount = 0;
+                const int fragmentMaxAttempts = 3;
+
+                do
                 {
-                    // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
-                    var endPosition = currentPosition + fragmentBuffer.LongLength;
+                    // Keep a counter how many times it has been attempted to send this fragment
+                    fragmentAttemptCount++;
 
-                    // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
-                    if (endPosition > source.Length) endPosition = source.Length;
-
-                    // Define how many bytes should be read from the source file
-                    var amountOfBytesToSend = (int)(endPosition - currentPosition);
-
-                    // Copy the bytes from the source file into the buffer
-                    await source.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
-
-                    // Create the PUT HTTP request to upload the fragment
-                    var uploadFragmentRequest = WebRequest.CreateHttp(uploadSessionResult.UploadUrl);
-                    uploadFragmentRequest.Method = "PUT";
-                    uploadFragmentRequest.ContentLength = amountOfBytesToSend;
-
-                    // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
-                    uploadFragmentRequest.Headers["Content-Range"] = string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", source.Length);
-
-                    // Provide the access token to authorize this request
-                    uploadFragmentRequest.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-
-                    // Used for retrying failed fragment transmissions
-                    var fragmentSuccessful = false;
-                    var fragmentAttemptCount = 0;
-                    const int fragmentMaxAttempts = 3;
-
-                    do
+                    // Copy the buffer contents to the HTTP stream
+                    using (var uploadFragmentRequestStream = await uploadFragmentRequest.GetRequestStreamAsync())
                     {
-                        // Keep a counter how many times it has been attempted to send this fragment
-                        fragmentAttemptCount++;
-
-                        // Copy the buffer contents to the HTTP stream
-                        using (var uploadFragmentRequestStream = await uploadFragmentRequest.GetRequestStreamAsync())
+                        try
                         {
-                            try
-                            {
-                                await uploadFragmentRequestStream.WriteAsync(fragmentBuffer, 0, amountOfBytesToSend);
-                            }
-                            catch (WebException)
-                            {
-                                // Do nothing. This exception will be thrown when trying to upload a file that already exists at the
-                                // target location. We still did get a response though, so we continue to try to parse the response.
-                            }
+                            await uploadFragmentRequestStream.WriteAsync(fragmentBuffer, 0, amountOfBytesToSend);
                         }
-
-                        // Await the server response
-                        using (var uploadFragmentResponse = await uploadFragmentRequest.GetResponseAsync())
+                        catch (WebException)
                         {
-                            using (var uploadFragmentResponseHttpResponse = uploadFragmentResponse as HttpWebResponse)
-                            {
-                                if (uploadFragmentResponseHttpResponse == null)
-                                {
-                                    return null;
-                                }
-
-                                switch (uploadFragmentResponseHttpResponse.StatusCode)
-                                {
-                                    // Fragment has been received, awaiting next fragment
-                                    case HttpStatusCode.Accepted:
-                                        // Move the current position pointer to the end of the fragment we've just sent so we continue from there with the next upload
-                                        currentPosition = endPosition;
-                                        fragmentSuccessful = true;
-                                        break;
-
-                                    // All fragments have been received, the file did already exist and has been overwritten
-                                    case HttpStatusCode.OK:
-                                    // All fragments have been received, the file has been created
-                                    case HttpStatusCode.Created:
-                                        var content = await ParseJsonResponse<OneDriveItem>(uploadFragmentResponseHttpResponse);
-                                        return content;
-
-                                        // All other status codes are considered to indicate a failed fragment transmission and will be retried
-                                }
-                            }
+                            // Do nothing. This exception will be thrown when trying to upload a file that already exists at the
+                            // target location. We still did get a response though, so we continue to try to parse the response.
                         }
-                    } while (!fragmentSuccessful && fragmentAttemptCount < fragmentMaxAttempts);
-
-                    // Verify if we got out of the retry loop because a fragment exceeded its maximum retry count. In that case we abort the complete upload.
-                    if (fragmentAttemptCount == fragmentMaxAttempts)
-                    {
-                        // Abort the complete upload
-                        return null;
                     }
+
+                    // Await the server response
+                    using (var uploadFragmentResponse = await uploadFragmentRequest.GetResponseAsync())
+                    {
+                        using (var uploadFragmentResponseHttpResponse = uploadFragmentResponse as HttpWebResponse)
+                        {
+                            if (uploadFragmentResponseHttpResponse == null)
+                            {
+                                return null;
+                            }
+
+                            switch (uploadFragmentResponseHttpResponse.StatusCode)
+                            {
+                                // Fragment has been received, awaiting next fragment
+                                case HttpStatusCode.Accepted:
+                                    // Move the current position pointer to the end of the fragment we've just sent so we continue from there with the next upload
+                                    currentPosition = endPosition;
+                                    fragmentSuccessful = true;
+                                    break;
+
+                                // All fragments have been received, the file did already exist and has been overwritten
+                                case HttpStatusCode.OK:
+                                // All fragments have been received, the file has been created
+                                case HttpStatusCode.Created:
+                                    var content = await ParseJsonResponse<OneDriveItem>(uploadFragmentResponseHttpResponse);
+                                    return content;
+
+                                // All other status codes are considered to indicate a failed fragment transmission and will be retried
+                            }
+                        }
+                    }
+                } while (!fragmentSuccessful && fragmentAttemptCount < fragmentMaxAttempts);
+
+                // Verify if we got out of the retry loop because a fragment exceeded its maximum retry count. In that case we abort the complete upload.
+                if (fragmentAttemptCount == fragmentMaxAttempts)
+                {
+                    // Abort the complete upload
+                    return null;
                 }
             }
 
