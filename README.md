@@ -28,9 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
-1.4.1.0 - April 28, 2016
+1.5.0.0 - April 29, 2016
 
-- Added UploadFileAs methods which accept a Stream [as requested](https://github.com/KoenZomers/OneDriveAPI/issues/5)
+- Refactored code heavily to be more optimized and have less duplicate code
+- Replaced all WebRequest instances with HttpClient. This effectively means that HTTP proxies are now supported for every function in this OneDrive API and that TLS 1.2 is now supported.
 
 [Version History](./VersionHistory.md)
 

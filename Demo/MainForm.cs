@@ -271,13 +271,13 @@ namespace AuthenticatorApp
 
         private async void CopyButton_Click(object sender, EventArgs e)
         {
-            var success = await OneDriveApi.Copy("Test.txt", "Documents", "Copied Test.txt");
+            var success = await OneDriveApi.Copy("Test.txt", "Test", "Copied Test.txt");
             JsonResultTextBox.Text = success ? "Copy Successfull" : "Copy Failed";
         }
 
         private async void MoveButton_Click(object sender, EventArgs e)
         {
-            var success = await OneDriveApi.Move("Test.txt", "Documents");
+            var success = await OneDriveApi.Move("Test.txt", "Test");
             JsonResultTextBox.Text = success ? "Move Successfull" : "Move Failed";
         }
 

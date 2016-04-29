@@ -200,28 +200,27 @@ namespace KoenZomers.OneDrive.Api
                 throw new InvalidOperationException("AccessTokenUri has not been set");
             }
 
-            var request = WebRequest.CreateHttp(AccessTokenUri);
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(queryBuilder.ToString());
-            await requestWriter.FlushAsync();
-
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.OK)
+            // Create an HTTPClient instance to communicate with the REST API of OneDrive
+            using (var client = CreateHttpClient())
             {
-                return null;
-            }
+                // Load the content to upload
+                using (var content = new StringContent(queryBuilder.ToString(), Encoding.UTF8, "application/x-www-form-urlencoded"))
+                {
+                    // Construct the message towards the webservice
+                    using (var request = new HttpRequestMessage(HttpMethod.Post, AccessTokenUri))
+                    {
+                        // Set the content to send along in the message body with the request
+                        request.Content = content;
 
-            var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
-            var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
+                        // Request the response from the webservice
+                        var response = await client.SendAsync(request);
+                        var responseBody = await response.Content.ReadAsStringAsync();
+                        var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
 
-            return appTokenResult;
+                        return appTokenResult;
+                    }
+                }
+            }       
         }
 
         /// <summary>
@@ -757,47 +756,14 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
         private async Task<OneDrivePermission> ShareItemInternal(string oneDriveRequestUrl, OneDriveLinkType linkType)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, oneDriveRequestUrl);
 
-            // Construct the request to send to the OneDrive API
-            var request = WebRequest.CreateHttp(completeUrl);
-            request.Method = "POST";
-            request.Accept = "application/json";
-            request.ContentType = "application/json";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+            // Construct the OneDriveRequestShare entity with the sharing details
+            var requestShare = new OneDriveRequestShare { SharingType = linkType };
 
-            // Construct the JSON to send in the POST message
-            var newFolder = new OneDriveRequestShare { SharingType = linkType };
-            var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(newFolder, settings);
-
-            // Add the JSON to the message request body
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(bodyText);
-            await requestWriter.FlushAsync();
-
-            // Send the request and await the response
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            // Verify the response outcome
-            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.Created)
-            {
-                return null;
-            }
-
-            // Parse the JSON response into an entity
-            var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
-            var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var result = JsonConvert.DeserializeObject<OneDrivePermission>(responseBody);
-            result.OriginalJson = responseBody;
-
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<OneDrivePermission>(requestShare, HttpMethod.Post, completeUrl, HttpStatusCode.Created);
             return result;
         }
 
@@ -809,48 +775,15 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
         private async Task<OneDriveItem> CreateFolderInternal(string oneDriveRequestUrl, string folderName)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBasicUrl, oneDriveRequestUrl);
-
-            // Construct the request to send to the OneDrive API
-            var request = WebRequest.CreateHttp(completeUrl);
-            request.Method = "POST";
-            request.Accept = "application/json";
-            request.ContentType = "application/json";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
+            var completeUrl = string.Concat(OneDriveApiBasicUrl, oneDriveRequestUrl);            
 
             // Construct the JSON to send in the POST message
             var newFolder = new OneDriveCreateFolder { Name = folderName, Folder = new object() };
-            var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(newFolder, settings);
 
-            // Add the JSON to the message request body
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(bodyText);
-            await requestWriter.FlushAsync();
-
-            // Send the request and await the response
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            // Verify the response outcome
-            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.Created)
-            {
-                return null;
-            }
-
-            // Parse the JSON response into an entity
-            var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
-            var responseBody = await responseBodyStreamReader.ReadToEndAsync();
-            var result = JsonConvert.DeserializeObject<OneDriveItem>(responseBody);
-            result.OriginalJson = responseBody;
-
-            return result;
+            // Send the webservice request
+            var oneDriveItem = await SendMessageReturnOneDriveItem<OneDriveItem>(newFolder, HttpMethod.Post, completeUrl, HttpStatusCode.Created);
+            return oneDriveItem;
         }
 
         /// <summary>
@@ -904,10 +837,7 @@ namespace KoenZomers.OneDrive.Api
             var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", item.Id, "/content");
 
             // Create an HTTPClient instance to communicate with the REST API of OneDrive
-            var client = CreateHttpClient();
-
-            // Provide the access token through a bearer authorization header
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken.AccessToken);
+            var client = CreateHttpClient(accessToken.AccessToken);
 
             // Send the request to the OneDrive API
             var response = await client.GetAsync(completeUrl);
@@ -937,37 +867,32 @@ namespace KoenZomers.OneDrive.Api
             // Construct the complete URL to call
             var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
 
-            // Create the PUT request to push the file
-            var request = WebRequest.CreateHttp(oneDriveUrl);
-            request.ContentType = "application/octet-stream";
-            request.Method = "PUT";
-            request.Accept = "application/json";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-
-            // Construct the request body with the file contents
-            using (var requestStream = await request.GetRequestStreamAsync())
+            // Create an HTTPClient instance to communicate with the REST API of OneDrive
+            using (var client = CreateHttpClient(accessToken.AccessToken))
             {
-                await CopyWithProgressAsync(fileStream, requestStream);
-
-                // Await the server response
-                using (var httpResponse = await request.GetResponseAsync())
+                // Load the content to upload
+                using (var content = new StreamContent(fileStream))
                 {
-                    using (var stream = httpResponse.GetResponseStream())
+                    // Indicate that we're sending binary data
+                    content.Headers.Add("Content-Type", "application/octet-stream");
+
+                    // Construct the PUT message towards the webservice
+                    using (var request = new HttpRequestMessage(HttpMethod.Put, oneDriveUrl))
                     {
-                        if (stream == null)
+                        // Set the content to upload
+                        request.Content = content;
+
+                        // Request the response from the webservice
+                        using (var response = await client.SendAsync(request))
                         {
-                            return null;
-                        }
+                            // Read the response as a string
+                            var responseString = await response.Content.ReadAsStringAsync();
 
-                        using (var reader = new StreamReader(stream))
-                        {
-                            var result = await reader.ReadToEndAsync();
+                            // Convert the JSON result to its appropriate type
+                            var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
+                            responseOneDriveItem.OriginalJson = responseString;
 
-                            // Convert the JSON results to its appropriate type
-                            var content = JsonConvert.DeserializeObject<OneDriveItem>(result);
-                            content.OriginalJson = result;
-
-                            return content;
+                            return responseOneDriveItem;
                         }
                     }
                 }
@@ -988,24 +913,7 @@ namespace KoenZomers.OneDrive.Api
             {
                 return await UploadFileViaSimpleUpload(fileStream, fileName, oneDriveItem);
             }
-        }
-
-        private static async Task<long> CopyWithProgressAsync(Stream source, Stream destination, long sourceLength = 0, int bufferSize = 64 * 1024)
-        {
-            long bytesWritten = 0;
-
-            byte[] copyBuffer = new byte[bufferSize];
-            int read;
-            while ((read = await source.ReadAsync(copyBuffer, 0, copyBuffer.Length)) > 0)
-            {
-                await destination.WriteAsync(copyBuffer, 0, read);
-                bytesWritten += read;
-            }
-
-            await destination.FlushAsync();
-
-            return bytesWritten;
-        }
+        }      
 
         /// <summary>
         /// Uploads a file to OneDrive using the resumable method. Better for large files or unstable network connections.
@@ -1038,28 +946,17 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Uploads a file to OneDrive using the resumable file upload method
+        /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
         /// </summary>
-        /// <param name="fileStream">Stream pointing to the file to upload</param>
-        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-        /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
-        /// <returns></returns>
-        public async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        /// <param name="fileName">Filename to store the uploaded content under</param>
+        /// <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        internal async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
 
-            // Construct the URL to initiate the upload
-            var oneDriveUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
-
-            // Create the inintial POST request to the OneDrive service to announce the upload
-            var request = WebRequest.CreateHttp(oneDriveUrl);
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.Accept = "application/json";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-
+            // Construct the OneDriveUploadSessionItemContainer entity with the upload details
             // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
             var uploadItemContainer = new OneDriveUploadSessionItemContainer
             {
@@ -1069,24 +966,26 @@ namespace KoenZomers.OneDrive.Api
                 }
             };
 
-            var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(uploadItemContainer, settings);
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
 
-            var requestStream = await request.GetRequestStreamAsync();
-            var writer = new StreamWriter(requestStream, Encoding.UTF8, 1024*1024, true);
-            await writer.WriteAsync(bodyText);
-            await writer.FlushAsync();
+        /// <summary>
+        /// Uploads a file to OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="fileStream">Stream pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        {
+            // Create a resumable upload session with OneDrive
+            var uploadSessionResult = await CreateResumableUploadSession(fileName, oneDriveItem);
 
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.OK)
-            {
-                return null;
-            }
-
-            var uploadSessionResult = await ParseJsonResponse<OneDriveUploadSession>(httpResponse);
+            // Get an access token to perform the request to OneDrive
+            var accessToken = await GetAccessToken();
 
             // Start sending the file from the first byte
             long currentPosition = 0;
@@ -1094,123 +993,93 @@ namespace KoenZomers.OneDrive.Api
             // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
             var fragmentBuffer = new byte[fragmentSizeInKiloByte*1000];
 
-            // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
-            while (currentPosition < fileStream.Length)
+            // Create an HTTPClient instance to communicate with the REST API of OneDrive to perform the upload 
+            using (var client = CreateHttpClient(accessToken.AccessToken))
             {
-                // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
-                var endPosition = currentPosition + fragmentBuffer.LongLength;
-
-                // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
-                if (endPosition > fileStream.Length) endPosition = fileStream.Length;
-
-                // Define how many bytes should be read from the source file
-                var amountOfBytesToSend = (int) (endPosition - currentPosition);
-
-                // Copy the bytes from the source file into the buffer
-                await fileStream.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
-
-                // Create the PUT HTTP request to upload the fragment
-                var uploadFragmentRequest = WebRequest.CreateHttp(uploadSessionResult.UploadUrl);
-                uploadFragmentRequest.Method = "PUT";
-                uploadFragmentRequest.ContentLength = amountOfBytesToSend;
-
-                // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
-                uploadFragmentRequest.Headers["Content-Range"] = string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", fileStream.Length);
-
-                // Provide the access token to authorize this request
-                uploadFragmentRequest.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-
-                // Used for retrying failed fragment transmissions
-                var fragmentSuccessful = false;
-                var fragmentAttemptCount = 0;
-                const int fragmentMaxAttempts = 3;
-
-                do
+                // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
+                while (currentPosition < fileStream.Length)
                 {
-                    // Keep a counter how many times it has been attempted to send this fragment
-                    fragmentAttemptCount++;
+                    // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
+                    var endPosition = currentPosition + fragmentBuffer.LongLength;
 
-                    // Copy the buffer contents to the HTTP stream
-                    using (var uploadFragmentRequestStream = await uploadFragmentRequest.GetRequestStreamAsync())
-                    {
-                        try
-                        {
-                            await uploadFragmentRequestStream.WriteAsync(fragmentBuffer, 0, amountOfBytesToSend);
-                        }
-                        catch (WebException)
-                        {
-                            // Do nothing. This exception will be thrown when trying to upload a file that already exists at the
-                            // target location. We still did get a response though, so we continue to try to parse the response.
-                        }
-                    }
+                    // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
+                    if (endPosition > fileStream.Length) endPosition = fileStream.Length;
 
-                    // Await the server response
-                    using (var uploadFragmentResponse = await uploadFragmentRequest.GetResponseAsync())
+                    // Define how many bytes should be read from the source file
+                    var amountOfBytesToSend = (int) (endPosition - currentPosition);
+
+                    // Copy the bytes from the source file into the buffer
+                    await fileStream.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
+
+                    // Load the content to upload
+                    using (var content = new ByteArrayContent(fragmentBuffer, 0, amountOfBytesToSend))
                     {
-                        using (var uploadFragmentResponseHttpResponse = uploadFragmentResponse as HttpWebResponse)
+                        // Indicate that we're sending binary data
+                        content.Headers.Add("Content-Type", "application/octet-stream");
+
+                        // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
+                        content.Headers.Add("Content-Range", string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", fileStream.Length));
+
+                        // Construct the PUT message towards the webservice containing the binary data
+                        using (var request = new HttpRequestMessage(HttpMethod.Put, uploadSessionResult.UploadUrl))
                         {
-                            if (uploadFragmentResponseHttpResponse == null)
+                            // Set the binary content to upload
+                            request.Content = content;
+
+                            // Used for retrying failed fragment transmissions
+                            var fragmentSuccessful = false;
+                            var fragmentAttemptCount = 0;
+                            const int fragmentMaxAttempts = 3;
+
+                            do
                             {
+                                // Keep a counter how many times it has been attempted to send this fragment
+                                fragmentAttemptCount++;
+
+                                // Send the data to the webservice
+                                using (var response = await client.SendAsync(request))
+                                {
+                                    // Check the response code
+                                    switch (response.StatusCode)
+                                    {
+                                        // Fragment has been received, awaiting next fragment
+                                        case HttpStatusCode.Accepted:
+                                            // Move the current position pointer to the end of the fragment we've just sent so we continue from there with the next upload
+                                            currentPosition = endPosition;
+                                            fragmentSuccessful = true;
+                                            break;
+
+                                        // All fragments have been received, the file did already exist and has been overwritten
+                                        case HttpStatusCode.OK:
+                                        // All fragments have been received, the file has been created
+                                        case HttpStatusCode.Created:
+                                            // Read the response as a string
+                                            var responseString = await response.Content.ReadAsStringAsync();
+
+                                            // Convert the JSON result to its appropriate type
+                                            var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
+                                            responseOneDriveItem.OriginalJson = responseString;
+
+                                            return responseOneDriveItem;
+
+                                        // All other status codes are considered to indicate a failed fragment transmission and will be retried
+                                    }
+                                }
+                            } while (!fragmentSuccessful && fragmentAttemptCount < fragmentMaxAttempts);
+
+                            // Verify if we got out of the retry loop because a fragment exceeded its maximum retry count. In that case we abort the complete upload.
+                            if (fragmentAttemptCount == fragmentMaxAttempts)
+                            {
+                                // Abort the complete upload
                                 return null;
                             }
-
-                            switch (uploadFragmentResponseHttpResponse.StatusCode)
-                            {
-                                // Fragment has been received, awaiting next fragment
-                                case HttpStatusCode.Accepted:
-                                    // Move the current position pointer to the end of the fragment we've just sent so we continue from there with the next upload
-                                    currentPosition = endPosition;
-                                    fragmentSuccessful = true;
-                                    break;
-
-                                // All fragments have been received, the file did already exist and has been overwritten
-                                case HttpStatusCode.OK:
-                                // All fragments have been received, the file has been created
-                                case HttpStatusCode.Created:
-                                    var content = await ParseJsonResponse<OneDriveItem>(uploadFragmentResponseHttpResponse);
-                                    return content;
-
-                                // All other status codes are considered to indicate a failed fragment transmission and will be retried
-                            }
                         }
                     }
-                } while (!fragmentSuccessful && fragmentAttemptCount < fragmentMaxAttempts);
-
-                // Verify if we got out of the retry loop because a fragment exceeded its maximum retry count. In that case we abort the complete upload.
-                if (fragmentAttemptCount == fragmentMaxAttempts)
-                {
-                    // Abort the complete upload
-                    return null;
                 }
             }
-
+            
+            // Request failed
             return null;
-        }
-
-        /// <summary>
-        /// Retrieves the contents of the provided WebResponse and parses the JSON contained in it into the provided OneDrive entity type
-        /// </summary>
-        /// <typeparam name="T">OneDrive entity type to parse the JSON response into</typeparam>
-        /// <param name="webResponse">WebResponse containing the OneDrive JSON response</param>
-        /// <returns>Typed OneDrive entity based on the JSON contained in the WebResponse</returns>
-        private static async Task<T> ParseJsonResponse<T>(WebResponse webResponse) where T : OneDriveItemBase
-        {
-            using (var stream = webResponse.GetResponseStream())
-            {
-                if (stream == null)
-                {
-                    return null;
-                }
-
-                var reader = new StreamReader(stream);
-                var result = await reader.ReadToEndAsync();
-
-                // Convert the JSON results to its appropriate type
-                var content = JsonConvert.DeserializeObject<T>(result);
-                content.OriginalJson = result;
-
-                return content;
-            }
         }
 
         /// <summary>
@@ -1221,35 +1090,12 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
         private async Task<T> GetData<T>(string url) where T : OneDriveItemBase
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, url);
 
-            // Create an HTTPClient instance to communicate with the REST API of OneDrive
-            var client = CreateHttpClient();
-
-            // Provide the access token through a bearer authorization header
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken.AccessToken);
-
-            // Send the request to the OneDrive API
-            var response = await client.GetAsync(completeUrl);
-
-            // Verify if the response was successful
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                return null;
-            }
-
-            // Retrieve the results from the OneDrive API
-            var result = await response.Content.ReadAsStringAsync();
-
-            // Convert the JSON results to its appropriate type
-            var content = JsonConvert.DeserializeObject<T>(result);
-            content.OriginalJson = result;
-
-            return content;
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<T>("", HttpMethod.Get, completeUrl, HttpStatusCode.OK);
+            return result;
         }
 
         /// <summary>
@@ -1259,19 +1105,12 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if successful, false if failed</returns>
         private async Task<bool> DeleteItemInternal(string oneDriveUrl)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, oneDriveUrl);
 
-            var request = WebRequest.CreateHttp(completeUrl);
-            request.Method = "DELETE";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.NoContent;
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnBool(null, HttpMethod.Delete, completeUrl, HttpStatusCode.NoContent);
+            return result;
         }
 
         /// <summary>
@@ -1283,19 +1122,10 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if successful, false if failed</returns>
         private async Task<bool> CopyItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent, string destinationName)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveSource.Id, "/action.copy");
 
-            var request = WebRequest.CreateHttp(completeUrl);
-            request.Method = "POST";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-            request.Headers["Prefer"] = "respond-async";
-            request.ContentType = "application/json";
-
-            // Construct the POST body
+            // Construct the OneDriveParentItemReference entity with the item to be copied details
             var requestBody = new OneDriveParentItemReference
             {
                 ParentReference = new OneDriveItemReference
@@ -1305,22 +1135,9 @@ namespace KoenZomers.OneDrive.Api
                 Name = destinationName
             };
 
-            // Serialize the POST body to JSON
-            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(requestBody, settings);
-
-            // Add the JSON to the message request body
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(bodyText);
-            await requestWriter.FlushAsync();
-
-            // Get the response
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.Accepted;
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnBool(requestBody, HttpMethod.Post, completeUrl, HttpStatusCode.Accepted, true);
+            return result;              
         }
 
         /// <summary>
@@ -1331,18 +1148,10 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if successful, false if failed</returns>
         private async Task<bool> MoveItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveSource.Id);
 
-            var request = WebRequest.CreateHttp(completeUrl);
-            request.Method = "PATCH";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-            request.ContentType = "application/json";
-
-            // Construct the POST body
+            // Construct the OneDriveParentItemReference entity with the item to be moved details
             var requestBody = new OneDriveParentItemReference
             {
                 ParentReference = new OneDriveItemReference
@@ -1351,22 +1160,9 @@ namespace KoenZomers.OneDrive.Api
                 },
             };
 
-            // Serialize the POST body to JSON
-            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(requestBody, settings);
-
-            // Add the JSON to the message request body
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(bodyText);
-            await requestWriter.FlushAsync();
-
-            // Get the response
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.OK;
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnBool(requestBody, new HttpMethod("PATCH"), completeUrl, HttpStatusCode.OK);
+            return result;
         }
 
         /// <summary>
@@ -1377,46 +1173,156 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if successful, false if failed</returns>
         private async Task<bool> RenameItemInternal(OneDriveItem oneDriveSource, string name)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBasicUrl, "drive/items/", oneDriveSource.Id);
 
-            var request = WebRequest.CreateHttp(completeUrl);
-            request.Method = "PATCH";
-            request.Headers["Authorization"] = string.Concat("bearer ", accessToken.AccessToken);
-            request.ContentType = "application/json";
-
-            // Construct the POST body
+            // Construct the OneDriveItem entity with the item to be renamed details
             var requestBody = new OneDriveItem
             {
                 Name = name
             };
 
-            // Serialize the POST body to JSON
-            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(requestBody, settings);
-
-            // Add the JSON to the message request body
-            var stream = await request.GetRequestStreamAsync();
-            var requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(bodyText);
-            await requestWriter.FlushAsync();
-
-            // Get the response
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
-
-            return httpResponse != null && httpResponse.StatusCode == HttpStatusCode.OK;
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnBool(requestBody, new HttpMethod("PATCH"), completeUrl, HttpStatusCode.OK);
+            return result;
         }
 
         /// <summary>
-        /// Instantiates a new HttpClient preconfigured for use
+        /// Sends a message to the OneDrive webservice and returns a OneDriveBaseItem with the response
         /// </summary>
+        /// <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
+        /// <param name="oneDriveItem">OneDriveBaseItem of the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+        /// <returns>Typed OneDrive entity with the result from the webservice</returns>
+        private async Task<T> SendMessageReturnOneDriveItem<T>(OneDriveItemBase oneDriveItem, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode = null) where T : OneDriveItemBase
+        {
+            var settings = new JsonSerializerSettings();
+            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            var bodyText = JsonConvert.SerializeObject(oneDriveItem, settings);
+
+            return await SendMessageReturnOneDriveItem<T>(bodyText, httpMethod, url, expectedHttpStatusCode);
+        }
+
+        /// <summary>
+        /// Sends a message to the OneDrive webservice and returns a OneDriveBaseItem with the response
+        /// </summary>
+        /// <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
+        /// <param name="bodyText">String with the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+        /// <returns>Typed OneDrive entity with the result from the webservice</returns>
+        private async Task<T> SendMessageReturnOneDriveItem<T>(string bodyText, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode = null) where T : OneDriveItemBase
+        {
+            var responseString = await SendMessageReturnString(bodyText, httpMethod, url, expectedHttpStatusCode);
+
+            // Validate output was generated
+            if (string.IsNullOrEmpty(responseString)) return null;
+
+            // Convert the JSON string result to its appropriate type
+            var responseOneDriveItem = JsonConvert.DeserializeObject<T>(responseString);
+            responseOneDriveItem.OriginalJson = responseString;
+
+            return responseOneDriveItem;
+        }
+
+        /// <summary>
+        /// Sends a message to the OneDrive webservice and returns a string with the response
+        /// </summary>
+        /// <param name="bodyText">String with the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+        /// <returns>String containing the response of the webservice</returns>
+        private async Task<string> SendMessageReturnString(string bodyText, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode = null)
+        {
+            using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url))
+            {
+                if (expectedHttpStatusCode.HasValue && response != null && response.StatusCode == expectedHttpStatusCode.Value)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    return responseString;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Sends a message to the OneDrive webservice and returns a bool indicating if the response matched the expected HTTP status code result
+        /// </summary>
+        /// <param name="oneDriveItem">OneDriveBaseItem of the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+        /// <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
+        /// <returns>Bool indicating if the HTTP response status from the webservice matched the provided expectedHttpStatusCode</returns>
+        private async Task<bool> SendMessageReturnBool(OneDriveItemBase oneDriveItem, HttpMethod httpMethod, string url, HttpStatusCode expectedHttpStatusCode, bool preferRespondAsync = false)
+        {
+            string bodyText = null;
+            if (oneDriveItem != null)
+            {
+                var settings = new JsonSerializerSettings();
+                settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                bodyText = JsonConvert.SerializeObject(oneDriveItem, settings);
+            }
+
+            using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url, preferRespondAsync))
+            {
+                return response != null && response.StatusCode == expectedHttpStatusCode;
+            }
+        }
+
+        /// <summary>
+        /// Sends a message to the OneDrive webservice and returns the HttpResponse instance
+        /// </summary>
+        /// <param name="bodyText">String with the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
+        /// <returns>HttpResponse of the webservice call. Note that the caller needs to dispose the returned instance.</returns>
+        private async Task<HttpResponseMessage> SendMessageReturnHttpResponse(string bodyText, HttpMethod httpMethod, string url, bool preferRespondAsync = false)
+        {
+            // Get an access token to perform the request to OneDrive
+            var accessToken = await GetAccessToken();
+
+            // Create an HTTPClient instance to communicate with the REST API of OneDrive
+            using (var client = CreateHttpClient(accessToken.AccessToken))
+            {
+                // Load the content to upload
+                using (var content = new StringContent(bodyText, Encoding.UTF8, "application/json"))
+                {
+                    // Construct the message towards the webservice
+                    using (var request = new HttpRequestMessage(httpMethod, url))
+                    {
+                        if (preferRespondAsync)
+                        {
+                            // Add a header to prefer the operation to happen while we continue processing our code
+                            request.Headers.Add("Prefer", "respond-async");
+                        }
+
+                        // Check if a body to send along with the request has been provided
+                        if (!string.IsNullOrEmpty(bodyText) && httpMethod != HttpMethod.Get)
+                        {
+                            // Set the content to send along in the message body with the request
+                            request.Content = content;
+                        }
+
+                        // Request the response from the webservice
+                        var response = await client.SendAsync(request);
+                        return response;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Instantiates a new HttpClient preconfigured for use. Note that the caller is responsible for disposing this object.
+        /// </summary>
+        /// <param name="bearerToken">Bearer token to add to the HTTP Client for authorization (optional)</param>
         /// <returns>HttpClient instance</returns>
-        protected HttpClient CreateHttpClient()
+        protected HttpClient CreateHttpClient(string bearerToken = null)
         {
             // Define the HttpClient settings
             var httpClientHandler = new HttpClientHandler
@@ -1436,6 +1342,13 @@ namespace KoenZomers.OneDrive.Api
 
             // Create the new HTTP Client
             var httpClient = new HttpClient(httpClientHandler);
+
+            if (!string.IsNullOrEmpty(bearerToken))
+            {
+                // Provide the access token through a bearer authorization header
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", bearerToken);
+            }
+
             return httpClient;
         }
 

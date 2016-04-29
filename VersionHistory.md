@@ -2,6 +2,10 @@
 
 ## Version History
 
+1.4.1.0 - April 28, 2016
+
+- Added UploadFileAs methods which accept a Stream [as requested](https://github.com/KoenZomers/OneDriveAPI/issues/5)
+
 1.4.0.0 - December 1, 2015
 
 - Added support for OneDrive for Business on Office 365 through the OneDrive API v2.0. It does NOT work against an On Premises SharePoint farm.
