@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.5.0.2 - May 10, 2016
+
+- Updated Newtonsoft.Json reference to version 8.0.3
+
 1.5.0.0 - April 29, 2016
 
 - Refactored code heavily to be more optimized and have less duplicate code
