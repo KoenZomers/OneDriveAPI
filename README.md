@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.5.0.3 - May 12, 2016
+
+- Added UploadFileViaSimpleUpload method which accepts in a string the path to the file to upload
+
 1.5.0.2 - May 10, 2016
 
 - Updated Newtonsoft.Json reference to version 8.0.3

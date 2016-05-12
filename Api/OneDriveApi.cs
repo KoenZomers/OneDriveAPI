@@ -621,7 +621,7 @@ namespace KoenZomers.OneDrive.Api
         {
             if (!File.Exists(filePath))
             {
-                throw new ArgumentException("Provided file could not be found", "filePath");
+                throw new ArgumentException("Provided file could not be found", nameof(filePath));
             }
 
             // Get a reference to the file to upload
@@ -636,7 +636,7 @@ namespace KoenZomers.OneDrive.Api
             // Verify if the filename does not contain any for OneDrive illegal characters
             if (!ValidFilename(fileName))
             {
-                throw new ArgumentException("Provided file contains illegal characters in its filename", "filePath");
+                throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(filePath));
             }
 
             // Verify which upload method should be used
@@ -675,7 +675,7 @@ namespace KoenZomers.OneDrive.Api
             // Verify if the filename does not contain any for OneDrive illegal characters
             if (!ValidFilename(fileName))
             {
-                throw new ArgumentException("Provided file contains illegal characters in its filename", "filePath");
+                throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(fileName));
             }
 
             // Verify which upload method should be used
@@ -913,7 +913,20 @@ namespace KoenZomers.OneDrive.Api
             {
                 return await UploadFileViaSimpleUpload(fileStream, fileName, oneDriveItem);
             }
-        }      
+        }
+
+        /// <summary>
+        /// Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+        /// </summary>
+        /// <param name="filePath">Path to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <returns>The resulting OneDrive item representing the uploaded file</returns>
+        public async Task<OneDriveItem> UploadFileViaSimpleUpload(string filePath, string fileName, OneDriveItem oneDriveItem)
+        {
+            var file = new FileInfo(filePath);
+            return await UploadFileViaSimpleUpload(file, fileName, oneDriveItem);
+        }
 
         /// <summary>
         /// Uploads a file to OneDrive using the resumable method. Better for large files or unstable network connections.
