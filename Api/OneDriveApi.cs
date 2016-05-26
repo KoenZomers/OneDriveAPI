@@ -163,6 +163,7 @@ namespace KoenZomers.OneDrive.Api
                 {
                     // We have a refresh token, request a new access token using it
                     AccessToken = await GetAccessTokenFromRefreshToken(AccessToken.RefreshToken);
+                    return AccessToken;
                 }
             }
 

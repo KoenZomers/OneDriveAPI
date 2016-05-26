@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.5.0.3 - May 26, 2016
+
+- Bugfix where GetAccessToken would return NULL instead of a new Access Token when the Access Token would have expired, but a valid Refresh Token was still available
+
 1.5.0.3 - May 12, 2016
 
 - Added UploadFileViaSimpleUpload method which accepts in a string the path to the file to upload
