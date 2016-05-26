@@ -28,7 +28,11 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
-1.5.0.3 - May 26, 2016
+1.5.1.0 - May 26, 2016
+
+- Compiled against .NET Framework v4.6.1 as v4.5 has run out of support (https://blogs.msdn.microsoft.com/dotnet/2015/12/09/support-ending-for-the-net-framework-4-4-5-and-4-5-1/)
+
+1.5.0.4 - May 26, 2016
 
 - Bugfix where GetAccessToken would return NULL instead of a new Access Token when the Access Token would have expired, but a valid Refresh Token was still available
 
