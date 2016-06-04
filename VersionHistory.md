@@ -2,6 +2,27 @@
 
 ## Version History
 
+1.5.1.0 - May 26, 2016
+
+- Compiled against .NET Framework v4.6.1 as v4.5 has run out of support (https://blogs.msdn.microsoft.com/dotnet/2015/12/09/support-ending-for-the-net-framework-4-4-5-and-4-5-1/)
+
+1.5.0.4 - May 26, 2016
+
+- Bugfix where GetAccessToken would return NULL instead of a new Access Token when the Access Token would have expired, but a valid Refresh Token was still available
+
+1.5.0.3 - May 12, 2016
+
+- Added UploadFileViaSimpleUpload method which accepts in a string the path to the file to upload
+
+1.5.0.2 - May 10, 2016
+
+- Updated Newtonsoft.Json reference to version 8.0.3
+
+1.5.0.0 - April 29, 2016
+
+- Refactored code heavily to be more optimized and have less duplicate code
+- Replaced all WebRequest instances with HttpClient. This effectively means that HTTP proxies are now supported for every function in this OneDrive API and that TLS 1.2 is now supported.
+
 1.4.1.0 - April 28, 2016
 
 - Added UploadFileAs methods which accept a Stream [as requested](https://github.com/KoenZomers/OneDriveAPI/issues/5)

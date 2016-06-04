@@ -1001,54 +1001,53 @@ namespace KoenZomers.OneDrive.Api
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
-            // Start sending the file from the first byte
-            long currentPosition = 0;
+            // Used for retrying failed transmissions
+            var transferAttemptCount = 0;
+            const int transferMaxAttempts = 3;
 
-            // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
-            var fragmentBuffer = new byte[fragmentSizeInKiloByte*1000];
-
-            // Create an HTTPClient instance to communicate with the REST API of OneDrive to perform the upload 
-            using (var client = CreateHttpClient(accessToken.AccessToken))
+            do
             {
-                // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
-                while (currentPosition < fileStream.Length)
+                // Keep a counter how many times it has been attempted to send this file
+                transferAttemptCount++;
+
+                // Start sending the file from the first byte
+                long currentPosition = 0;
+
+                // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
+                var fragmentBuffer = new byte[fragmentSizeInKiloByte*1000];
+
+                // Create an HTTPClient instance to communicate with the REST API of OneDrive to perform the upload 
+                using (var client = CreateHttpClient(accessToken.AccessToken))
                 {
-                    // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
-                    var endPosition = currentPosition + fragmentBuffer.LongLength;
-
-                    // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
-                    if (endPosition > fileStream.Length) endPosition = fileStream.Length;
-
-                    // Define how many bytes should be read from the source file
-                    var amountOfBytesToSend = (int) (endPosition - currentPosition);
-
-                    // Copy the bytes from the source file into the buffer
-                    await fileStream.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
-
-                    // Load the content to upload
-                    using (var content = new ByteArrayContent(fragmentBuffer, 0, amountOfBytesToSend))
+                    // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
+                    while (currentPosition < fileStream.Length)
                     {
-                        // Indicate that we're sending binary data
-                        content.Headers.Add("Content-Type", "application/octet-stream");
+                        // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
+                        var endPosition = currentPosition + fragmentBuffer.LongLength;
 
-                        // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
-                        content.Headers.Add("Content-Range", string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", fileStream.Length));
+                        // Make sure our end position isn't further than the file size in which case it would be the last fragment of the file to be sent
+                        if (endPosition > fileStream.Length) endPosition = fileStream.Length;
 
-                        // Construct the PUT message towards the webservice containing the binary data
-                        using (var request = new HttpRequestMessage(HttpMethod.Put, uploadSessionResult.UploadUrl))
+                        // Define how many bytes should be read from the source file
+                        var amountOfBytesToSend = (int) (endPosition - currentPosition);
+
+                        // Copy the bytes from the source file into the buffer
+                        await fileStream.ReadAsync(fragmentBuffer, 0, amountOfBytesToSend);
+
+                        // Load the content to upload
+                        using (var content = new ByteArrayContent(fragmentBuffer, 0, amountOfBytesToSend))
                         {
-                            // Set the binary content to upload
-                            request.Content = content;
+                            // Indicate that we're sending binary data
+                            content.Headers.Add("Content-Type", "application/octet-stream");
 
-                            // Used for retrying failed fragment transmissions
-                            var fragmentSuccessful = false;
-                            var fragmentAttemptCount = 0;
-                            const int fragmentMaxAttempts = 3;
+                            // Provide information to OneDrive which range of bytes we're going to send and the total amount of bytes the file exists out of
+                            content.Headers.Add("Content-Range", string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", fileStream.Length));
 
-                            do
+                            // Construct the PUT message towards the webservice containing the binary data
+                            using (var request = new HttpRequestMessage(HttpMethod.Put, uploadSessionResult.UploadUrl))
                             {
-                                // Keep a counter how many times it has been attempted to send this fragment
-                                fragmentAttemptCount++;
+                                // Set the binary content to upload
+                                request.Content = content;
 
                                 // Send the data to the webservice
                                 using (var response = await client.SendAsync(request))
@@ -1060,7 +1059,6 @@ namespace KoenZomers.OneDrive.Api
                                         case HttpStatusCode.Accepted:
                                             // Move the current position pointer to the end of the fragment we've just sent so we continue from there with the next upload
                                             currentPosition = endPosition;
-                                            fragmentSuccessful = true;
                                             break;
 
                                         // All fragments have been received, the file did already exist and has been overwritten
@@ -1079,19 +1077,12 @@ namespace KoenZomers.OneDrive.Api
                                         // All other status codes are considered to indicate a failed fragment transmission and will be retried
                                     }
                                 }
-                            } while (!fragmentSuccessful && fragmentAttemptCount < fragmentMaxAttempts);
-
-                            // Verify if we got out of the retry loop because a fragment exceeded its maximum retry count. In that case we abort the complete upload.
-                            if (fragmentAttemptCount == fragmentMaxAttempts)
-                            {
-                                // Abort the complete upload
-                                return null;
                             }
                         }
                     }
                 }
-            }
-            
+            } while (transferAttemptCount < transferMaxAttempts);
+
             // Request failed
             return null;
         }
