@@ -31,6 +31,7 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 1.6.0.0 - August 9, 2016
 
 - Added support for the new OneDrive Consumer API registration process. Follow the steps below to register your own application.
+  ** BEWARE: If upgrading from a previous version, ensure you add the OneDriveConsumerApiRedirectUri field to your App.Config. Leave its value an empty string in this case.
 
 1.5.3.0 - July 10, 2016
 
