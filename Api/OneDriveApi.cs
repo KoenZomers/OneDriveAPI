@@ -73,7 +73,7 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// The url to provide as the redirect URL after successful authentication
         /// </summary>
-        protected abstract string AuthenticationRedirectUrl { get; }
+        public abstract string AuthenticationRedirectUrl { get; set; }
 
         /// <summary>
         /// String formatted Uri that needs to be called to authenticate
@@ -129,7 +129,7 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Url must start with the return url followed by a question mark to provide querystring parameters
-            if (!url.StartsWith(string.Concat(AuthenticationRedirectUrl, "?")))
+            if (!url.StartsWith(string.Concat(AuthenticationRedirectUrl, "?")) && !url.StartsWith(string.Concat(AuthenticationRedirectUrl, "/?")))
             {
                 return null;
             }
@@ -194,6 +194,7 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="queryBuilder">The querystring parameters to send in the POST body</param>
         /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
+        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
         protected async Task<OneDriveAccessToken> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
         {
             if (string.IsNullOrEmpty(AccessTokenUri))
@@ -216,9 +217,29 @@ namespace KoenZomers.OneDrive.Api
                         // Request the response from the webservice
                         var response = await client.SendAsync(request);
                         var responseBody = await response.Content.ReadAsStringAsync();
-                        var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
 
-                        return appTokenResult;
+                        // Verify if the request was successful (response status 200-299)
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Successfully retrieved token, parse it from the response
+                            var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
+
+                            return appTokenResult;
+                        }
+
+                        // Not able to retrieve a token, parse the error and throw it as an exception
+                        OneDriveError errorResult;
+                        try
+                        {
+                            // Try to parse the response as a OneDrive API error message
+                            errorResult = JsonConvert.DeserializeObject<OneDriveError>(responseBody);
+                        }
+                        catch(Exception ex)
+                        {
+                            throw new Exceptions.TokenRetrievalFailedException(innerException: ex);
+                        }
+
+                        throw new Exceptions.TokenRetrievalFailedException(message: errorResult.ErrorDescription, errorDetails: errorResult);
                     }
                 }
             }       
@@ -1022,6 +1043,8 @@ namespace KoenZomers.OneDrive.Api
                     // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
                     while (currentPosition < fileStream.Length)
                     {
+                        var fragmentSuccessful = true;
+
                         // Define the end position in the file bytes based on the buffer size we're using to send fragments of the file to OneDrive
                         var endPosition = currentPosition + fragmentBuffer.LongLength;
 
@@ -1075,10 +1098,17 @@ namespace KoenZomers.OneDrive.Api
                                             return responseOneDriveItem;
 
                                         // All other status codes are considered to indicate a failed fragment transmission and will be retried
+                                        default:
+                                            fragmentSuccessful = false;
+                                            break;
                                     }
                                 }
                             }
                         }
+
+                        // Check if the fragment was successful, if not, retry the complete upload
+                        if (!fragmentSuccessful)
+                            break;
                     }
                 }
             } while (transferAttemptCount < transferMaxAttempts);

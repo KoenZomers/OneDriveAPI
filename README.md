@@ -28,6 +28,14 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.0.0 - August 9, 2016
+
+- Added support for the new OneDrive Consumer API registration process. Follow the steps below to register your own application.
+
+1.5.3.0 - July 10, 2016
+
+- Added extra error handling in case retreiving an access token fails. It will now throw a TokenRetrievalFailedException with detailed information why it failed instead of just returning NULL to aid in troubleshooting.
+
 1.5.2.0 - June 4, 2016
 
 - Fixed an issue where OneDrive could respond with a HTTP 500 error and the retry functionality would fail
@@ -40,12 +48,20 @@ If you wish to use the OneDrive API, you need to register your own Client ID / C
 
 ### OneDrive for Consumers
 
+** NOTE: Microsoft updated the web interface, so the steps below have been updated to reflect this (August 9, 2016) **
+
 1. Go to https://account.live.com/developers/applications/index
 2. Log in with your Microsoft Account
-3. Click on Add an app in the "Live SDK applications" section at the bottom
-4. Give it any name you would like
-5. It will show you the Client ID which is called the Application Id here and the Client Secret which is called the Application Secret here.
-6. Update the App.config file of your application where you will be using the OneDrive API with these values. Use the DemoApplication its app.config for a sample of this.
+3. Click on "Add an app" next to the "My applications" section
+4. Give it any name you would like and click on "Create application"
+5. It will show you the Application Id which you have copy to the App.config OneDriveConsumerApiClientID field
+6. Click on "Generate New Password" under "Application Secrets"
+7. Copy the generated password from the "New password generated" dialog and paste it to the App.config OneDriveConsumerApiClientSecret field and click OK
+8. Click on "Add Platform" under "Platforms"
+9. Click on "Web"
+10. Ensure the "Allow Implicit Flow" is checked, enter a URL in the "Redirect URIs" field. This can be any URL. Just beware that this URL will receive your access token, so use a site that belongs to you. I'll use https://apps.zomers.eu . Make sure "Live SDK support" at the bottom is checked. Click on "Save" at the bottom.
+11. Copy the same URI you've used at the previous step to the App.config OneDriveConsumerApiRedirectUri field
+12. Run the demo application and click on "Authorize"
 
 ### OneDrive for Business
 
@@ -67,6 +83,7 @@ If you wish to use the OneDrive API, you need to register your own Client ID / C
 16. After it's done processing your changes, it will show the client secret in the line under keys where you just used the dropdown. Copy this value to notepad. This is the client secret and only will be visible once and never again.
 17. Copy the Client ID field at the top.
 18. Replace the Client ID and Client Secret in your App.config where you will be using the OneDrive API. Use the DemoApplication its app.config for a sample of this.
+19. Run the demo application, select "OneDrive for Business O365" and click on "Authorize"
 
 ## Feedback
 

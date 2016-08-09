@@ -103,6 +103,7 @@
     <Compile Include="Enums\OneDriveLinkType.cs" />
     <Compile Include="Enums\OneDriveQuotaState.cs" />
     <Compile Include="Enums\OneDriveResyncLogic.cs" />
+    <Compile Include="Exceptions\TokenRetrievalFailedException.cs" />
     <Compile Include="Helpers\QueryStringBuilder.cs" />
     <Compile Include="Entities\OneDriveAccessToken.cs" />
     <Compile Include="OneDriveApi.cs" />

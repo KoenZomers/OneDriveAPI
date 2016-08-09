@@ -16,7 +16,7 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// The url to provide as the redirect URL after successful authentication
         /// </summary>
-        protected override string AuthenticationRedirectUrl => "https://login.live.com/oauth20_desktop.srf";
+        public override string AuthenticationRedirectUrl { get; set; } = "https://login.live.com/oauth20_desktop.srf";
 
         /// <summary>
         /// String formatted Uri that needs to be called to authenticate
@@ -70,7 +70,8 @@ namespace KoenZomers.OneDrive.Api
         /// Gets an access token from the provided refresh token
         /// </summary>
         /// <param name="refreshToken">Refresh token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
+        /// <returns>Access token for OneDrive</returns>
+        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
         protected override async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
         {
             var queryBuilder = new QueryStringBuilder();
@@ -106,7 +107,8 @@ namespace KoenZomers.OneDrive.Api
         /// Gets an access token from the provided authorization token
         /// </summary>
         /// <param name="authorizationToken">Authorization token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
+        /// <returns>Access token for OneDrive</returns>
+        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
         protected override async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken)
         {
             var queryBuilder = new QueryStringBuilder();

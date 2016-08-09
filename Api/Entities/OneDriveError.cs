@@ -2,9 +2,12 @@
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
-    public class OneDriveError : OneDriveErrorDetail
+    public class OneDriveError : OneDriveItemBase
     {
         [JsonProperty("error")]
-        public OneDriveErrorDetail Error { get; set; }
+        public string Error { get; set; }
+
+        [JsonProperty("error_description")]
+        public string ErrorDescription { get; set; }
     }
 }
