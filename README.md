@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.1.0 - August 11, 2016
+
+- Added support for getting folder contents by the parent folder ID instead of a path (GetChildrenByFolderId). This allows you to get the items from a folder on someone else their OneDrive which you have linked to yours.
+
 1.6.0.0 - August 9, 2016
 
 - Added support for the new OneDrive Consumer API registration process. Follow the steps below to register your own application.

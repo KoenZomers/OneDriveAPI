@@ -315,10 +315,20 @@ namespace KoenZomers.OneDrive.Api
         /// Retrieves the children under the provided OneDrive path
         /// </summary>
         /// <param name="path">Path within OneDrive to retrieve the child items of</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItemCollection containing all items in the requested folder</returns>
         public async Task<OneDriveItemCollection> GetChildrenByPath(string path)
         {
             return await GetData<OneDriveItemCollection>(string.Concat("drive/root:/", path, ":/children"));
+        }
+
+        /// <summary>
+        /// Retrieves the children under the OneDrive folder with the provided id
+        /// </summary>
+        /// <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
+        /// <returns>OneDriveItemCollection containing all items in the requested folder</returns>
+        public async Task<OneDriveItemCollection> GetChildrenByFolderId(string id)
+        {
+            return await GetData<OneDriveItemCollection>(string.Concat("drive/items/", id, "/children"));
         }
 
         /// <summary>

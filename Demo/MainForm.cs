@@ -210,9 +210,8 @@ namespace AuthenticatorApp
 
         private async void GetByIdButton_Click(object sender, EventArgs e)
         {
-            var data1 = await OneDriveApi.GetChildrenByPath("Drivers");
-            var data2 = await OneDriveApi.GetChildrenByParentItem(data1.Collection[0]);
-            JsonResultTextBox.Text = data2.OriginalJson;
+            var data1 = await OneDriveApi.GetChildrenByFolderId("E499210E61A71FF3!3635");
+            JsonResultTextBox.Text = data1.OriginalJson;
         }
 
         private async void DownloadButton_Click(object sender, EventArgs e)
