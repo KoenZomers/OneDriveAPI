@@ -158,5 +158,11 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// </summary>
         [JsonProperty("children", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public OneDriveItem[] Children { get; set; }
+
+        /// <summary>
+        /// If containing information, it regards a OneDriveItem stored on another OneDrive but linked by the current OneDrive
+        /// </summary>
+        [JsonProperty("remoteItem", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public OneDriveRemoteItem RemoteItem{ get; set; }
     }
 }

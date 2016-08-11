@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.2.0 - August 11, 2016
+
+- Added additional API functions for getting content from linked folders on other OneDrives (GetItemById and OneDriveRemoteItem entity)
+
 1.6.1.0 - August 11, 2016
 
 - Added support for getting folder contents by the parent folder ID instead of a path (GetChildrenByFolderId). This allows you to get the items from a folder on someone else their OneDrive which you have linked to yours.

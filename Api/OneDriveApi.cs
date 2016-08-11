@@ -352,6 +352,16 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
+        /// Retrieves the OneDrive Item
+        /// </summary>
+        /// <param name="id">Unique identifier of the OneDrive item to retrieve</param>
+        /// <returns></returns>
+        public async Task<OneDriveItem> GetItemById(string id)
+        {
+            return await GetData<OneDriveItem>(string.Concat("drive/items/", id));
+        }
+
+        /// <summary>
         /// Retrieves the OneDrive folder item or creates it if it doesn't exist yet
         /// </summary>
         /// <param name="path">Path of the OneDrive folder to retrieve or create</param>
