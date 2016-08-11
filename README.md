@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.3.0 - August 11, 2016
+
+- Fixed a bug with the Delete method throwing an exception
+
 1.6.2.0 - August 11, 2016
 
 - Added additional API functions for getting content from linked folders on other OneDrives (GetItemById and OneDriveRemoteItem entity)

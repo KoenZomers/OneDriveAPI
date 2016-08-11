@@ -1346,7 +1346,7 @@ namespace KoenZomers.OneDrive.Api
             using (var client = CreateHttpClient(accessToken.AccessToken))
             {
                 // Load the content to upload
-                using (var content = new StringContent(bodyText, Encoding.UTF8, "application/json"))
+                using (var content = new StringContent(bodyText ?? "", Encoding.UTF8, "application/json"))
                 {
                     // Construct the message towards the webservice
                     using (var request = new HttpRequestMessage(httpMethod, url))
