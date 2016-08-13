@@ -426,8 +426,8 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
         public async Task<OneDriveItem> GetItemInFolder(OneDriveItem folder, string fileName)
         {
-            var itemsInFolder = await GetChildrenByFolderId(folder.Id);
-            var item = itemsInFolder.Collection.FirstOrDefault(i => string.Equals(i.Name, fileName, StringComparison.InvariantCultureIgnoreCase));
+            var itemsInFolder = await GetAllChildrenByFolderId(folder.Id);
+            var item = itemsInFolder.FirstOrDefault(i => string.Equals(i.Name, fileName, StringComparison.InvariantCultureIgnoreCase));
             return item;
         }
 
