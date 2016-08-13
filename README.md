@@ -28,6 +28,11 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.4.0 - August 13, 2016
+
+- Added GetItemInFolder to retrieve an item based on the folder it resides in and its filename
+- Added GetAllChildrenByXXX methods for each of the existing methods to get all items inside a certain folder which obeys the paging NextLink in the results to ensure all child items are returned and not just the first batch
+
 1.6.3.0 - August 11, 2016
 
 - Fixed a bug with the Delete method throwing an exception

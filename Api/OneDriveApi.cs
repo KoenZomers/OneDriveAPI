@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -304,58 +305,150 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Retrieves the children under the OneDrive root folder
+        /// Retrieves the first batch of children under the OneDrive root folder
         /// </summary>
+        /// <returns>OneDriveItemCollection containing the first batch of items in the root folder</returns>
         public async Task<OneDriveItemCollection> GetDriveRootChildren()
         {
             return await GetData<OneDriveItemCollection>("drive/root/children");
         }
 
         /// <summary>
-        /// Retrieves the children under the provided OneDrive path
+        /// Retrieves all the children under the OneDrive root folder
+        /// </summary>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        public async Task<OneDriveItem[]> GetAllDriveRootChildren()
+        {
+            return await GetAllChildrenInternal("drive/root/children");
+        }
+
+        /// <summary>
+        /// Retrieves the first batch of children under the provided OneDrive path
         /// </summary>
         /// <param name="path">Path within OneDrive to retrieve the child items of</param>
-        /// <returns>OneDriveItemCollection containing all items in the requested folder</returns>
+        /// <returns>OneDriveItemCollection containing the first batch of items in the requested folder</returns>
         public async Task<OneDriveItemCollection> GetChildrenByPath(string path)
         {
             return await GetData<OneDriveItemCollection>(string.Concat("drive/root:/", path, ":/children"));
         }
 
         /// <summary>
-        /// Retrieves the children under the OneDrive folder with the provided id
+        /// Retrieves all children under the provided OneDrive path
+        /// </summary>
+        /// <param name="path">Path within OneDrive to retrieve the child items of</param>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        public async Task<OneDriveItem[]> GetAllChildrenByPath(string path)
+        {
+            return await GetAllChildrenInternal(string.Concat("drive/root:/", path, ":/children"));
+        }
+
+        /// <summary>
+        /// Retrieves the first batch of children under the OneDrive folder with the provided id
         /// </summary>
         /// <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
-        /// <returns>OneDriveItemCollection containing all items in the requested folder</returns>
+        /// <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
         public async Task<OneDriveItemCollection> GetChildrenByFolderId(string id)
         {
             return await GetData<OneDriveItemCollection>(string.Concat("drive/items/", id, "/children"));
         }
 
         /// <summary>
-        /// Retrieves the children under the provided OneDrive Item
+        /// Retrieves all the children under the OneDrive folder with the provided id
+        /// </summary>
+        /// <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        public async Task<OneDriveItem[]> GetAllChildrenByFolderId(string id)
+        {
+            return await GetAllChildrenInternal(string.Concat("drive/items/", id, "/children"));
+        }
+
+        /// <summary>
+        /// Retrieves the firsth batch of children under the provided OneDrive Item
         /// </summary>
         /// <param name="item">OneDrive item to retrieve the child items of</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
         public async Task<OneDriveItemCollection> GetChildrenByParentItem(OneDriveItem item)
         {
             return await GetData<OneDriveItemCollection>(string.Concat("drive/items/", item.Id, "/children"));
         }
 
         /// <summary>
-        /// Retrieves the OneDrive Item
+        /// Retrieves all the children under the OneDrive folder with the provided id
+        /// </summary>
+        /// <param name="item">OneDrive item to retrieve the child items of</param>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        public async Task<OneDriveItem[]> GetAllChildrenByParentItem(OneDriveItem item)
+        {
+            return await GetAllChildrenInternal(string.Concat("drive/items/", item.Id, "/children"));
+        }
+
+        /// <summary>
+        /// Retrieves all the children under the OneDrive folder with the provided id
+        /// </summary>
+        /// <param name="fetchUrl">Url to use to fetch the first set of child items</param>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        private async Task<OneDriveItem[]> GetAllChildrenInternal(string fetchUrl)
+        {
+            var results = new List<OneDriveItem>();
+            do
+            {
+                // Retrieve a batch with child items
+                var resultSet = await GetData<OneDriveItemCollection>(fetchUrl);
+
+                // Add the batch results to the complete list with results
+                results.AddRange(resultSet.Collection);
+
+                // Check if there's a NextLink in the response. If so, continue with fetching the next bach of items. If not, we're done.
+                if (string.IsNullOrEmpty(resultSet.NextLink)) break;
+
+                // Set the url where to get the next batch of items based on the NextLink provided in the previous batch results
+                fetchUrl = resultSet.NextLink;
+            } while (true);
+
+            return results.ToArray();
+        }
+
+        /// <summary>
+        /// Retrieves the OneDrive Item by its complete path to the file
         /// </summary>
         /// <param name="path">Path of the OneDrive item to retrieve</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
         public async Task<OneDriveItem> GetItem(string path)
         {
             return await GetData<OneDriveItem>(string.Concat("drive/root:/", path));
         }
 
         /// <summary>
-        /// Retrieves the OneDrive Item
+        /// Retrieves the OneDrive Item by it's filename in a specific folder
+        /// </summary>
+        /// <param name="folder">OneDriveItem representing the folder in which the file should reside</param>
+        /// <param name="fileName">File name of the file to retrieve</param>
+        /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        public async Task<OneDriveItem> GetItemInFolder(OneDriveItem folder, string fileName)
+        {
+            var itemsInFolder = await GetChildrenByFolderId(folder.Id);
+            var item = itemsInFolder.Collection.FirstOrDefault(i => string.Equals(i.Name, fileName, StringComparison.InvariantCultureIgnoreCase));
+            return item;
+        }
+
+        /// <summary>
+        /// Retrieves the OneDrive Item by it's filename in a specific folder
+        /// </summary>
+        /// <param name="folderId">Unique identifier of the folder in which the file should reside</param>
+        /// <param name="fileName">File name of the file to retrieve</param>
+        /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        public async Task<OneDriveItem> GetItemInFolder(string folderId, string fileName)
+        {
+            var folder = await GetItemById(folderId);
+            if (folder == null) return null;
+            return await GetItemInFolder(folder, fileName);
+        }
+
+        /// <summary>
+        /// Retrieves the OneDrive Item by it's unique identifier
         /// </summary>
         /// <param name="id">Unique identifier of the OneDrive item to retrieve</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
         public async Task<OneDriveItem> GetItemById(string id)
         {
             return await GetData<OneDriveItem>(string.Concat("drive/items/", id));
@@ -1146,7 +1239,7 @@ namespace KoenZomers.OneDrive.Api
         private async Task<T> GetData<T>(string url) where T : OneDriveItemBase
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBasicUrl, url);
+            var completeUrl = url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? url : string.Concat(OneDriveApiBasicUrl, url);
 
             // Call the OneDrive webservice
             var result = await SendMessageReturnOneDriveItem<T>("", HttpMethod.Get, completeUrl, HttpStatusCode.OK);
