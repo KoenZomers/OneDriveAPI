@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.4.1 - August 13, 2016
+
+- Changed implementation of GetItemInFolder so it scans through all items in the folder instead of just the results of the first batch
+
 1.6.4.0 - August 13, 2016
 
 - Added GetItemInFolder to retrieve an item based on the folder it resides in and its filename
