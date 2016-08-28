@@ -213,5 +213,19 @@ namespace KoenZomers.OneDrive.Api
         }
 
         #endregion
+
+        #region Public Methods - OneDrive for Business Only
+
+        /// <summary>
+        /// Returns all the items that have been shared by others through OneDrive for Business with the current user
+        /// </summary>
+        /// <returns>Collection with items that have been shared by others with the current user</returns>
+        public async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
+        {
+            var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/view.sharedWithMe");
+            return oneDriveItems;
+        }
+
+        #endregion
     }
 }

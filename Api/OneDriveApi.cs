@@ -387,7 +387,7 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="fetchUrl">Url to use to fetch the first set of child items</param>
         /// <returns>OneDriveItem array containing all items in the requested folder</returns>
-        private async Task<OneDriveItem[]> GetAllChildrenInternal(string fetchUrl)
+        protected async Task<OneDriveItem[]> GetAllChildrenInternal(string fetchUrl)
         {
             var results = new List<OneDriveItem>();
             do
@@ -1236,7 +1236,7 @@ namespace KoenZomers.OneDrive.Api
         /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
         /// <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
         /// <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
-        private async Task<T> GetData<T>(string url) where T : OneDriveItemBase
+        protected async Task<T> GetData<T>(string url) where T : OneDriveItemBase
         {
             // Construct the complete URL to call
             var completeUrl = url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? url : string.Concat(OneDriveApiBasicUrl, url);

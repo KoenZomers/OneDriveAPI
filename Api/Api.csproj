@@ -59,6 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\OneDriveAudioFacet.cs" />
+    <Compile Include="Entities\OneDriveForBusinessSharePointId.cs" />
+    <Compile Include="Entities\OneDriveSharedWithMeItemCollection.cs" />
     <Compile Include="Entities\OneDriveRemoteItem.cs" />
     <Compile Include="Entities\OneDriveParentItemReference.cs" />
     <Compile Include="Entities\OneDriveRequestShare.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="Entities\OneDriveItemCollection.cs" />
     <Compile Include="Entities\OneDriveItemReference.cs" />
     <Compile Include="Entities\OneDrivePermission.cs" />
+    <Compile Include="Entities\OneDriveSharedWithMeItem.cs" />
     <Compile Include="Entities\OneDriveThumbnail.cs" />
     <Compile Include="Entities\OneDriveThumbnailSet.cs" />
     <Compile Include="Entities\OneDriveCreateFolder.cs" />

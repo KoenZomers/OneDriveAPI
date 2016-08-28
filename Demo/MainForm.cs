@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using KoenZomers.OneDrive.Api;
+using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Enums;
 
 namespace AuthenticatorApp
@@ -288,6 +290,18 @@ namespace AuthenticatorApp
         {
             var success = await OneDriveApi.Rename("Test.txt", "Renamed Test.txt");
             JsonResultTextBox.Text = success ? "Rename Successfull" : "Rename Failed";
+        }
+
+        private async void SharedWithMeButton_Click(object sender, EventArgs e)
+        {
+            var api = OneDriveApi as OneDriveForBusinessO365Api;
+            if (api == null)
+            {
+                MessageBox.Show("This feature only works with OneDrive for Business", "Feature not available", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            var data = await api.GetSharedWithMe();
+            JsonResultTextBox.Text = data.OriginalJson;
         }
     }
 }

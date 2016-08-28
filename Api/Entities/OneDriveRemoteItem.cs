@@ -1,6 +1,4 @@
-﻿using System;
-using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -38,5 +36,53 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// </summary>
         [JsonProperty("folder", NullValueHandling = NullValueHandling.Ignore)]
         public OneDriveFolderFacet Folder { get; set; }
+
+        /// <summary>
+        /// File metadata, if the item is a file
+        /// </summary>
+        [JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
+        public OneDriveFileFacet File { get; set; }
+
+        /// <summary>
+        /// Date and time at which the item has been created
+        /// </summary>
+        [JsonProperty("createdDateTime", NullValueHandling = NullValueHandling.Ignore)]
+        public string CreatedDateTime { get; set; }
+
+        /// <summary>
+        /// Date and time at which the item was last modified
+        /// </summary>
+        [JsonProperty("lastModifiedDateTime", NullValueHandling = NullValueHandling.Ignore)]
+        public string LastModifiedDateTime { get; set; }
+
+        /// <summary>
+        /// User that last modified the contents of this item
+        /// </summary>
+        [JsonProperty("lastModifiedBy", NullValueHandling = NullValueHandling.Ignore)]
+        public OneDriveUserProfile LastModifiedBy { get; set; }
+
+        /// <summary>
+        /// User that created the contents of this item
+        /// </summary>
+        [JsonProperty("createdBy", NullValueHandling = NullValueHandling.Ignore)]
+        public OneDriveUserProfile CreatedBy { get; set; }
+
+        /// <summary>
+        /// SharePoint specific identifiers for this item
+        /// </summary>
+        [JsonProperty("sharepointIds", NullValueHandling = NullValueHandling.Ignore)]
+        public OneDriveForBusinessSharePointId SharePointIds { get; set; }
+
+        /// <summary>
+        /// Name of the item
+        /// </summary>
+        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Url to use with the WebDav protocol to access this item
+        /// </summary>
+        [JsonProperty("webDavUrl", NullValueHandling = NullValueHandling.Ignore)]
+        public string WebDavUrl { get; set; }
     }
 }

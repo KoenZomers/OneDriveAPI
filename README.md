@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.5.0 - August 28, 2016
+
+- Added GetSharedWithMe method to get all items that have been shared with the current user. Only valid when used with a OneDrive for Business site. Still need to figure out how to get the actual content through the OneDrive API as I don't want to use SharePoint CSOM or REST as it seems to require a different access token.
+
 1.6.4.1 - August 13, 2016
 
 - Changed implementation of GetItemInFolder so it scans through all items in the folder instead of just the results of the first batch
