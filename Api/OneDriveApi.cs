@@ -1476,17 +1476,9 @@ namespace KoenZomers.OneDrive.Api
             var httpClientHandler = new HttpClientHandler
             {
                 UseDefaultCredentials = true,
+                UseProxy = UseProxy,
+                Proxy = ProxyConfiguration
             };
-
-            // Attach a proxy if set on this API instance
-            if (ProxyConfiguration != null || UseProxy)
-            {
-                httpClientHandler.UseProxy = true;
-            }
-            if (ProxyConfiguration != null)
-            {
-                httpClientHandler.Proxy = ProxyConfiguration;
-            }
 
             // Create the new HTTP Client
             var httpClient = new HttpClient(httpClientHandler);

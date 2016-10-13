@@ -28,6 +28,10 @@ Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/
 
 ## Version History
 
+1.6.6.0 - October 14, 2016
+
+- Fixed a bug where if you would be using a proxy and first have it set to use the proxy and then use the same instance to tell it to no longer use the proxy, it would still use the proxy anyway.
+
 1.6.5.0 - August 28, 2016
 
 - Added GetSharedWithMe method to get all items that have been shared with the current user. Only valid when used with a OneDrive for Business site. Still need to figure out how to get the actual content through the OneDrive API as I don't want to use SharePoint CSOM or REST as it seems to require a different access token.
