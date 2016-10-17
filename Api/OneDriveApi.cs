@@ -33,14 +33,14 @@ namespace KoenZomers.OneDrive.Api
         public string ClientSecret { get; protected set; }
 
         /// <summary>
-        /// Defines if a proxy should be used to connect to the OneDrive API
+        /// If provided, this proxy will be used for communication with the OneDrive API. If not provided, no proxy will be used.
         /// </summary>
-        public bool UseProxy { get; set; }
+        public IWebProxy ProxyConfiguration { get; set; }
 
         /// <summary>
-        /// If provided, this proxy will be used for communication with the OneDrive API. If not provided but UseProxy is set to true, the default system proxy will be used.
+        /// If provided along with a proxy configuration, these credentials will be used to authenticate to the proxy. If omitted, the default system credentials will be used.
         /// </summary>
-        public WebProxy ProxyConfiguration { get; set; }
+        public NetworkCredential ProxyCredential { get; set; }
 
         /// <summary>
         /// Authorization token used for requesting tokens
@@ -1475,10 +1475,16 @@ namespace KoenZomers.OneDrive.Api
             // Define the HttpClient settings
             var httpClientHandler = new HttpClientHandler
             {
-                UseDefaultCredentials = true,
-                UseProxy = UseProxy,
-                Proxy = ProxyConfiguration
+                UseDefaultCredentials = ProxyCredential == null,
+                UseProxy = ProxyConfiguration != null,
+                Proxy = ProxyConfiguration,
+                //Credentials = ProxyCredential
             };
+
+            if (ProxyCredential != null)
+            {
+                httpClientHandler.Proxy.Credentials = ProxyCredential;
+            }
 
             // Create the new HTTP Client
             var httpClient = new HttpClient(httpClientHandler);

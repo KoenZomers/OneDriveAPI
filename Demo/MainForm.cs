@@ -62,7 +62,7 @@ namespace AuthenticatorApp
                     break;
             }
 
-            OneDriveApi.UseProxy = UseProxyCheckBox.Checked;
+            OneDriveApi.ProxyConfiguration = UseProxyCheckBox.Checked ? System.Net.WebRequest.DefaultWebProxy : null;
         }
 
         private async void AuthenticationBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
