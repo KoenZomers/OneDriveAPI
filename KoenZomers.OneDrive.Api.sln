@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{3C80EF7E-5A02-429D-86E7-542F9A88933D}"
 EndProject
@@ -12,6 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 		VersionHistory.md = VersionHistory.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{8B6344A3-7223-4BFD-AE3A-66212F316809}"
+	ProjectSection(SolutionItems) = preProject
+		Images\SolutionExplorer.png = Images\SolutionExplorer.png
 	EndProjectSection
 EndProject
 Global
@@ -31,5 +36,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8B6344A3-7223-4BFD-AE3A-66212F316809} = {2EA1AA74-A6A5-4720-9FCA-79BC33B07F1B}
 	EndGlobalSection
 EndGlobal
