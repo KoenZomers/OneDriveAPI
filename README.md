@@ -30,6 +30,13 @@ _oneDrive.AuthenticateUsingRefreshToken("yourrefreshtoken");_
 
 If you don't have a refresh token yet, you will have to go through an interactive browser logon to perform authentication and get the refresh token. Check the DemoApplication to see how this works.
 
+Once you have an authenticated OneDrive session, you can simply use for example:
+
+- Getting all files in the root: _oneDrive.GetDriveRootChildren();_
+- Downloading a file: _oneDrive.DownloadItemAndSaveAs("fileOnOneDrive.txt", "c:\temp\file.txt");_
+- Uploading a file: _oneDrive.UploadFile("c:\temp\file.txt", "fileOnOneDrive.txt");_
+- And many more operations...
+
 Let me know in case you run into other things that no longer work because of this update and I'll be happy to look into it.
 
 ## Available via NuGet
