@@ -44,7 +44,8 @@ You can also pull this API in as a NuGet package by adding "KoenZomers.OneDrive.
 
 Install-Package KoenZomers.OneDrive.Api
 
-https://www.nuget.org/packages/KoenZomers.OneDrive.Api/1.6.6.1
+Package statistics:
+https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
