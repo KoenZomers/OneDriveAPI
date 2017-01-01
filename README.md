@@ -40,10 +40,11 @@ Once you have an authenticated OneDrive session, you can simply use for example:
 Let me know in case you run into other things that no longer work because of this update and I'll be happy to look into it.
 
 ## Available via NuGet
-You can also pull this API in as a NuGet package by adding the following NuGet repository to Visual Studio:
-http://nuget.koenzomers.nl/nuget or running the following line from the NuGet Package Manager Console in Visual Studio:
+You can also pull this API in as a NuGet package by adding "KoenZomers.OneDrive.Api" or running:
 
-Install-Package -Id KoenZomers.OneDrive.Api -Source https://nuget.koenzomers.nl/NuGet
+Install-Package KoenZomers.OneDrive.Api
+
+https://www.nuget.org/packages/KoenZomers.OneDrive.Api/1.6.6.1
 
 ## Version History
 
