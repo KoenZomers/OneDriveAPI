@@ -224,7 +224,6 @@ namespace KoenZomers.OneDrive.Api
                         {
                             // Successfully retrieved token, parse it from the response
                             var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
-
                             return appTokenResult;
                         }
 
@@ -1024,10 +1023,17 @@ namespace KoenZomers.OneDrive.Api
                             var responseString = await response.Content.ReadAsStringAsync();
 
                             // Convert the JSON result to its appropriate type
-                            var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
-                            responseOneDriveItem.OriginalJson = responseString;
+                            try
+                            {
+                                var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
+                                responseOneDriveItem.OriginalJson = responseString;
 
-                            return responseOneDriveItem;
+                                return responseOneDriveItem;
+                            }
+                            catch(JsonReaderException e)
+                            {
+                                throw new Exceptions.InvalidResponseException(responseString, e);
+                            }
                         }
                     }
                 }
@@ -1205,10 +1211,17 @@ namespace KoenZomers.OneDrive.Api
                                             var responseString = await response.Content.ReadAsStringAsync();
 
                                             // Convert the JSON result to its appropriate type
-                                            var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
-                                            responseOneDriveItem.OriginalJson = responseString;
+                                            try
+                                            {
+                                                var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
+                                                responseOneDriveItem.OriginalJson = responseString;
 
-                                            return responseOneDriveItem;
+                                                return responseOneDriveItem;
+                                            }
+                                            catch (JsonReaderException e)
+                                            {
+                                                throw new Exceptions.InvalidResponseException(responseString, e);
+                                            }
 
                                         // All other status codes are considered to indicate a failed fragment transmission and will be retried
                                         default:
@@ -1369,11 +1382,18 @@ namespace KoenZomers.OneDrive.Api
             // Validate output was generated
             if (string.IsNullOrEmpty(responseString)) return null;
 
-            // Convert the JSON string result to its appropriate type
-            var responseOneDriveItem = JsonConvert.DeserializeObject<T>(responseString);
-            responseOneDriveItem.OriginalJson = responseString;
+            // Convert the JSON result to its appropriate type
+            try
+            {
+                var responseOneDriveItem = JsonConvert.DeserializeObject<T>(responseString);
+                responseOneDriveItem.OriginalJson = responseString;
 
-            return responseOneDriveItem;
+                return responseOneDriveItem;
+            }
+            catch (JsonReaderException e)
+            {
+                throw new Exceptions.InvalidResponseException(responseString, e);
+            }
         }
 
         /// <summary>

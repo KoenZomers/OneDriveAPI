@@ -49,6 +49,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+1.6.6.2 & 1.6.6.3 - June 29, 2017
+
+- Wrapped the upload response with a new InvalidResponseException type which contains the message received from OneDrive when it is unable to parse it back to the expected type.
+
 1.6.6.1 - October 17, 2016
 
 - The last update introduced a bug when using the system default proxy with the system default credentials. Fixed it in this release.

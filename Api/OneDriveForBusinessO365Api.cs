@@ -174,14 +174,22 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Get the first Office 365 Service
-            var discoveryResult = JsonConvert.DeserializeObject<ServiceDiscoverySet>(result);
-            if (discoveryResult.Services.Count == 0)
+            try
             {
-                return null;
-            }
+                var discoveryResult = JsonConvert.DeserializeObject<ServiceDiscoverySet>(result);
 
-            // Service discovery successful
-            return discoveryResult;
+                if (discoveryResult.Services.Count == 0)
+                {
+                    return null;
+                }
+
+                // Service discovery successful
+                return discoveryResult;
+            }
+            catch (JsonReaderException e)
+            {
+                throw new Exceptions.InvalidResponseException(result, e);
+            }
         }
 
         /// <summary>
