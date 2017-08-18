@@ -49,6 +49,11 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+1.6.7.0 - August 18, 2017
+
+- Compiled both the API and demo application against the .NET Framework 4.5.2 since 4.5 has gone out of support by Microsoft
+- Added event UploadProgressChanged which reports back on the upload progress. This is implemented in the demo application under the Upload button. Be sure to upload a file larger than 5 MB to see it working as it's only used with the UploadFileViaResumableUpload method. Thanks to [sza110](https://github.com/sza110) for writing this functionality.
+
 1.6.6.2 & 1.6.6.3 - June 29, 2017
 
 - Wrapped the upload response with a new InvalidResponseException type which contains the message received from OneDrive when it is unable to parse it back to the expected type.

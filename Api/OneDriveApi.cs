@@ -93,6 +93,15 @@ namespace KoenZomers.OneDrive.Api
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// Event triggered when uploading a file using UploadFileViaResumableUpload to indicate the progress of the upload process
+        /// </summary>
+        public event EventHandler<OneDriveUploadProgressChangedEventArgs> UploadProgressChanged;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -1141,6 +1150,9 @@ namespace KoenZomers.OneDrive.Api
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
+            // Amount of bytes succesfully sent
+            long totalBytesSent = 0;
+
             // Used for retrying failed transmissions
             var transferAttemptCount = 0;
             const int transferMaxAttempts = 3;
@@ -1201,6 +1213,10 @@ namespace KoenZomers.OneDrive.Api
                                         case HttpStatusCode.Accepted:
                                             // Move the current position pointer to the end of the fragment we've just sent so we continue from there with the next upload
                                             currentPosition = endPosition;
+                                            totalBytesSent += amountOfBytesToSend;
+
+                                            // Trigger event
+                                            UploadProgressChanged?.Invoke(this, new OneDriveUploadProgressChangedEventArgs(totalBytesSent, fileStream.Length));
                                             break;
 
                                         // All fragments have been received, the file did already exist and has been overwritten

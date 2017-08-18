@@ -73,20 +73,20 @@
             this.AuthenticationBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthenticationBrowser.Location = new System.Drawing.Point(12, 156);
+            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 195);
             this.AuthenticationBrowser.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.AuthenticationBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this.AuthenticationBrowser.MinimumSize = new System.Drawing.Size(22, 25);
             this.AuthenticationBrowser.Name = "AuthenticationBrowser";
-            this.AuthenticationBrowser.Size = new System.Drawing.Size(1134, 350);
+            this.AuthenticationBrowser.Size = new System.Drawing.Size(1276, 438);
             this.AuthenticationBrowser.TabIndex = 0;
             this.AuthenticationBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.AuthenticationBrowser_Navigated);
             // 
             // Step1Button
             // 
-            this.Step1Button.Location = new System.Drawing.Point(5, 102);
+            this.Step1Button.Location = new System.Drawing.Point(6, 128);
             this.Step1Button.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Step1Button.Name = "Step1Button";
-            this.Step1Button.Size = new System.Drawing.Size(107, 41);
+            this.Step1Button.Size = new System.Drawing.Size(120, 51);
             this.Step1Button.TabIndex = 1;
             this.Step1Button.Text = "Authorize";
             this.Step1Button.UseVisualStyleBackColor = true;
@@ -96,19 +96,19 @@
             // 
             this.CurrentUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CurrentUrlTextBox.Location = new System.Drawing.Point(12, 537);
+            this.CurrentUrlTextBox.Location = new System.Drawing.Point(14, 671);
             this.CurrentUrlTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CurrentUrlTextBox.Name = "CurrentUrlTextBox";
-            this.CurrentUrlTextBox.Size = new System.Drawing.Size(1134, 22);
+            this.CurrentUrlTextBox.Size = new System.Drawing.Size(1275, 26);
             this.CurrentUrlTextBox.TabIndex = 4;
             // 
             // CurrentUrlLabel
             // 
             this.CurrentUrlLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CurrentUrlLabel.AutoSize = true;
-            this.CurrentUrlLabel.Location = new System.Drawing.Point(13, 517);
+            this.CurrentUrlLabel.Location = new System.Drawing.Point(15, 646);
             this.CurrentUrlLabel.Name = "CurrentUrlLabel";
-            this.CurrentUrlLabel.Size = new System.Drawing.Size(87, 17);
+            this.CurrentUrlLabel.Size = new System.Drawing.Size(99, 20);
             this.CurrentUrlLabel.TabIndex = 5;
             this.CurrentUrlLabel.Text = "Current URL";
             // 
@@ -116,9 +116,9 @@
             // 
             this.AuthorizationCodeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AuthorizationCodeLabel.AutoSize = true;
-            this.AuthorizationCodeLabel.Location = new System.Drawing.Point(12, 569);
+            this.AuthorizationCodeLabel.Location = new System.Drawing.Point(14, 711);
             this.AuthorizationCodeLabel.Name = "AuthorizationCodeLabel";
-            this.AuthorizationCodeLabel.Size = new System.Drawing.Size(128, 17);
+            this.AuthorizationCodeLabel.Size = new System.Drawing.Size(145, 20);
             this.AuthorizationCodeLabel.TabIndex = 7;
             this.AuthorizationCodeLabel.Text = "Authorization Code";
             // 
@@ -126,19 +126,19 @@
             // 
             this.AuthorizationCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(11, 587);
+            this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(12, 734);
             this.AuthorizationCodeTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthorizationCodeTextBox.Name = "AuthorizationCodeTextBox";
-            this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(1134, 22);
+            this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(1275, 26);
             this.AuthorizationCodeTextBox.TabIndex = 6;
             // 
             // AccessTokenLabel
             // 
             this.AccessTokenLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AccessTokenLabel.AutoSize = true;
-            this.AccessTokenLabel.Location = new System.Drawing.Point(12, 702);
+            this.AccessTokenLabel.Location = new System.Drawing.Point(14, 878);
             this.AccessTokenLabel.Name = "AccessTokenLabel";
-            this.AccessTokenLabel.Size = new System.Drawing.Size(97, 17);
+            this.AccessTokenLabel.Size = new System.Drawing.Size(109, 20);
             this.AccessTokenLabel.TabIndex = 9;
             this.AccessTokenLabel.Text = "Access Token";
             // 
@@ -146,10 +146,10 @@
             // 
             this.AccessTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AccessTokenTextBox.Location = new System.Drawing.Point(11, 721);
+            this.AccessTokenTextBox.Location = new System.Drawing.Point(12, 901);
             this.AccessTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenTextBox.Name = "AccessTokenTextBox";
-            this.AccessTokenTextBox.Size = new System.Drawing.Size(1134, 22);
+            this.AccessTokenTextBox.Size = new System.Drawing.Size(1275, 26);
             this.AccessTokenTextBox.TabIndex = 8;
             this.AccessTokenTextBox.TextChanged += new System.EventHandler(this.AccessTokenTextBox_TextChanged);
             // 
@@ -158,20 +158,21 @@
             this.JsonResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.JsonResultTextBox.Location = new System.Drawing.Point(12, 156);
+            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 195);
             this.JsonResultTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.JsonResultTextBox.Multiline = true;
             this.JsonResultTextBox.Name = "JsonResultTextBox";
-            this.JsonResultTextBox.Size = new System.Drawing.Size(1133, 349);
+            this.JsonResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.JsonResultTextBox.Size = new System.Drawing.Size(1274, 435);
             this.JsonResultTextBox.TabIndex = 10;
             this.JsonResultTextBox.Visible = false;
             // 
             // RefreshTokenButton
             // 
-            this.RefreshTokenButton.Location = new System.Drawing.Point(117, 102);
+            this.RefreshTokenButton.Location = new System.Drawing.Point(132, 128);
             this.RefreshTokenButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenButton.Name = "RefreshTokenButton";
-            this.RefreshTokenButton.Size = new System.Drawing.Size(107, 41);
+            this.RefreshTokenButton.Size = new System.Drawing.Size(120, 51);
             this.RefreshTokenButton.TabIndex = 12;
             this.RefreshTokenButton.Text = "Refresh";
             this.RefreshTokenButton.UseVisualStyleBackColor = true;
@@ -181,9 +182,9 @@
             // 
             this.RefreshTokenLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RefreshTokenLabel.AutoSize = true;
-            this.RefreshTokenLabel.Location = new System.Drawing.Point(13, 614);
+            this.RefreshTokenLabel.Location = new System.Drawing.Point(15, 768);
             this.RefreshTokenLabel.Name = "RefreshTokenLabel";
-            this.RefreshTokenLabel.Size = new System.Drawing.Size(102, 17);
+            this.RefreshTokenLabel.Size = new System.Drawing.Size(114, 20);
             this.RefreshTokenLabel.TabIndex = 14;
             this.RefreshTokenLabel.Text = "Refresh Token";
             // 
@@ -191,19 +192,19 @@
             // 
             this.RefreshTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.RefreshTokenTextBox.Location = new System.Drawing.Point(12, 633);
+            this.RefreshTokenTextBox.Location = new System.Drawing.Point(14, 791);
             this.RefreshTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenTextBox.Name = "RefreshTokenTextBox";
-            this.RefreshTokenTextBox.Size = new System.Drawing.Size(1134, 22);
+            this.RefreshTokenTextBox.Size = new System.Drawing.Size(1275, 26);
             this.RefreshTokenTextBox.TabIndex = 13;
             // 
             // AccessTokenValidLabel
             // 
             this.AccessTokenValidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AccessTokenValidLabel.AutoSize = true;
-            this.AccessTokenValidLabel.Location = new System.Drawing.Point(12, 658);
+            this.AccessTokenValidLabel.Location = new System.Drawing.Point(14, 822);
             this.AccessTokenValidLabel.Name = "AccessTokenValidLabel";
-            this.AccessTokenValidLabel.Size = new System.Drawing.Size(154, 17);
+            this.AccessTokenValidLabel.Size = new System.Drawing.Size(170, 20);
             this.AccessTokenValidLabel.TabIndex = 16;
             this.AccessTokenValidLabel.Text = "Access Token Valid Till";
             // 
@@ -211,10 +212,10 @@
             // 
             this.AccessTokenValidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AccessTokenValidTextBox.Location = new System.Drawing.Point(11, 677);
+            this.AccessTokenValidTextBox.Location = new System.Drawing.Point(12, 846);
             this.AccessTokenValidTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenValidTextBox.Name = "AccessTokenValidTextBox";
-            this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1134, 22);
+            this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1275, 26);
             this.AccessTokenValidTextBox.TabIndex = 15;
             // 
             // OneDriveCommandsPanel
@@ -241,18 +242,18 @@
             this.OneDriveCommandsPanel.Controls.Add(this.GetRoodFolderButton);
             this.OneDriveCommandsPanel.Controls.Add(this.GetDriveButton);
             this.OneDriveCommandsPanel.Enabled = false;
-            this.OneDriveCommandsPanel.Location = new System.Drawing.Point(231, 9);
+            this.OneDriveCommandsPanel.Location = new System.Drawing.Point(260, 11);
             this.OneDriveCommandsPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
-            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(915, 142);
+            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1029, 178);
             this.OneDriveCommandsPanel.TabIndex = 17;
             // 
             // SharedWithMeButton
             // 
-            this.SharedWithMeButton.Location = new System.Drawing.Point(792, 4);
+            this.SharedWithMeButton.Location = new System.Drawing.Point(891, 5);
             this.SharedWithMeButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SharedWithMeButton.Name = "SharedWithMeButton";
-            this.SharedWithMeButton.Size = new System.Drawing.Size(107, 41);
+            this.SharedWithMeButton.Size = new System.Drawing.Size(120, 51);
             this.SharedWithMeButton.TabIndex = 31;
             this.SharedWithMeButton.Text = "Shared w/me";
             this.SharedWithMeButton.UseVisualStyleBackColor = true;
@@ -260,10 +261,10 @@
             // 
             // RenameButton
             // 
-            this.RenameButton.Location = new System.Drawing.Point(344, 93);
+            this.RenameButton.Location = new System.Drawing.Point(387, 116);
             this.RenameButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RenameButton.Name = "RenameButton";
-            this.RenameButton.Size = new System.Drawing.Size(107, 41);
+            this.RenameButton.Size = new System.Drawing.Size(120, 51);
             this.RenameButton.TabIndex = 30;
             this.RenameButton.Text = "Rename";
             this.RenameButton.UseVisualStyleBackColor = true;
@@ -271,10 +272,10 @@
             // 
             // MoveButton
             // 
-            this.MoveButton.Location = new System.Drawing.Point(679, 94);
+            this.MoveButton.Location = new System.Drawing.Point(764, 118);
             this.MoveButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MoveButton.Name = "MoveButton";
-            this.MoveButton.Size = new System.Drawing.Size(107, 41);
+            this.MoveButton.Size = new System.Drawing.Size(120, 51);
             this.MoveButton.TabIndex = 29;
             this.MoveButton.Text = "Move";
             this.MoveButton.UseVisualStyleBackColor = true;
@@ -282,10 +283,10 @@
             // 
             // CopyButton
             // 
-            this.CopyButton.Location = new System.Drawing.Point(567, 94);
+            this.CopyButton.Location = new System.Drawing.Point(638, 118);
             this.CopyButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CopyButton.Name = "CopyButton";
-            this.CopyButton.Size = new System.Drawing.Size(107, 41);
+            this.CopyButton.Size = new System.Drawing.Size(120, 51);
             this.CopyButton.TabIndex = 28;
             this.CopyButton.Text = "Copy";
             this.CopyButton.UseVisualStyleBackColor = true;
@@ -293,10 +294,10 @@
             // 
             // DownloadToButton
             // 
-            this.DownloadToButton.Location = new System.Drawing.Point(453, 48);
+            this.DownloadToButton.Location = new System.Drawing.Point(510, 60);
             this.DownloadToButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.DownloadToButton.Name = "DownloadToButton";
-            this.DownloadToButton.Size = new System.Drawing.Size(107, 41);
+            this.DownloadToButton.Size = new System.Drawing.Size(120, 51);
             this.DownloadToButton.TabIndex = 27;
             this.DownloadToButton.Text = "Download To";
             this.DownloadToButton.UseVisualStyleBackColor = true;
@@ -304,10 +305,10 @@
             // 
             // ShareButton
             // 
-            this.ShareButton.Location = new System.Drawing.Point(679, 4);
+            this.ShareButton.Location = new System.Drawing.Point(764, 5);
             this.ShareButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ShareButton.Name = "ShareButton";
-            this.ShareButton.Size = new System.Drawing.Size(107, 41);
+            this.ShareButton.Size = new System.Drawing.Size(120, 51);
             this.ShareButton.TabIndex = 26;
             this.ShareButton.Text = "Share Item";
             this.ShareButton.UseVisualStyleBackColor = true;
@@ -315,10 +316,10 @@
             // 
             // CreateFolderButton
             // 
-            this.CreateFolderButton.Location = new System.Drawing.Point(679, 48);
+            this.CreateFolderButton.Location = new System.Drawing.Point(764, 60);
             this.CreateFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CreateFolderButton.Name = "CreateFolderButton";
-            this.CreateFolderButton.Size = new System.Drawing.Size(107, 41);
+            this.CreateFolderButton.Size = new System.Drawing.Size(120, 51);
             this.CreateFolderButton.TabIndex = 25;
             this.CreateFolderButton.Text = "Create Folder";
             this.CreateFolderButton.UseVisualStyleBackColor = true;
@@ -326,10 +327,10 @@
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Location = new System.Drawing.Point(567, 4);
+            this.DeleteButton.Location = new System.Drawing.Point(638, 5);
             this.DeleteButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(107, 41);
+            this.DeleteButton.Size = new System.Drawing.Size(120, 51);
             this.DeleteButton.TabIndex = 24;
             this.DeleteButton.Text = "Delete";
             this.DeleteButton.UseVisualStyleBackColor = true;
@@ -337,10 +338,10 @@
             // 
             // SearchButton
             // 
-            this.SearchButton.Location = new System.Drawing.Point(567, 48);
+            this.SearchButton.Location = new System.Drawing.Point(638, 60);
             this.SearchButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SearchButton.Name = "SearchButton";
-            this.SearchButton.Size = new System.Drawing.Size(107, 41);
+            this.SearchButton.Size = new System.Drawing.Size(120, 51);
             this.SearchButton.TabIndex = 23;
             this.SearchButton.Text = "Search";
             this.SearchButton.UseVisualStyleBackColor = true;
@@ -348,10 +349,10 @@
             // 
             // DownloadButton
             // 
-            this.DownloadButton.Location = new System.Drawing.Point(455, 4);
+            this.DownloadButton.Location = new System.Drawing.Point(512, 5);
             this.DownloadButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.DownloadButton.Name = "DownloadButton";
-            this.DownloadButton.Size = new System.Drawing.Size(107, 41);
+            this.DownloadButton.Size = new System.Drawing.Size(120, 51);
             this.DownloadButton.TabIndex = 22;
             this.DownloadButton.Text = "Download Str";
             this.DownloadButton.UseVisualStyleBackColor = true;
@@ -359,10 +360,10 @@
             // 
             // GetByIdButton
             // 
-            this.GetByIdButton.Location = new System.Drawing.Point(343, 49);
+            this.GetByIdButton.Location = new System.Drawing.Point(386, 61);
             this.GetByIdButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetByIdButton.Name = "GetByIdButton";
-            this.GetByIdButton.Size = new System.Drawing.Size(107, 41);
+            this.GetByIdButton.Size = new System.Drawing.Size(120, 51);
             this.GetByIdButton.TabIndex = 21;
             this.GetByIdButton.Text = "Get By Id";
             this.GetByIdButton.UseVisualStyleBackColor = true;
@@ -370,10 +371,10 @@
             // 
             // GetByPathButton
             // 
-            this.GetByPathButton.Location = new System.Drawing.Point(343, 4);
+            this.GetByPathButton.Location = new System.Drawing.Point(386, 5);
             this.GetByPathButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetByPathButton.Name = "GetByPathButton";
-            this.GetByPathButton.Size = new System.Drawing.Size(107, 41);
+            this.GetByPathButton.Size = new System.Drawing.Size(120, 51);
             this.GetByPathButton.TabIndex = 20;
             this.GetByPathButton.Text = "Get by Path";
             this.GetByPathButton.UseVisualStyleBackColor = true;
@@ -381,10 +382,10 @@
             // 
             // UploadButton
             // 
-            this.UploadButton.Location = new System.Drawing.Point(455, 94);
+            this.UploadButton.Location = new System.Drawing.Point(512, 118);
             this.UploadButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UploadButton.Name = "UploadButton";
-            this.UploadButton.Size = new System.Drawing.Size(107, 41);
+            this.UploadButton.Size = new System.Drawing.Size(120, 51);
             this.UploadButton.TabIndex = 19;
             this.UploadButton.Text = "Upload";
             this.UploadButton.UseVisualStyleBackColor = true;
@@ -392,10 +393,10 @@
             // 
             // GetPublicButton
             // 
-            this.GetPublicButton.Location = new System.Drawing.Point(231, 4);
+            this.GetPublicButton.Location = new System.Drawing.Point(260, 5);
             this.GetPublicButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetPublicButton.Name = "GetPublicButton";
-            this.GetPublicButton.Size = new System.Drawing.Size(107, 41);
+            this.GetPublicButton.Size = new System.Drawing.Size(120, 51);
             this.GetPublicButton.TabIndex = 18;
             this.GetPublicButton.Text = "Public";
             this.GetPublicButton.UseVisualStyleBackColor = true;
@@ -403,10 +404,10 @@
             // 
             // GetPhotos
             // 
-            this.GetPhotos.Location = new System.Drawing.Point(231, 48);
+            this.GetPhotos.Location = new System.Drawing.Point(260, 60);
             this.GetPhotos.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetPhotos.Name = "GetPhotos";
-            this.GetPhotos.Size = new System.Drawing.Size(107, 41);
+            this.GetPhotos.Size = new System.Drawing.Size(120, 51);
             this.GetPhotos.TabIndex = 17;
             this.GetPhotos.Text = "Photos";
             this.GetPhotos.UseVisualStyleBackColor = true;
@@ -414,10 +415,10 @@
             // 
             // GetCameraRollButton
             // 
-            this.GetCameraRollButton.Location = new System.Drawing.Point(231, 94);
+            this.GetCameraRollButton.Location = new System.Drawing.Point(260, 118);
             this.GetCameraRollButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetCameraRollButton.Name = "GetCameraRollButton";
-            this.GetCameraRollButton.Size = new System.Drawing.Size(107, 41);
+            this.GetCameraRollButton.Size = new System.Drawing.Size(120, 51);
             this.GetCameraRollButton.TabIndex = 16;
             this.GetCameraRollButton.Text = "Camera Roll";
             this.GetCameraRollButton.UseVisualStyleBackColor = true;
@@ -425,10 +426,10 @@
             // 
             // GetDocumentsButton
             // 
-            this.GetDocumentsButton.Location = new System.Drawing.Point(119, 94);
+            this.GetDocumentsButton.Location = new System.Drawing.Point(134, 118);
             this.GetDocumentsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetDocumentsButton.Name = "GetDocumentsButton";
-            this.GetDocumentsButton.Size = new System.Drawing.Size(107, 41);
+            this.GetDocumentsButton.Size = new System.Drawing.Size(120, 51);
             this.GetDocumentsButton.TabIndex = 15;
             this.GetDocumentsButton.Text = "Documents";
             this.GetDocumentsButton.UseVisualStyleBackColor = true;
@@ -436,10 +437,10 @@
             // 
             // GetRootChildren
             // 
-            this.GetRootChildren.Location = new System.Drawing.Point(119, 4);
+            this.GetRootChildren.Location = new System.Drawing.Point(134, 5);
             this.GetRootChildren.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetRootChildren.Name = "GetRootChildren";
-            this.GetRootChildren.Size = new System.Drawing.Size(107, 41);
+            this.GetRootChildren.Size = new System.Drawing.Size(120, 51);
             this.GetRootChildren.TabIndex = 14;
             this.GetRootChildren.Text = "Root Children";
             this.GetRootChildren.UseVisualStyleBackColor = true;
@@ -447,10 +448,10 @@
             // 
             // GetRoodFolderButton
             // 
-            this.GetRoodFolderButton.Location = new System.Drawing.Point(119, 48);
+            this.GetRoodFolderButton.Location = new System.Drawing.Point(134, 60);
             this.GetRoodFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetRoodFolderButton.Name = "GetRoodFolderButton";
-            this.GetRoodFolderButton.Size = new System.Drawing.Size(107, 41);
+            this.GetRoodFolderButton.Size = new System.Drawing.Size(120, 51);
             this.GetRoodFolderButton.TabIndex = 12;
             this.GetRoodFolderButton.Text = "Root Folder";
             this.GetRoodFolderButton.UseVisualStyleBackColor = true;
@@ -458,10 +459,10 @@
             // 
             // GetDriveButton
             // 
-            this.GetDriveButton.Location = new System.Drawing.Point(7, 4);
+            this.GetDriveButton.Location = new System.Drawing.Point(8, 5);
             this.GetDriveButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetDriveButton.Name = "GetDriveButton";
-            this.GetDriveButton.Size = new System.Drawing.Size(107, 41);
+            this.GetDriveButton.Size = new System.Drawing.Size(120, 51);
             this.GetDriveButton.TabIndex = 13;
             this.GetDriveButton.Text = "Drive";
             this.GetDriveButton.UseVisualStyleBackColor = true;
@@ -470,10 +471,10 @@
             // UseProxyCheckBox
             // 
             this.UseProxyCheckBox.AutoSize = true;
-            this.UseProxyCheckBox.Location = new System.Drawing.Point(16, 57);
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(18, 71);
             this.UseProxyCheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UseProxyCheckBox.Name = "UseProxyCheckBox";
-            this.UseProxyCheckBox.Size = new System.Drawing.Size(94, 21);
+            this.UseProxyCheckBox.Size = new System.Drawing.Size(106, 24);
             this.UseProxyCheckBox.TabIndex = 18;
             this.UseProxyCheckBox.Text = "Use Proxy";
             this.UseProxyCheckBox.UseVisualStyleBackColor = true;
@@ -487,17 +488,17 @@
             this.OneDriveTypeCombo.Items.AddRange(new object[] {
             "Consumer OneDrive",
             "OneDrive for Business O365"});
-            this.OneDriveTypeCombo.Location = new System.Drawing.Point(15, 12);
-            this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4);
+            this.OneDriveTypeCombo.Location = new System.Drawing.Point(17, 15);
+            this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OneDriveTypeCombo.Name = "OneDriveTypeCombo";
-            this.OneDriveTypeCombo.Size = new System.Drawing.Size(209, 24);
+            this.OneDriveTypeCombo.Size = new System.Drawing.Size(235, 28);
             this.OneDriveTypeCombo.TabIndex = 19;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1158, 761);
+            this.ClientSize = new System.Drawing.Size(1303, 951);
             this.Controls.Add(this.OneDriveTypeCombo);
             this.Controls.Add(this.UseProxyCheckBox);
             this.Controls.Add(this.AccessTokenValidLabel);
@@ -516,7 +517,7 @@
             this.Controls.Add(this.AuthenticationBrowser);
             this.Controls.Add(this.OneDriveCommandsPanel);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MinimumSize = new System.Drawing.Size(381, 312);
+            this.MinimumSize = new System.Drawing.Size(426, 376);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OneDrive API Test";

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
     <AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -81,6 +81,7 @@
     <Compile Include="Entities\OneDriveThumbnail.cs" />
     <Compile Include="Entities\OneDriveThumbnailSet.cs" />
     <Compile Include="Entities\OneDriveCreateFolder.cs" />
+    <Compile Include="Entities\OneDriveUploadProgressChangedEventArgs.cs" />
     <Compile Include="Entities\OneDriveUploadSession.cs" />
     <Compile Include="Entities\OneDriveUploadSessionItemContainer.cs" />
     <Compile Include="Entities\OneDriveUploadSessionItem.cs" />

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using KoenZomers.OneDrive.Api;
 using KoenZomers.OneDrive.Api.Entities;
@@ -189,7 +188,23 @@ namespace AuthenticatorApp
         private async void UploadButton_Click(object sender, EventArgs e)
         {
             var fileToUpload = SelectLocalFile();
+
+            // Reset the output field
+            JsonResultTextBox.Text = $"Starting upload{Environment.NewLine}";
+
+            // Define the anonynous method to respond to the file upload progress events
+            EventHandler <OneDriveUploadProgressChangedEventArgs> progressHandler = delegate(object s, OneDriveUploadProgressChangedEventArgs a) { JsonResultTextBox.Text += $"Uploading - {a.BytesSent} bytes sent / {a.TotalBytes} bytes total ({a.ProgressPercentage}%){Environment.NewLine}"; };
+
+            // Subscribe to the upload progress event
+            OneDriveApi.UploadProgressChanged += progressHandler;
+
+            // Upload the file to the root of the OneDrive
             var data = await OneDriveApi.UploadFile(fileToUpload, "");
+
+            // Unsubscribe from the upload progress event
+            OneDriveApi.UploadProgressChanged -= progressHandler;
+
+            // Display the result of the upload
             JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
