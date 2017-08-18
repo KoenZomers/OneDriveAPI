@@ -66,52 +66,6 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 - Wrapped the upload response with a new InvalidResponseException type which contains the message received from OneDrive when it is unable to parse it back to the expected type.
 
-1.6.6.1 - October 17, 2016
-
-- The last update introduced a bug when using the system default proxy with the system default credentials. Fixed it in this release.
-
-1.6.6.0 - October 14, 2016
-
-- Fixed a bug where if you would be using a proxy and first have it set to use the proxy and then use the same instance to tell it to no longer use the proxy, it would still use the proxy anyway.
-
-1.6.5.0 - August 28, 2016
-
-- Added GetSharedWithMe method to get all items that have been shared with the current user. Only valid when used with a OneDrive for Business site. Still need to figure out how to get the actual content through the OneDrive API as I don't want to use SharePoint CSOM or REST as it seems to require a different access token.
-
-1.6.4.1 - August 13, 2016
-
-- Changed implementation of GetItemInFolder so it scans through all items in the folder instead of just the results of the first batch
-
-1.6.4.0 - August 13, 2016
-
-- Added GetItemInFolder to retrieve an item based on the folder it resides in and its filename
-- Added GetAllChildrenByXXX methods for each of the existing methods to get all items inside a certain folder which obeys the paging NextLink in the results to ensure all child items are returned and not just the first batch
-
-1.6.3.0 - August 11, 2016
-
-- Fixed a bug with the Delete method throwing an exception
-
-1.6.2.0 - August 11, 2016
-
-- Added additional API functions for getting content from linked folders on other OneDrives (GetItemById and OneDriveRemoteItem entity)
-
-1.6.1.0 - August 11, 2016
-
-- Added support for getting folder contents by the parent folder ID instead of a path (GetChildrenByFolderId). This allows you to get the items from a folder on someone else their OneDrive which you have linked to yours.
-
-1.6.0.0 - August 9, 2016
-
-- Added support for the new OneDrive Consumer API registration process. Follow the steps below to register your own application.
-  ** BEWARE: If upgrading from a previous version, ensure you add the OneDriveConsumerApiRedirectUri field to your App.Config. Leave its value an empty string in this case.
-
-1.5.3.0 - July 10, 2016
-
-- Added extra error handling in case retreiving an access token fails. It will now throw a TokenRetrievalFailedException with detailed information why it failed instead of just returning NULL to aid in troubleshooting.
-
-1.5.2.0 - June 4, 2016
-
-- Fixed an issue where OneDrive could respond with a HTTP 500 error and the retry functionality would fail
-
 [Version History](./VersionHistory.md)
 
 ## Register your own Client ID / Client Secret
