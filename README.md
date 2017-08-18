@@ -14,19 +14,27 @@ The code contains a fully working demo Windows Forms application which shows you
 
 To get an instance to a OneDrive Consumer account, simply use:
 
-_KoenZomers.OneDrive.Api oneDrive = new OneDriveConsumerApi(clientId, clientSecret);_
+```C#
+KoenZomers.OneDrive.Api oneDrive = new OneDriveConsumerApi(clientId, clientSecret);
+```
 
 To get an instance to a OneDrive for Business account, simply use:
 
-_KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret);_
+```C#
+KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret);
+```
 
 If you want it to work through a HTTPS proxy, simply provide the proxy configuration by setting the ProxyConfiguration property:
 
-_oneDrive.ProxyConfiguration = System.Net.WebRequest.DefaultWebProxy;_
+```C#
+oneDrive.ProxyConfiguration = System.Net.WebRequest.DefaultWebProxy;
+```
 
 In order to get a new access token from the refresh token you already got from authenticating to OneDrive or OneDrive for Business, simply use:
 
-_oneDrive.AuthenticateUsingRefreshToken("yourrefreshtoken");_
+```C#
+oneDrive.AuthenticateUsingRefreshToken("yourrefreshtoken");
+```
 
 If you don't have a refresh token yet, you will have to go through an interactive browser logon to perform authentication and get the refresh token. Check the DemoApplication to see how this works.
 
