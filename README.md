@@ -12,19 +12,19 @@ The code contains a fully working demo Windows Forms application which shows you
 
 ![](./Images/SolutionExplorer.png)
 
-To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API using Azure AD v2.0, simply use:
+To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API using Azure AD v2.0 (recommended), simply use:
 
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveGraphApi(applicationId);
 ```
 
-To get an instance to a OneDrive Consumer account, simply use:
+OR to get an instance to a OneDrive Consumer account, simply use:
 
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveConsumerApi(clientId, clientSecret);
 ```
 
-To get an instance to a OneDrive for Business account, simply use:
+OR to get an instance to a OneDrive for Business account, simply use:
 
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret);
@@ -70,6 +70,7 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 - Added support for utilizing the Microsoft Graph API to access files from both Consumer OneDrive as well as OneDrive for Business sites through 1 unified authentication process
 - Changed the default limit for deciding between the Simple Upload and Resumable Upload from 5 MB to 4 MB [as per Microsoft recommendations](https://dev.onedrive.com/items/upload_put.htm)
 - All methods in the base OneDrive class are now virtual so you can easily override them in your inherited code if you wish to do so
+- Added methods to query for basic SharePoint Online site data as exposed by the [Graph API v1.0](https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/resources/sharepoint). Only the beta of the Graph API supports working with list items and files on SharePoint Online. As the beta is not intended for production use, I haven't implemented these methods.
 
 1.6.7.0 - August 18, 2017
 
@@ -86,7 +87,7 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 If you wish to use the OneDrive API, you need to register your own Client ID / Client Secret. Depending on whether you want to target OneDrive for Consumers or OneDrive for Business, follow the steps below to do so.
 
-### OneDrive via Azure AD v2.0 / Microsoft Graph
+### OneDrive via Azure AD v2.0 / Microsoft Graph (recommended)
 
 1. Go to https://apps.dev.microsoft.com
 2. Log in with your Microsoft or school or work account
@@ -95,7 +96,7 @@ If you wish to use the OneDrive API, you need to register your own Client ID / C
 5. Click Create
 6. Copy the Application Id shown on the screen and use it in this app for the GraphApiApplicationId App.config AppSetting
 
-### OneDrive for Consumers
+### OneDrive for Consumers via Azure AD / api.onedrive.com
 
 ** NOTE: Microsoft updated the web interface, so the steps below have been updated to reflect this (August 9, 2016) **
 
@@ -112,7 +113,7 @@ If you wish to use the OneDrive API, you need to register your own Client ID / C
 11. Copy the same URI you've used at the previous step to the App.config OneDriveConsumerApiRedirectUri field
 12. Run the demo application and click on "Authorize"
 
-### OneDrive for Business
+### OneDrive for Business via Azure AD / tenant-my.microsoft.com
 
 1. Go to https://manage.windowsazure.com
 2. Click on Active Directory in the left navigation bar

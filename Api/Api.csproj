@@ -99,6 +99,7 @@
     <Compile Include="Entities\OneDriveTombstoneFacet.cs" />
     <Compile Include="Entities\OneDriveVideoFacet.cs" />
     <Compile Include="Entities\ServiceDiscoveryItem.cs" />
+    <Compile Include="Entities\SharePointSite.cs" />
     <Compile Include="Entities\ServiceDiscoverySet.cs" />
     <Compile Include="Enums\NameConflictBehavior.cs" />
     <Compile Include="Enums\OneDriveAsyncJobStatus.cs" />

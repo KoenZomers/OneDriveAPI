@@ -145,6 +145,7 @@ namespace AuthenticatorApp
             OneDriveCommandsPanel.Enabled = accessTokenAvailable;
             AuthenticationBrowser.Visible = !accessTokenAvailable;
             JsonResultTextBox.Visible = accessTokenAvailable;
+            JsonResultTextBox.Text = "Connected";
         }
 
         private async void GetDriveButton_Click(object sender, EventArgs e)
@@ -314,6 +315,25 @@ namespace AuthenticatorApp
         private async void SharedWithMeButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetSharedWithMe();
+            JsonResultTextBox.Text = data.OriginalJson;
+        }
+
+        private async void RootSiteButton_Click(object sender, EventArgs e)
+        {
+            if(!(OneDriveApi is OneDriveGraphApi))
+            {
+                JsonResultTextBox.Text = "Only possible when connecting to Graph API";
+                return;
+            }
+
+            var data = await ((OneDriveGraphApi) OneDriveApi).GetSiteRoot();
+
+            if(data == null)
+            {
+                JsonResultTextBox.Text = "No data returned. Did you connect using a work or school account?";
+                return;
+            }
+
             JsonResultTextBox.Text = data.OriginalJson;
         }
     }

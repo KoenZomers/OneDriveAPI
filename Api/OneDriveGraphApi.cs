@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Helpers;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using KoenZomers.OneDrive.Api.Enums;
@@ -50,6 +48,11 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         public string[] DefaultScopes => new[] { "offline_access", "files.readwrite.all" };
 
+        /// <summary>
+        /// Base URL of the Graph API
+        /// </summary>
+        protected string GraphApiBaseUrl => "https://graph.microsoft.com/v1.0/";
+
         #endregion
 
         #region Constructors
@@ -60,7 +63,7 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="applicationId">Microsoft Application ID to use to connect</param>
         public OneDriveGraphApi(string applicationId) : base(applicationId, null)
         {
-            OneDriveApiBaseUrl = "https://graph.microsoft.com/v1.0/me/";
+            OneDriveApiBaseUrl = GraphApiBaseUrl + "me/";
         }
 
         #endregion
@@ -250,8 +253,63 @@ namespace KoenZomers.OneDrive.Api
             return result;
         }
 
+        /// <summary>
+        /// Gets the root SharePoint site
+        /// </summary>
+        /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
+        public virtual async Task<SharePointSite> GetSiteRoot()
+        {
+            return await GetGraphData<SharePointSite>("sites/root");
+        }
+
+        /// <summary>
+        /// Gets a SharePoint site by its unique identifier
+        /// </summary>
+        /// <param name="siteId">Unique identifier of the SharePoint site to retrieve, i.e. tenant.sharepoint.com,42f21fb5-a809-41d6-a97c-64ea0935306f,5a153572-749b-45e8-bae3-4a5e108ffa85</param>
+        /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
+        public virtual async Task<SharePointSite> GetSiteById(string siteId)
+        {
+            return await GetGraphData<SharePointSite>("sites/" + siteId);
+        }
+
+        /// <summary>
+        /// Gets a SharePoint site by its hostname and path
+        /// </summary>
+        /// <param name="hostname">Full SharePoint Online domain to request the SharePoint site from, i.e. tenant.sharepoint.com</param>
+        /// <param name="sitePath">SharePoint tenant relative URL of the site to retrieve, i.e. /sites/team1</param>
+        /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
+        public virtual async Task<SharePointSite> GetSiteByPath(string hostname, string sitePath)
+        {
+            return await GetGraphData<SharePointSite>("sites/" + hostname + ":/" + sitePath);
+        }
+
+        /// <summary>
+        /// Gets a SharePoint site belonging to a group
+        /// </summary>
+        /// <param name="hostname"></param>
+        /// <param name="groupId">Unique identifier of group to retrieve the associated SharePoint site for</param>
+        /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
+        public virtual async Task<SharePointSite> GetSiteByGroupId(string groupId)
+        {
+            return await GetGraphData<SharePointSite>("groups/" + groupId + "/sites/root");
+        }
+
+        /// <summary>
+        /// Retrieves data from the Graph API
+        /// </summary>
+        /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
+        /// <param name="url">Url fragment after the Graph base Uri which indicated the type of information to return</param>
+        /// <returns>OneDrive entity filled with the information retrieved from the Graph API</returns>
+        protected virtual async Task<T> GetGraphData<T>(string url) where T : OneDriveItemBase
+        {
+            // Construct the complete URL to call
+            var completeUrl = url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? url : string.Concat(GraphApiBaseUrl, url);
+
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<T>("", HttpMethod.Get, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
         #endregion
-
-
     }
 }
