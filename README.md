@@ -12,7 +12,7 @@ The code contains a fully working demo Windows Forms application which shows you
 
 ![](./Images/SolutionExplorer.png)
 
-To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API, simply use:
+To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API using Azure AD v2.0, simply use:
 
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveGraphApi(applicationId);
@@ -30,7 +30,7 @@ To get an instance to a OneDrive for Business account, simply use:
 KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret);
 ```
 
-If you're not sure which of these to use, go with the Azure AD V2.0 endpoint.
+If you're not sure which of these to use, go with the Microsoft Graph using the Azure AD v2.0 endpoint.
 
 If you want it to work through a HTTPS proxy, simply provide the proxy configuration by setting the ProxyConfiguration property:
 
