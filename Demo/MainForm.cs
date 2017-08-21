@@ -59,6 +59,10 @@ namespace AuthenticatorApp
                 case 1:
                     OneDriveApi = new OneDriveForBusinessO365Api(_configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientSecret"].Value);
                     break;
+
+                case 2:
+                    OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
+                    break;
             }
 
             OneDriveApi.ProxyConfiguration = UseProxyCheckBox.Checked ? System.Net.WebRequest.DefaultWebProxy : null;
@@ -199,7 +203,7 @@ namespace AuthenticatorApp
             OneDriveApi.UploadProgressChanged += progressHandler;
 
             // Upload the file to the root of the OneDrive
-            var data = await OneDriveApi.UploadFile(fileToUpload, "");
+            var data = await OneDriveApi.UploadFile(fileToUpload, await OneDriveApi.GetDriveRoot());
 
             // Unsubscribe from the upload progress event
             OneDriveApi.UploadProgressChanged -= progressHandler;
@@ -228,7 +232,7 @@ namespace AuthenticatorApp
         private async void GetByIdButton_Click(object sender, EventArgs e)
         {
             var data1 = await OneDriveApi.GetChildrenByFolderId("E499210E61A71FF3!3635");
-            JsonResultTextBox.Text = data1.OriginalJson;
+            JsonResultTextBox.Text = data1 != null ? data1.OriginalJson : "Not found";
         }
 
         private async void DownloadButton_Click(object sender, EventArgs e)
@@ -309,13 +313,7 @@ namespace AuthenticatorApp
 
         private async void SharedWithMeButton_Click(object sender, EventArgs e)
         {
-            var api = OneDriveApi as OneDriveForBusinessO365Api;
-            if (api == null)
-            {
-                MessageBox.Show("This feature only works with OneDrive for Business", "Feature not available", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            var data = await api.GetSharedWithMe();
+            var data = await OneDriveApi.GetSharedWithMe();
             JsonResultTextBox.Text = data.OriginalJson;
         }
     }

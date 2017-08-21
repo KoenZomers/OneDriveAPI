@@ -114,6 +114,7 @@
     <Compile Include="Entities\OneDriveAccessToken.cs" />
     <Compile Include="OneDriveApi.cs" />
     <Compile Include="OneDriveConsumerApi.cs" />
+    <Compile Include="OneDriveGraphApi.cs" />
     <Compile Include="OneDriveForBusinessO365Api.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

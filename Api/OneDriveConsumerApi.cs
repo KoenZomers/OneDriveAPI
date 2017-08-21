@@ -44,7 +44,7 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="clientSecret">OneDrive Client Secret to use to connect</param>
         public OneDriveConsumerApi(string clientId, string clientSecret) : base(clientId, clientSecret)
         {
-            OneDriveApiBasicUrl = "https://api.onedrive.com/v1.0/";
+            OneDriveApiBaseUrl = "https://api.onedrive.com/v1.0/";
         }
 
         #endregion
@@ -130,7 +130,7 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="filename">Filename to validate</param>
         /// <returns>True if filename is valid to be used, false if it isn't</returns>
-        public new static bool ValidFilename(string filename)
+        public override bool ValidFilename(string filename)
         {
             char[] restrictedCharacters = { '\\', '/', ':', '*', '?', '<', '>', '|' };
             return filename.IndexOfAny(restrictedCharacters) == -1;

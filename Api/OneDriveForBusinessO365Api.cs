@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Helpers;
 using Newtonsoft.Json;
+using KoenZomers.OneDrive.Api.Enums;
+using System.Net.Http;
 
 namespace KoenZomers.OneDrive.Api
 {
@@ -122,7 +124,7 @@ namespace KoenZomers.OneDrive.Api
             var discoveryAccessToken = await GetAccessTokenFromRefreshToken(refreshToken, "https://api.office.com/discovery/");
             var oneDriveForBusinessService = await DiscoverOneDriveForBusinessService(discoveryAccessToken.AccessToken);
 
-            OneDriveApiBasicUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
+            OneDriveApiBaseUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
 
             var oneDriveForBusinessAccessToken = await GetAccessTokenFromRefreshToken(refreshToken, oneDriveForBusinessService.ServiceResourceId);
             return oneDriveForBusinessAccessToken;
@@ -138,7 +140,7 @@ namespace KoenZomers.OneDrive.Api
             var discoveryAccessToken = await GetAccessTokenFromAuthorizationToken(authorizationToken, "https://api.office.com/discovery/");
             var oneDriveForBusinessService = await DiscoverOneDriveForBusinessService(discoveryAccessToken.AccessToken);
 
-            OneDriveApiBasicUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
+            OneDriveApiBaseUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
 
             var oneDriveForBusinessAccessToken = await GetAccessTokenFromAuthorizationToken(authorizationToken, oneDriveForBusinessService.ServiceResourceId);
             return oneDriveForBusinessAccessToken;
@@ -214,7 +216,7 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="filename">Filename to validate</param>
         /// <returns>True if filename is valid to be used, false if it isn't</returns>
-        public new static bool ValidFilename(string filename)
+        public override bool ValidFilename(string filename)
         {
             char[] restrictedCharacters = { '\\', '/', ':', '*', '?', '"', '<', '>', '|', '#', '%' };
             return filename.IndexOfAny(restrictedCharacters) == -1;
@@ -228,10 +230,58 @@ namespace KoenZomers.OneDrive.Api
         /// Returns all the items that have been shared by others through OneDrive for Business with the current user
         /// </summary>
         /// <returns>Collection with items that have been shared by others with the current user</returns>
-        public async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
+        public override async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
         {
             var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/view.sharedWithMe");
             return oneDriveItems;
+        }
+
+        /// <summary>
+        /// Shares a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to share</param>
+        /// <param name="linkType">Type of sharing to request</param>
+        /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
+        public override async Task<OneDrivePermission> ShareItem(string itemPath, OneDriveLinkType linkType)
+        {
+            return await ShareItemInternal(string.Concat("drive/root:/", itemPath, ":/createLink"), linkType);
+        }
+
+        /// <summary>
+        /// Shares a OneDrive item
+        /// </summary>
+        /// <param name="item">The OneDrive item to share</param>
+        /// <param name="linkType">Type of sharing to request</param>
+        /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
+        public override async Task<OneDrivePermission> ShareItem(OneDriveItem item, OneDriveLinkType linkType)
+        {
+            return await ShareItemInternal(string.Concat("drive/items/", item.Id, "/createLink"), linkType);
+        }
+
+        /// <summary>
+        /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+        /// </summary>
+        /// <param name="fileName">Filename to store the uploaded content under</param>
+        /// <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        protected override async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem)
+        {
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
+
+            // Construct the OneDriveUploadSessionItemContainer entity with the upload details
+            // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
+            var uploadItemContainer = new OneDriveUploadSessionItemContainer
+            {
+                Item = new OneDriveUploadSessionItem
+                {
+                    FilenameConflictBehavior = NameConflictBehavior.Replace
+                }
+            };
+
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            return result;
         }
 
         #endregion

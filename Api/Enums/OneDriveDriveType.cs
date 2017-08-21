@@ -8,15 +8,21 @@ namespace KoenZomers.OneDrive.Api.Enums
     public enum OneDriveDriveType
     {
         /// <summary>
-        /// Public OneDrive
+        /// Consumer OneDrive
         /// </summary>
         [EnumMember(Value = "personal")] 
         Personal,
         
         /// <summary>
-        /// Enterprise OneDrive
+        /// OneDrive for Business
         /// </summary>
         [EnumMember(Value = "business")]
-        Business
+        Business,
+
+        /// <summary>
+        /// SharePoint Document Library
+        /// </summary>
+        [EnumMember(Value = "documentLibrary")]
+        SharePointDocumentLibrary
     }
 }

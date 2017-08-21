@@ -487,7 +487,8 @@
             this.OneDriveTypeCombo.FormattingEnabled = true;
             this.OneDriveTypeCombo.Items.AddRange(new object[] {
             "Consumer OneDrive",
-            "OneDrive for Business O365"});
+            "OneDrive for Business O365",
+            "Graph API (Consumer & Business)"});
             this.OneDriveTypeCombo.Location = new System.Drawing.Point(17, 15);
             this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OneDriveTypeCombo.Name = "OneDriveTypeCombo";

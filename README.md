@@ -1,7 +1,7 @@
 # OneDriveAPI
 OneDrive API in C#
 
-Easy to use lightweight framework to communicate with the OneDrive v2.0 API. It allows communication through one unified piece of code with:
+Easy to use lightweight framework to communicate with the OneDrive and OneDrive for Business through either the Azure AD (api.onedrive.com & tenant-my.sharepoint.com/_api or the Azure AD V2.0 (graph.microsoft.com) endpoint. It allows communication through one unified piece of code with:
 
 - OneDrive Personal
 - OneDrive for Business
@@ -11,6 +11,12 @@ Easy to use lightweight framework to communicate with the OneDrive v2.0 API. It 
 The code contains a fully working demo Windows Forms application which shows you exactly how to use all of the functionality exposed in the OneDrive API.
 
 ![](./Images/SolutionExplorer.png)
+
+To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API, simply use:
+
+```C#
+KoenZomers.OneDrive.Api oneDrive = new OneDriveGraphApi(applicationId);
+```
 
 To get an instance to a OneDrive Consumer account, simply use:
 
@@ -23,6 +29,8 @@ To get an instance to a OneDrive for Business account, simply use:
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret);
 ```
+
+If you're not sure which of these to use, go with the Azure AD V2.0 endpoint.
 
 If you want it to work through a HTTPS proxy, simply provide the proxy configuration by setting the ProxyConfiguration property:
 
@@ -57,6 +65,12 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.0.0.0 - August 21, 2017
+
+- Added support for utilizing the Microsoft Graph API to access files from both Consumer OneDrive as well as OneDrive for Business sites through 1 unified authentication process
+- Changed the default limit for deciding between the Simple Upload and Resumable Upload from 5 MB to 4 MB [as per Microsoft recommendations](https://dev.onedrive.com/items/upload_put.htm)
+- All methods in the base OneDrive class are now virtual so you can easily override them in your inherited code if you wish to do so
+
 1.6.7.0 - August 18, 2017
 
 - Compiled both the API and demo application against the .NET Framework 4.5.2 since 4.5 has gone out of support by Microsoft
@@ -71,6 +85,15 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 ## Register your own Client ID / Client Secret
 
 If you wish to use the OneDrive API, you need to register your own Client ID / Client Secret. Depending on whether you want to target OneDrive for Consumers or OneDrive for Business, follow the steps below to do so.
+
+### OneDrive via Azure AD v2.0 / Microsoft Graph
+
+1. Go to https://apps.dev.microsoft.com
+2. Log in with your Microsoft or school or work account
+3. Click on "Add an app" next to "Converged applications"
+4. Give it any name you'd like and uncheck the "Let us help you get started" box
+5. Click Create
+6. Copy the Application Id shown on the screen and use it in this app for the GraphApiApplicationId App.config AppSetting
 
 ### OneDrive for Consumers
 

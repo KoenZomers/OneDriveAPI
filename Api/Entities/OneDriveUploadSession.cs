@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
-    internal class OneDriveUploadSession : OneDriveItemBase
+    public class OneDriveUploadSession : OneDriveItemBase
     {
         [JsonProperty("uploadUrl")]
         public string UploadUrl { get; set; }
