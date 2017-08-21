@@ -94,7 +94,7 @@ If you wish to use the OneDrive API, you need to register your own Client ID / C
 3. Click on "Add an app" next to "Converged applications"
 4. Give it any name you'd like and uncheck the "Let us help you get started" box
 5. Click Create
-6. Copy the Application Id shown on the screen and use it in this app for the GraphApiApplicationId App.config AppSetting
+6. Copy the Application Id shown on the screen and use it in this app for the GraphApiApplicationId App.config AppSetting. Make sure you set the redirect URL to https://login.microsoftonline.com/common/oauth2/nativeclient. Allow implicit flow can stay unchecked, logout URL can be left empty, Microsoft Graph Permissions not need to be specified here.
 
 ### OneDrive for Consumers via Azure AD / api.onedrive.com
 
