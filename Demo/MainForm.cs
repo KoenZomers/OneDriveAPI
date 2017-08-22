@@ -284,7 +284,7 @@ namespace AuthenticatorApp
 
         private async void CreateFolderButton_Click(object sender, EventArgs e)
         {
-            var data = await OneDriveApi.GetFolderOrCreate("Test");
+            var data = await OneDriveApi.GetFolderOrCreate("Test\\sub1\\sub2");
             JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 

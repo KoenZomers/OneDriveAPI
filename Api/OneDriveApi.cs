@@ -465,10 +465,21 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Retrieves the OneDrive folder item or creates it if it doesn't exist yet
         /// </summary>
-        /// <param name="path">Path of the OneDrive folder to retrieve or create</param>
-        /// <returns></returns>
+        /// <param name="path">Path of the OneDrive folder to retrieve or create. It will ensure that the whole provided path exists and create (sub)folders if they don't exist yet</param>
+        /// <example>Files\Work\Contracts</example>
+        /// <returns>OneDriveItem representing the folder designated in the path</returns>
         public virtual async Task<OneDriveItem> GetFolderOrCreate(string path)
         {
+            // Replace possible forward slashes with backslashes
+            path = path.Replace("/", "\\");
+
+            // Check if the path contains multiple folders
+            if(path.Contains("\\"))
+            {
+                // Path contains multiple folders, use recursion to ensure the entire path exists
+                await GetFolderOrCreate(path.Remove(path.LastIndexOf("\\")));
+            }
+
             // Try to get the folder
             var folder = await GetData<OneDriveItem>(string.Concat("drive/root:/", path));
 
@@ -479,8 +490,8 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Folder not found, create it
-            var folderName = path.Contains("/") ? path.Remove(0, path.LastIndexOf("/", StringComparison.Ordinal) + 1) : path;
-            var parentPath = path.Contains("/") ? path.Remove(path.Length - folderName.Length - 1) : "";
+            var folderName = path.Contains("\\") ? path.Remove(0, path.LastIndexOf("\\", StringComparison.Ordinal) + 1) : path;
+            var parentPath = path.Contains("\\") ? path.Remove(path.Length - folderName.Length - 1) : "";
             folder = await CreateFolder(parentPath, folderName);
 
             return folder;
