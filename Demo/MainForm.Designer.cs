@@ -43,6 +43,7 @@
             this.AccessTokenValidLabel = new System.Windows.Forms.Label();
             this.AccessTokenValidTextBox = new System.Windows.Forms.TextBox();
             this.OneDriveCommandsPanel = new System.Windows.Forms.Panel();
+            this.RootSiteButton = new System.Windows.Forms.Button();
             this.SharedWithMeButton = new System.Windows.Forms.Button();
             this.RenameButton = new System.Windows.Forms.Button();
             this.MoveButton = new System.Windows.Forms.Button();
@@ -65,7 +66,10 @@
             this.GetDriveButton = new System.Windows.Forms.Button();
             this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
             this.OneDriveTypeCombo = new System.Windows.Forms.ComboBox();
-            this.RootSiteButton = new System.Windows.Forms.Button();
+            this.GetPermissionsButton = new System.Windows.Forms.Button();
+            this.AddPermissionButton = new System.Windows.Forms.Button();
+            this.ChangePermissionButton = new System.Windows.Forms.Button();
+            this.RemovePermissionsButton = new System.Windows.Forms.Button();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -222,6 +226,10 @@
             // OneDriveCommandsPanel
             // 
             this.OneDriveCommandsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.OneDriveCommandsPanel.Controls.Add(this.RemovePermissionsButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.ChangePermissionButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.AddPermissionButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.GetPermissionsButton);
             this.OneDriveCommandsPanel.Controls.Add(this.RootSiteButton);
             this.OneDriveCommandsPanel.Controls.Add(this.SharedWithMeButton);
             this.OneDriveCommandsPanel.Controls.Add(this.RenameButton);
@@ -249,6 +257,17 @@
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
             this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1260, 178);
             this.OneDriveCommandsPanel.TabIndex = 17;
+            // 
+            // RootSiteButton
+            // 
+            this.RootSiteButton.Location = new System.Drawing.Point(1017, 5);
+            this.RootSiteButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.RootSiteButton.Name = "RootSiteButton";
+            this.RootSiteButton.Size = new System.Drawing.Size(120, 51);
+            this.RootSiteButton.TabIndex = 32;
+            this.RootSiteButton.Text = "Root Site";
+            this.RootSiteButton.UseVisualStyleBackColor = true;
+            this.RootSiteButton.Click += new System.EventHandler(this.RootSiteButton_Click);
             // 
             // SharedWithMeButton
             // 
@@ -497,16 +516,49 @@
             this.OneDriveTypeCombo.Size = new System.Drawing.Size(300, 28);
             this.OneDriveTypeCombo.TabIndex = 19;
             // 
-            // RootSiteButton
+            // GetPermissionsButton
             // 
-            this.RootSiteButton.Location = new System.Drawing.Point(1017, 5);
-            this.RootSiteButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.RootSiteButton.Name = "RootSiteButton";
-            this.RootSiteButton.Size = new System.Drawing.Size(120, 51);
-            this.RootSiteButton.TabIndex = 32;
-            this.RootSiteButton.Text = "Root Site";
-            this.RootSiteButton.UseVisualStyleBackColor = true;
-            this.RootSiteButton.Click += new System.EventHandler(this.RootSiteButton_Click);
+            this.GetPermissionsButton.Location = new System.Drawing.Point(890, 61);
+            this.GetPermissionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.GetPermissionsButton.Name = "GetPermissionsButton";
+            this.GetPermissionsButton.Size = new System.Drawing.Size(120, 51);
+            this.GetPermissionsButton.TabIndex = 33;
+            this.GetPermissionsButton.Text = "Get permis.";
+            this.GetPermissionsButton.UseVisualStyleBackColor = true;
+            this.GetPermissionsButton.Click += new System.EventHandler(this.GetPermissionsButton_Click);
+            // 
+            // AddPermissionButton
+            // 
+            this.AddPermissionButton.Location = new System.Drawing.Point(890, 115);
+            this.AddPermissionButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.AddPermissionButton.Name = "AddPermissionButton";
+            this.AddPermissionButton.Size = new System.Drawing.Size(120, 51);
+            this.AddPermissionButton.TabIndex = 34;
+            this.AddPermissionButton.Text = "Add permis.";
+            this.AddPermissionButton.UseVisualStyleBackColor = true;
+            this.AddPermissionButton.Click += new System.EventHandler(this.AddPermissionButton_Click);
+            // 
+            // ChangePermissionButton
+            // 
+            this.ChangePermissionButton.Location = new System.Drawing.Point(1016, 115);
+            this.ChangePermissionButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ChangePermissionButton.Name = "ChangePermissionButton";
+            this.ChangePermissionButton.Size = new System.Drawing.Size(120, 51);
+            this.ChangePermissionButton.TabIndex = 35;
+            this.ChangePermissionButton.Text = "Ch. permis.";
+            this.ChangePermissionButton.UseVisualStyleBackColor = true;
+            this.ChangePermissionButton.Click += new System.EventHandler(this.ChangePermissionButton_Click);
+            // 
+            // RemovePermissionsButton
+            // 
+            this.RemovePermissionsButton.Location = new System.Drawing.Point(1016, 60);
+            this.RemovePermissionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.RemovePermissionsButton.Name = "RemovePermissionsButton";
+            this.RemovePermissionsButton.Size = new System.Drawing.Size(120, 51);
+            this.RemovePermissionsButton.TabIndex = 36;
+            this.RemovePermissionsButton.Text = "Rem. permis.";
+            this.RemovePermissionsButton.UseVisualStyleBackColor = true;
+            this.RemovePermissionsButton.Click += new System.EventHandler(this.RemovePermissionsButton_Click);
             // 
             // MainForm
             // 
@@ -581,6 +633,10 @@
         private System.Windows.Forms.Button RenameButton;
         private System.Windows.Forms.Button SharedWithMeButton;
         private System.Windows.Forms.Button RootSiteButton;
+        private System.Windows.Forms.Button GetPermissionsButton;
+        private System.Windows.Forms.Button AddPermissionButton;
+        private System.Windows.Forms.Button ChangePermissionButton;
+        private System.Windows.Forms.Button RemovePermissionsButton;
     }
 }
 

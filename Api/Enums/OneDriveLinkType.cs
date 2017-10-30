@@ -2,6 +2,9 @@
 
 namespace KoenZomers.OneDrive.Api.Enums
 {
+    /// <summary>
+    /// Type of rights assignable to a OneDrive item
+    /// </summary>
     public enum OneDriveLinkType
     {
         /// <summary>

@@ -1398,7 +1398,7 @@ namespace KoenZomers.OneDrive.Api
         {
             var settings = new JsonSerializerSettings();
             settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = JsonConvert.SerializeObject(oneDriveItem, settings);
+            var bodyText = oneDriveItem != null ? JsonConvert.SerializeObject(oneDriveItem, settings) : null;
 
             return await SendMessageReturnOneDriveItem<T>(bodyText, httpMethod, url, expectedHttpStatusCode);
         }

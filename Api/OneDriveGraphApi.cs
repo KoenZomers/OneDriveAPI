@@ -205,8 +205,10 @@ namespace KoenZomers.OneDrive.Api
             return result;
         }
 
+        #region Sharing
+
         /// <summary>
-        /// Shares a OneDrive item
+        /// Shares a OneDrive item by creating an anonymous link to the item
         /// </summary>
         /// <param name="itemPath">The path to the OneDrive item to share</param>
         /// <param name="linkType">Type of sharing to request</param>
@@ -217,7 +219,7 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Shares a OneDrive item
+        /// Shares a OneDrive item by creating an anonymous link to the item
         /// </summary>
         /// <param name="item">The OneDrive item to share</param>
         /// <param name="linkType">Type of sharing to request</param>
@@ -226,6 +228,248 @@ namespace KoenZomers.OneDrive.Api
         {
             return await ShareItemInternal(string.Concat("drive/items/", item.Id, "/createLink"), linkType);
         }
+
+        #endregion
+
+        #region Adding permissions
+
+        /// <summary>
+        /// Adds permissions to a OneDrive item
+        /// </summary>        
+        /// <param name="item">The OneDrive item to add the permission to</param>
+        /// <param name="permissionRequest">Details of the request for permission</param>
+        /// <returns>Collection with OneDrivePermissionResponse objects representing the granted permissions</returns>
+        public async Task<OneDriveCollectionResponse<OneDrivePermissionResponse>> AddPermission(OneDriveItem item, OneDrivePermissionRequest permissionRequest)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", item.Id, "/invite");
+
+            var result = await SendMessageReturnOneDriveItem<OneDriveCollectionResponse<OneDrivePermissionResponse>>(permissionRequest, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Adds permissions to a OneDrive item
+        /// </summary>        
+        /// <param name="itemPath">The path to the OneDrive item to add the permission to</param>
+        /// <param name="permissionRequest">Details of the request for permission</param>
+        /// <returns>Collection with OneDrivePermissionResponse objects representing the granted permissions</returns>
+        public async Task<OneDriveCollectionResponse<OneDrivePermissionResponse>> AddPermission(string itemPath, OneDrivePermissionRequest permissionRequest)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/root:/", itemPath, ":/invite");
+
+            var result = await SendMessageReturnOneDriveItem<OneDriveCollectionResponse<OneDrivePermissionResponse>>(permissionRequest, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Adds permissions to a OneDrive item
+        /// </summary>
+        /// <param name="item">The OneDrive item to add the permission to</param>
+        /// <param name="requireSignin">Boolean to indicate if the user has to sign in before being able to access the OneDrive item</param>
+        /// <param name="linkType">Indicates what type of access should be assigned to the invitees</param>
+        /// <param name="emailAddresses">Array with e-mail addresses to receive access to the OneDrive item</param>
+        /// <param name="sendInvitation">Send an e-mail to the invitees to inform them about having received permissions to the OneDrive item</param>
+        /// <param name="sharingMessage">Custom message to add to the e-mail sent out to the invitees</param>
+        /// <returns>Collection with OneDrivePermissionResponse objects representing the granted permissions</returns>
+        public async Task<OneDriveCollectionResponse<OneDrivePermissionResponse>> AddPermission(OneDriveItem item, bool requireSignin, bool sendInvitation, OneDriveLinkType linkType, string sharingMessage, string[] emailAddresses)
+        {
+            var permissionRequest = new OneDrivePermissionRequest
+            {
+                Message = sharingMessage,
+                RequireSignin = requireSignin,
+                SendInvitation = sendInvitation,
+                Roles = linkType == OneDriveLinkType.View ? new[] { "read" } : new[] { "write" }
+            };
+
+            var recipients = new List<OneDriveDriveRecipient>();
+            foreach (var emailAddress in emailAddresses)
+            {
+                recipients.Add(new OneDriveDriveRecipient
+                {
+                    Email = emailAddress
+                });
+            }
+            permissionRequest.Recipients = recipients.ToArray();
+
+            return await AddPermission(item, permissionRequest);
+        }
+
+        /// <summary>
+        /// Adds permissions to a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to add the permission to</param>
+        /// <param name="requireSignin">Boolean to indicate if the user has to sign in before being able to access the OneDrive item</param>
+        /// <param name="linkType">Indicates what type of access should be assigned to the invitees</param>
+        /// <param name="emailAddresses">Array with e-mail addresses to receive access to the OneDrive item</param>
+        /// <param name="sendInvitation">Send an e-mail to the invitees to inform them about having received permissions to the OneDrive item</param>
+        /// <param name="sharingMessage">Custom message to add to the e-mail sent out to the invitees</param>
+        /// <returns>Collection with OneDrivePermissionResponse objects representing the granted permissions</returns>
+        public async Task<OneDriveCollectionResponse<OneDrivePermissionResponse>> AddPermission(string itemPath, bool requireSignin, bool sendInvitation, OneDriveLinkType linkType, string sharingMessage, string[] emailAddresses)
+        {
+            var permissionRequest = new OneDrivePermissionRequest
+            {
+                Message = sharingMessage,
+                RequireSignin = requireSignin,
+                SendInvitation = sendInvitation,
+                Roles = linkType == OneDriveLinkType.View ? new[] { "read" } : new[] { "write" }
+            };
+
+            var recipients = new List<OneDriveDriveRecipient>();
+            foreach (var emailAddress in emailAddresses)
+            {
+                recipients.Add(new OneDriveDriveRecipient
+                {
+                    Email = emailAddress
+                });
+            }
+            permissionRequest.Recipients = recipients.ToArray();
+
+            return await AddPermission(itemPath, permissionRequest);
+        }
+
+        #endregion
+
+        #region Updating permissions
+
+        /// <summary>
+        /// Changes permissions on a OneDrive item
+        /// </summary>
+        /// <param name="item">The OneDrive item to change the permission of</param>
+        /// <param name="permissionType">Permission to set on the OneDrive item</param>
+        /// <param name="permissionId">ID of the permission object applied to the OneDrive item which needs its permissions changed</param>
+        /// <returns>OneDrivePermissionResponse object representing the granted permission</returns>
+        public async Task<OneDrivePermissionResponse> ChangePermission(OneDriveItem item, string permissionId, OneDriveLinkType permissionType)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", item.Id, "/permissions/", permissionId);
+
+            var result = await SendMessageReturnOneDriveItem<OneDrivePermissionResponse>("{ \"roles\": [ \"" + (permissionType == OneDriveLinkType.Edit ? "write" : "read") + "\" ] }", new HttpMethod("PATCH"), completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Changes permissions on a OneDrive item
+        /// </summary>
+        /// <param name="item">The OneDrive item to change the permission of</param>
+        /// <param name="permissionType">Permission to set on the OneDrive item</param>
+        /// <param name="permission">Permission object applied to the OneDrive item which needs its permissions changed</param>
+        /// <returns>OneDrivePermissionResponse object representing the granted permission</returns>
+        public async Task<OneDrivePermissionResponse> ChangePermission(OneDriveItem item, OneDrivePermission permission, OneDriveLinkType permissionType)
+        {
+            return await ChangePermission(item, permission.Id, permissionType);
+        }
+
+        /// <summary>
+        /// Changes permissions on a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to change the permission of</param>
+        /// <param name="permissionType">Permission to set on the OneDrive item</param>
+        /// <param name="permissionId">ID of the permission object applied to the OneDrive item which needs its permissions changed</param>
+        /// <returns>OneDrivePermissionResponse object representing the granted permission</returns>
+        public async Task<OneDrivePermissionResponse> ChangePermission(string itemPath, string permissionId, OneDriveLinkType permissionType)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/root:/", itemPath, ":/permissions/", permissionId);
+
+            var result = await SendMessageReturnOneDriveItem<OneDrivePermissionResponse>("{ \"roles\": [ \"" + (permissionType == OneDriveLinkType.Edit ? "write" : "read") + "\" ] }", new HttpMethod("PATCH"), completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Changes permissions on a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to change the permission of</param>
+        /// <param name="permissionType">Permission to set on the OneDrive item</param>
+        /// <param name="permission">Permission object applied to the OneDrive item which needs its permissions changed</param>
+        /// <returns>OneDrivePermissionResponse object representing the granted permission</returns>
+        public async Task<OneDrivePermissionResponse> ChangePermission(string itemPath, OneDrivePermission permission, OneDriveLinkType permissionType)
+        {
+            return await ChangePermission(itemPath, permission.Id, permissionType);
+        }
+
+        #endregion
+
+        #region Removing permissions
+
+        /// <summary>
+        /// Removes the permission from a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to remove the permission from</param>
+        /// <param name="permissionId">Unique permission identifier as received when addign the permission to the item</param>
+        /// <returns>Boolean indicating if the operation was successful (true) or failed (false)</returns>
+        public async Task<bool> RemovePermission(string itemPath, string permissionId)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/root:/", itemPath, ":/permissions/", permissionId);
+
+            var result = await SendMessageReturnBool(null, HttpMethod.Delete, completeUrl, HttpStatusCode.NoContent);
+            return result;
+        }
+
+        /// <summary>
+        /// Removes the permission from a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to remove the permission from</param>
+        /// <param name="permission">Permission object as received when creating a permission on the item</param>
+        /// <returns>Boolean indicating if the operation was successful (true) or failed (false)</returns>
+        public async Task<bool> RemovePermission(string itemPath, OneDrivePermission permission)
+        {
+            return await RemovePermission(itemPath, permission.Id);
+        }
+
+        /// <summary>
+        /// Removes the permission from a OneDrive item
+        /// </summary>
+        /// <param name="item">The OneDrive item to add a permission to</param>
+        /// <param name="permissionId">Unique sharing permission identifier as received when adding the permission to the item</param>
+        /// <returns>Boolean indicating if the operation was successful (true) or failed (false)</returns>
+        public async Task<bool> RemovePermission(OneDriveItem item, string permissionId)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", item.Id, "/permissions/", permissionId);
+
+            var result = await SendMessageReturnBool(null, HttpMethod.Delete, completeUrl, HttpStatusCode.NoContent);
+            return result;            
+        }
+
+        /// <summary>
+        /// Removes the permission from a OneDrive item
+        /// </summary>
+        /// <param name="item">The OneDrive item to add a permission to</param>
+        /// <param name="permission">Permission object as received when creating a permission on the item</param>
+        /// <returns>Boolean indicating if the operation was successful (true) or failed (false)</returns>
+        public async Task<bool> RemovePermission(OneDriveItem item, OneDrivePermission permission)
+        {
+            return await RemovePermission(item, permission.Id);
+        }
+
+        #endregion
+
+        #region Listing permissions
+
+        /// <summary>
+        /// Lists all permissions on a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to retrieve the permissions of</param>
+        /// <returns>Collection with OneDrivePermission objects which indicate the permissions on the item</returns>
+        public async Task<OneDriveCollectionResponse<OneDrivePermission>> ListPermissions(string itemPath)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/root:/", itemPath, ":/permissions");
+
+            var result = await SendMessageReturnOneDriveItem<OneDriveCollectionResponse<OneDrivePermission>>(string.Empty, HttpMethod.Get, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Lists all permissions on a OneDrive item
+        /// </summary>
+        /// <param name="itemPath">The OneDrive item to retrieve the permissions of</param>
+        /// <returns>Collection with OneDrivePermission objects which indicate the permissions on the item</returns>
+        public async Task<OneDriveCollectionResponse<OneDrivePermission>> ListPermissions(OneDriveItem item)
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", item.Id, "/permissions");
+
+            var result = await SendMessageReturnOneDriveItem<OneDriveCollectionResponse<OneDrivePermission>>(item, HttpMethod.Get, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        #endregion
 
         /// <summary>
         /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.

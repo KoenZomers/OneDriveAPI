@@ -59,7 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\OneDriveAudioFacet.cs" />
+    <Compile Include="Entities\OneDriveDriveRecipient.cs" />
     <Compile Include="Entities\OneDriveForBusinessSharePointId.cs" />
+    <Compile Include="Entities\OneDrivePermissionResponseInvitation.cs" />
+    <Compile Include="Entities\OneDrivePermissionResponseGrant.cs" />
+    <Compile Include="Entities\OneDrivePermissionResponse.cs" />
+    <Compile Include="Entities\OneDrivePermissionRequest.cs" />
     <Compile Include="Entities\OneDriveSharedWithMeItemCollection.cs" />
     <Compile Include="Entities\OneDriveRemoteItem.cs" />
     <Compile Include="Entities\OneDriveParentItemReference.cs" />

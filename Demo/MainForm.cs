@@ -336,6 +336,85 @@ namespace AuthenticatorApp
 
             JsonResultTextBox.Text = data.OriginalJson;
         }
+
+        private async void GetPermissionsButton_Click(object sender, EventArgs e)
+        {
+            if (!(OneDriveApi is OneDriveGraphApi))
+            {
+                JsonResultTextBox.Text = "Only possible when connecting to Graph API";
+                return;
+            }
+
+            var data = await((OneDriveGraphApi)OneDriveApi).ListPermissions("Test");
+
+            if (data == null)
+            {
+                JsonResultTextBox.Text = "No data returned. Did you connect using a work or school account?";
+                return;
+            }
+
+            JsonResultTextBox.Text = data.OriginalJson;
+        }
+
+        private async void AddPermissionButton_Click(object sender, EventArgs e)
+        {
+            if (!(OneDriveApi is OneDriveGraphApi))
+            {
+                JsonResultTextBox.Text = "Only possible when connecting to Graph API";
+                return;
+            }
+
+            var data = await((OneDriveGraphApi)OneDriveApi).AddPermission("Test", true, true, OneDriveLinkType.View, "Testing of sharing this item", new[] { "yvonne@zomers.eu" });
+
+            if (data == null)
+            {
+                JsonResultTextBox.Text = "No data returned. Did you connect using a work or school account?";
+                return;
+            }
+
+            JsonResultTextBox.Text = data.OriginalJson;
+        }
+
+        private async void ChangePermissionButton_Click(object sender, EventArgs e)
+        {
+            if (!(OneDriveApi is OneDriveGraphApi))
+            {
+                JsonResultTextBox.Text = "Only possible when connecting to Graph API";
+                return;
+            }
+
+            var currentPermissions = await ((OneDriveGraphApi)OneDriveApi).ListPermissions("Test");
+            var data = await((OneDriveGraphApi)OneDriveApi).ChangePermission("Test", currentPermissions.Collection[0].Id, currentPermissions.Collection[0].Roles[0] == "read" ? OneDriveLinkType.Edit : OneDriveLinkType.View);
+
+            if (data == null)
+            {
+                JsonResultTextBox.Text = "No data returned. Did you connect using a work or school account?";
+                return;
+            }
+
+            JsonResultTextBox.Text = data.OriginalJson;
+        }
+
+        private async void RemovePermissionsButton_Click(object sender, EventArgs e)
+        {
+            if (!(OneDriveApi is OneDriveGraphApi))
+            {
+                JsonResultTextBox.Text = "Only possible when connecting to Graph API";
+                return;
+            }
+
+            var currentPermissions = await ((OneDriveGraphApi)OneDriveApi).ListPermissions("Test");
+
+            if(currentPermissions.Collection.Length == 0)
+            {
+                JsonResultTextBox.Text = "No permissions are set";
+                return;
+            }
+
+            var result = await ((OneDriveGraphApi)OneDriveApi).RemovePermission("Test", currentPermissions.Collection[0].Id);
+
+            JsonResultTextBox.Text = result ? "Removing permissions successful" : "Removing permissions failed";
+        }
     }
 }
 
