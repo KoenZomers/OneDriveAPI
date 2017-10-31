@@ -695,7 +695,10 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>True if download was successful, false if it failed</returns>
         public virtual async Task<bool> DownloadItemAndSaveAs(OneDriveItem oneDriveItem, string saveAs)
         {
-            using (var stream = await DownloadItemInternal(oneDriveItem))
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+
+            using (var stream = await DownloadItemInternal(oneDriveItem, completeUrl))
             {
                 using (var outputStream = new FileStream(saveAs, FileMode.Create))
                 {
@@ -723,7 +726,9 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>Stream with the contents of the item on OneDrive</returns>
         public virtual async Task<Stream> DownloadItem(OneDriveItem oneDriveItem)
         {
-            return await DownloadItemInternal(oneDriveItem);
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+            return await DownloadItemInternal(oneDriveItem, completeUrl);
         }
 
         /// <summary>
@@ -991,14 +996,12 @@ namespace KoenZomers.OneDrive.Api
         /// Downloads the contents of the provided OneDriveItem to the location provided
         /// </summary>
         /// <param name="item">OneDriveItem to download its contents of</param>
+        /// <param name="completeUrl">Complete URL from where to download the file</param>
         /// <returns>Stream with the downloaded content</returns>
-        protected virtual async Task<Stream> DownloadItemInternal(OneDriveItem item)
+        protected virtual async Task<Stream> DownloadItemInternal(OneDriveItem item, string completeUrl)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
-
-            // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", item.Id, "/content");
 
             // Create an HTTPClient instance to communicate with the REST API of OneDrive
             var client = CreateHttpClient(accessToken.AccessToken);
@@ -1025,11 +1028,22 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>The resulting OneDrive item representing the uploaded file</returns>
         public async Task<OneDriveItem> UploadFileViaSimpleUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem)
         {
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Construct the complete URL to call
             var oneDriveUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
+
+            return await UploadFileViaSimpleUploadInternal(fileStream, oneDriveUrl);
+        }
+
+        /// <summary>
+        /// Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+        /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="oneDriveUrl">The URL to POST the file contents to</param>
+        /// <returns>The resulting OneDrive item representing the uploaded file</returns>
+        protected async Task<OneDriveItem> UploadFileViaSimpleUploadInternal(Stream fileStream, string oneDriveUrl)
+        { 
+            // Get an access token to perform the request to OneDrive
+            var accessToken = await GetAccessToken();
 
             // Create an HTTPClient instance to communicate with the REST API of OneDrive
             using (var client = CreateHttpClient(accessToken.AccessToken))
@@ -1165,9 +1179,18 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem instance representing the uploaded item</returns>
         public async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
         {
-            // Create a resumable upload session with OneDrive
-            var uploadSessionResult = await CreateResumableUploadSession(fileName, oneDriveItem);
+            var oneDriveUploadSession = await CreateResumableUploadSession(fileName, oneDriveItem);
+            return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInKiloByte);
+        }
 
+        /// <summary>
+        /// Uploads a file to OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
+        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        protected async Task<OneDriveItem> UploadFileViaResumableUploadInternal(Stream fileStream, OneDriveUploadSession oneDriveUploadSession, short fragmentSizeInKiloByte = 5000)
+        {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
@@ -1219,7 +1242,7 @@ namespace KoenZomers.OneDrive.Api
                             content.Headers.Add("Content-Range", string.Concat("bytes ", currentPosition, "-", endPosition - 1, "/", fileStream.Length));
 
                             // Construct the PUT message towards the webservice containing the binary data
-                            using (var request = new HttpRequestMessage(HttpMethod.Put, uploadSessionResult.UploadUrl))
+                            using (var request = new HttpRequestMessage(HttpMethod.Put, oneDriveUploadSession.UploadUrl))
                             {
                                 // Set the binary content to upload
                                 request.Content = content;

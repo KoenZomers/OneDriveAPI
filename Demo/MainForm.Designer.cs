@@ -43,6 +43,10 @@
             this.AccessTokenValidLabel = new System.Windows.Forms.Label();
             this.AccessTokenValidTextBox = new System.Windows.Forms.TextBox();
             this.OneDriveCommandsPanel = new System.Windows.Forms.Panel();
+            this.RemovePermissionsButton = new System.Windows.Forms.Button();
+            this.ChangePermissionButton = new System.Windows.Forms.Button();
+            this.AddPermissionButton = new System.Windows.Forms.Button();
+            this.GetPermissionsButton = new System.Windows.Forms.Button();
             this.RootSiteButton = new System.Windows.Forms.Button();
             this.SharedWithMeButton = new System.Windows.Forms.Button();
             this.RenameButton = new System.Windows.Forms.Button();
@@ -66,10 +70,12 @@
             this.GetDriveButton = new System.Windows.Forms.Button();
             this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
             this.OneDriveTypeCombo = new System.Windows.Forms.ComboBox();
-            this.GetPermissionsButton = new System.Windows.Forms.Button();
-            this.AddPermissionButton = new System.Windows.Forms.Button();
-            this.ChangePermissionButton = new System.Windows.Forms.Button();
-            this.RemovePermissionsButton = new System.Windows.Forms.Button();
+            this.GetAppFolderMetadataButton = new System.Windows.Forms.Button();
+            this.GetAppFolderFilesButton = new System.Windows.Forms.Button();
+            this.AppFolderCreateFolderButton = new System.Windows.Forms.Button();
+            this.UploadToAppFolderButton = new System.Windows.Forms.Button();
+            this.DownloadFromAppFolderButton = new System.Windows.Forms.Button();
+            this.GetFilesInFolderInAppFolderButton = new System.Windows.Forms.Button();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,17 +84,17 @@
             this.AuthenticationBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 195);
+            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 253);
             this.AuthenticationBrowser.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthenticationBrowser.MinimumSize = new System.Drawing.Size(22, 25);
             this.AuthenticationBrowser.Name = "AuthenticationBrowser";
-            this.AuthenticationBrowser.Size = new System.Drawing.Size(1585, 438);
+            this.AuthenticationBrowser.Size = new System.Drawing.Size(1589, 380);
             this.AuthenticationBrowser.TabIndex = 0;
             this.AuthenticationBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.AuthenticationBrowser_Navigated);
             // 
             // Step1Button
             // 
-            this.Step1Button.Location = new System.Drawing.Point(6, 128);
+            this.Step1Button.Location = new System.Drawing.Point(14, 183);
             this.Step1Button.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Step1Button.Name = "Step1Button";
             this.Step1Button.Size = new System.Drawing.Size(120, 51);
@@ -104,7 +110,7 @@
             this.CurrentUrlTextBox.Location = new System.Drawing.Point(14, 671);
             this.CurrentUrlTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CurrentUrlTextBox.Name = "CurrentUrlTextBox";
-            this.CurrentUrlTextBox.Size = new System.Drawing.Size(1584, 26);
+            this.CurrentUrlTextBox.Size = new System.Drawing.Size(1588, 26);
             this.CurrentUrlTextBox.TabIndex = 4;
             // 
             // CurrentUrlLabel
@@ -134,7 +140,7 @@
             this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(12, 734);
             this.AuthorizationCodeTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthorizationCodeTextBox.Name = "AuthorizationCodeTextBox";
-            this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(1584, 26);
+            this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(1588, 26);
             this.AuthorizationCodeTextBox.TabIndex = 6;
             // 
             // AccessTokenLabel
@@ -154,7 +160,7 @@
             this.AccessTokenTextBox.Location = new System.Drawing.Point(12, 901);
             this.AccessTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenTextBox.Name = "AccessTokenTextBox";
-            this.AccessTokenTextBox.Size = new System.Drawing.Size(1584, 26);
+            this.AccessTokenTextBox.Size = new System.Drawing.Size(1588, 26);
             this.AccessTokenTextBox.TabIndex = 8;
             this.AccessTokenTextBox.TextChanged += new System.EventHandler(this.AccessTokenTextBox_TextChanged);
             // 
@@ -163,18 +169,18 @@
             this.JsonResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 195);
+            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 253);
             this.JsonResultTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.JsonResultTextBox.Multiline = true;
             this.JsonResultTextBox.Name = "JsonResultTextBox";
             this.JsonResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.JsonResultTextBox.Size = new System.Drawing.Size(1583, 435);
+            this.JsonResultTextBox.Size = new System.Drawing.Size(1587, 377);
             this.JsonResultTextBox.TabIndex = 10;
             this.JsonResultTextBox.Visible = false;
             // 
             // RefreshTokenButton
             // 
-            this.RefreshTokenButton.Location = new System.Drawing.Point(132, 128);
+            this.RefreshTokenButton.Location = new System.Drawing.Point(140, 183);
             this.RefreshTokenButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenButton.Name = "RefreshTokenButton";
             this.RefreshTokenButton.Size = new System.Drawing.Size(120, 51);
@@ -200,7 +206,7 @@
             this.RefreshTokenTextBox.Location = new System.Drawing.Point(14, 791);
             this.RefreshTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenTextBox.Name = "RefreshTokenTextBox";
-            this.RefreshTokenTextBox.Size = new System.Drawing.Size(1584, 26);
+            this.RefreshTokenTextBox.Size = new System.Drawing.Size(1588, 26);
             this.RefreshTokenTextBox.TabIndex = 13;
             // 
             // AccessTokenValidLabel
@@ -220,12 +226,18 @@
             this.AccessTokenValidTextBox.Location = new System.Drawing.Point(12, 846);
             this.AccessTokenValidTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenValidTextBox.Name = "AccessTokenValidTextBox";
-            this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1584, 26);
+            this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1588, 26);
             this.AccessTokenValidTextBox.TabIndex = 15;
             // 
             // OneDriveCommandsPanel
             // 
             this.OneDriveCommandsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.OneDriveCommandsPanel.Controls.Add(this.GetFilesInFolderInAppFolderButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.DownloadFromAppFolderButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.UploadToAppFolderButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.AppFolderCreateFolderButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.GetAppFolderFilesButton);
+            this.OneDriveCommandsPanel.Controls.Add(this.GetAppFolderMetadataButton);
             this.OneDriveCommandsPanel.Controls.Add(this.RemovePermissionsButton);
             this.OneDriveCommandsPanel.Controls.Add(this.ChangePermissionButton);
             this.OneDriveCommandsPanel.Controls.Add(this.AddPermissionButton);
@@ -252,11 +264,55 @@
             this.OneDriveCommandsPanel.Controls.Add(this.GetRoodFolderButton);
             this.OneDriveCommandsPanel.Controls.Add(this.GetDriveButton);
             this.OneDriveCommandsPanel.Enabled = false;
-            this.OneDriveCommandsPanel.Location = new System.Drawing.Point(338, 11);
+            this.OneDriveCommandsPanel.Location = new System.Drawing.Point(313, 11);
             this.OneDriveCommandsPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
-            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1260, 178);
+            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1289, 238);
             this.OneDriveCommandsPanel.TabIndex = 17;
+            // 
+            // RemovePermissionsButton
+            // 
+            this.RemovePermissionsButton.Location = new System.Drawing.Point(1143, 115);
+            this.RemovePermissionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.RemovePermissionsButton.Name = "RemovePermissionsButton";
+            this.RemovePermissionsButton.Size = new System.Drawing.Size(120, 51);
+            this.RemovePermissionsButton.TabIndex = 36;
+            this.RemovePermissionsButton.Text = "Rem. permis.";
+            this.RemovePermissionsButton.UseVisualStyleBackColor = true;
+            this.RemovePermissionsButton.Click += new System.EventHandler(this.RemovePermissionsButton_Click);
+            // 
+            // ChangePermissionButton
+            // 
+            this.ChangePermissionButton.Location = new System.Drawing.Point(1143, 172);
+            this.ChangePermissionButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ChangePermissionButton.Name = "ChangePermissionButton";
+            this.ChangePermissionButton.Size = new System.Drawing.Size(120, 51);
+            this.ChangePermissionButton.TabIndex = 35;
+            this.ChangePermissionButton.Text = "Ch. permis.";
+            this.ChangePermissionButton.UseVisualStyleBackColor = true;
+            this.ChangePermissionButton.Click += new System.EventHandler(this.ChangePermissionButton_Click);
+            // 
+            // AddPermissionButton
+            // 
+            this.AddPermissionButton.Location = new System.Drawing.Point(1143, 60);
+            this.AddPermissionButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.AddPermissionButton.Name = "AddPermissionButton";
+            this.AddPermissionButton.Size = new System.Drawing.Size(120, 51);
+            this.AddPermissionButton.TabIndex = 34;
+            this.AddPermissionButton.Text = "Add permis.";
+            this.AddPermissionButton.UseVisualStyleBackColor = true;
+            this.AddPermissionButton.Click += new System.EventHandler(this.AddPermissionButton_Click);
+            // 
+            // GetPermissionsButton
+            // 
+            this.GetPermissionsButton.Location = new System.Drawing.Point(1143, 5);
+            this.GetPermissionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.GetPermissionsButton.Name = "GetPermissionsButton";
+            this.GetPermissionsButton.Size = new System.Drawing.Size(120, 51);
+            this.GetPermissionsButton.TabIndex = 33;
+            this.GetPermissionsButton.Text = "Get permis.";
+            this.GetPermissionsButton.UseVisualStyleBackColor = true;
+            this.GetPermissionsButton.Click += new System.EventHandler(this.GetPermissionsButton_Click);
             // 
             // RootSiteButton
             // 
@@ -282,7 +338,7 @@
             // 
             // RenameButton
             // 
-            this.RenameButton.Location = new System.Drawing.Point(386, 115);
+            this.RenameButton.Location = new System.Drawing.Point(764, 170);
             this.RenameButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RenameButton.Name = "RenameButton";
             this.RenameButton.Size = new System.Drawing.Size(120, 51);
@@ -293,7 +349,7 @@
             // 
             // MoveButton
             // 
-            this.MoveButton.Location = new System.Drawing.Point(764, 115);
+            this.MoveButton.Location = new System.Drawing.Point(764, 5);
             this.MoveButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MoveButton.Name = "MoveButton";
             this.MoveButton.Size = new System.Drawing.Size(120, 51);
@@ -304,7 +360,7 @@
             // 
             // CopyButton
             // 
-            this.CopyButton.Location = new System.Drawing.Point(638, 115);
+            this.CopyButton.Location = new System.Drawing.Point(764, 61);
             this.CopyButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CopyButton.Name = "CopyButton";
             this.CopyButton.Size = new System.Drawing.Size(120, 51);
@@ -315,7 +371,7 @@
             // 
             // DownloadToButton
             // 
-            this.DownloadToButton.Location = new System.Drawing.Point(512, 60);
+            this.DownloadToButton.Location = new System.Drawing.Point(386, 61);
             this.DownloadToButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.DownloadToButton.Name = "DownloadToButton";
             this.DownloadToButton.Size = new System.Drawing.Size(120, 51);
@@ -326,7 +382,7 @@
             // 
             // ShareButton
             // 
-            this.ShareButton.Location = new System.Drawing.Point(764, 5);
+            this.ShareButton.Location = new System.Drawing.Point(890, 61);
             this.ShareButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ShareButton.Name = "ShareButton";
             this.ShareButton.Size = new System.Drawing.Size(120, 51);
@@ -337,7 +393,7 @@
             // 
             // CreateFolderButton
             // 
-            this.CreateFolderButton.Location = new System.Drawing.Point(764, 60);
+            this.CreateFolderButton.Location = new System.Drawing.Point(386, 172);
             this.CreateFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CreateFolderButton.Name = "CreateFolderButton";
             this.CreateFolderButton.Size = new System.Drawing.Size(120, 51);
@@ -348,7 +404,7 @@
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Location = new System.Drawing.Point(638, 5);
+            this.DeleteButton.Location = new System.Drawing.Point(764, 116);
             this.DeleteButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(120, 51);
@@ -359,7 +415,7 @@
             // 
             // SearchButton
             // 
-            this.SearchButton.Location = new System.Drawing.Point(638, 60);
+            this.SearchButton.Location = new System.Drawing.Point(8, 172);
             this.SearchButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(120, 51);
@@ -370,7 +426,7 @@
             // 
             // DownloadButton
             // 
-            this.DownloadButton.Location = new System.Drawing.Point(512, 5);
+            this.DownloadButton.Location = new System.Drawing.Point(386, 5);
             this.DownloadButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.DownloadButton.Name = "DownloadButton";
             this.DownloadButton.Size = new System.Drawing.Size(120, 51);
@@ -381,7 +437,7 @@
             // 
             // GetByIdButton
             // 
-            this.GetByIdButton.Location = new System.Drawing.Point(386, 61);
+            this.GetByIdButton.Location = new System.Drawing.Point(8, 115);
             this.GetByIdButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetByIdButton.Name = "GetByIdButton";
             this.GetByIdButton.Size = new System.Drawing.Size(120, 51);
@@ -392,7 +448,7 @@
             // 
             // GetByPathButton
             // 
-            this.GetByPathButton.Location = new System.Drawing.Point(386, 5);
+            this.GetByPathButton.Location = new System.Drawing.Point(8, 61);
             this.GetByPathButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetByPathButton.Name = "GetByPathButton";
             this.GetByPathButton.Size = new System.Drawing.Size(120, 51);
@@ -403,7 +459,7 @@
             // 
             // UploadButton
             // 
-            this.UploadButton.Location = new System.Drawing.Point(512, 115);
+            this.UploadButton.Location = new System.Drawing.Point(386, 115);
             this.UploadButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UploadButton.Name = "UploadButton";
             this.UploadButton.Size = new System.Drawing.Size(120, 51);
@@ -447,7 +503,7 @@
             // 
             // GetDocumentsButton
             // 
-            this.GetDocumentsButton.Location = new System.Drawing.Point(134, 115);
+            this.GetDocumentsButton.Location = new System.Drawing.Point(260, 170);
             this.GetDocumentsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.GetDocumentsButton.Name = "GetDocumentsButton";
             this.GetDocumentsButton.Size = new System.Drawing.Size(120, 51);
@@ -492,7 +548,7 @@
             // UseProxyCheckBox
             // 
             this.UseProxyCheckBox.AutoSize = true;
-            this.UseProxyCheckBox.Location = new System.Drawing.Point(18, 71);
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(19, 140);
             this.UseProxyCheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UseProxyCheckBox.Name = "UseProxyCheckBox";
             this.UseProxyCheckBox.Size = new System.Drawing.Size(106, 24);
@@ -513,58 +569,83 @@
             this.OneDriveTypeCombo.Location = new System.Drawing.Point(17, 15);
             this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OneDriveTypeCombo.Name = "OneDriveTypeCombo";
-            this.OneDriveTypeCombo.Size = new System.Drawing.Size(300, 28);
+            this.OneDriveTypeCombo.Size = new System.Drawing.Size(289, 28);
             this.OneDriveTypeCombo.TabIndex = 19;
             // 
-            // GetPermissionsButton
+            // GetAppFolderMetadataButton
             // 
-            this.GetPermissionsButton.Location = new System.Drawing.Point(890, 61);
-            this.GetPermissionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.GetPermissionsButton.Name = "GetPermissionsButton";
-            this.GetPermissionsButton.Size = new System.Drawing.Size(120, 51);
-            this.GetPermissionsButton.TabIndex = 33;
-            this.GetPermissionsButton.Text = "Get permis.";
-            this.GetPermissionsButton.UseVisualStyleBackColor = true;
-            this.GetPermissionsButton.Click += new System.EventHandler(this.GetPermissionsButton_Click);
+            this.GetAppFolderMetadataButton.Location = new System.Drawing.Point(512, 5);
+            this.GetAppFolderMetadataButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.GetAppFolderMetadataButton.Name = "GetAppFolderMetadataButton";
+            this.GetAppFolderMetadataButton.Size = new System.Drawing.Size(120, 51);
+            this.GetAppFolderMetadataButton.TabIndex = 37;
+            this.GetAppFolderMetadataButton.Text = "AppFol. Meta";
+            this.GetAppFolderMetadataButton.UseVisualStyleBackColor = true;
+            this.GetAppFolderMetadataButton.Click += new System.EventHandler(this.GetAppFolderMetadataButton_Click);
             // 
-            // AddPermissionButton
+            // GetAppFolderFilesButton
             // 
-            this.AddPermissionButton.Location = new System.Drawing.Point(890, 115);
-            this.AddPermissionButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.AddPermissionButton.Name = "AddPermissionButton";
-            this.AddPermissionButton.Size = new System.Drawing.Size(120, 51);
-            this.AddPermissionButton.TabIndex = 34;
-            this.AddPermissionButton.Text = "Add permis.";
-            this.AddPermissionButton.UseVisualStyleBackColor = true;
-            this.AddPermissionButton.Click += new System.EventHandler(this.AddPermissionButton_Click);
+            this.GetAppFolderFilesButton.Location = new System.Drawing.Point(512, 61);
+            this.GetAppFolderFilesButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.GetAppFolderFilesButton.Name = "GetAppFolderFilesButton";
+            this.GetAppFolderFilesButton.Size = new System.Drawing.Size(120, 51);
+            this.GetAppFolderFilesButton.TabIndex = 38;
+            this.GetAppFolderFilesButton.Text = "AppFol. Files";
+            this.GetAppFolderFilesButton.UseVisualStyleBackColor = true;
+            this.GetAppFolderFilesButton.Click += new System.EventHandler(this.GetAppFolderFilesButton_Click);
             // 
-            // ChangePermissionButton
+            // AppFolderCreateFolderButton
             // 
-            this.ChangePermissionButton.Location = new System.Drawing.Point(1016, 115);
-            this.ChangePermissionButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ChangePermissionButton.Name = "ChangePermissionButton";
-            this.ChangePermissionButton.Size = new System.Drawing.Size(120, 51);
-            this.ChangePermissionButton.TabIndex = 35;
-            this.ChangePermissionButton.Text = "Ch. permis.";
-            this.ChangePermissionButton.UseVisualStyleBackColor = true;
-            this.ChangePermissionButton.Click += new System.EventHandler(this.ChangePermissionButton_Click);
+            this.AppFolderCreateFolderButton.Location = new System.Drawing.Point(512, 117);
+            this.AppFolderCreateFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.AppFolderCreateFolderButton.Name = "AppFolderCreateFolderButton";
+            this.AppFolderCreateFolderButton.Size = new System.Drawing.Size(120, 51);
+            this.AppFolderCreateFolderButton.TabIndex = 39;
+            this.AppFolderCreateFolderButton.Tag = "";
+            this.AppFolderCreateFolderButton.Text = "AppFl. N Fold";
+            this.AppFolderCreateFolderButton.UseVisualStyleBackColor = true;
+            this.AppFolderCreateFolderButton.Click += new System.EventHandler(this.AppFolderCreateFolderButton_Click);
             // 
-            // RemovePermissionsButton
+            // UploadToAppFolderButton
             // 
-            this.RemovePermissionsButton.Location = new System.Drawing.Point(1016, 60);
-            this.RemovePermissionsButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.RemovePermissionsButton.Name = "RemovePermissionsButton";
-            this.RemovePermissionsButton.Size = new System.Drawing.Size(120, 51);
-            this.RemovePermissionsButton.TabIndex = 36;
-            this.RemovePermissionsButton.Text = "Rem. permis.";
-            this.RemovePermissionsButton.UseVisualStyleBackColor = true;
-            this.RemovePermissionsButton.Click += new System.EventHandler(this.RemovePermissionsButton_Click);
+            this.UploadToAppFolderButton.Location = new System.Drawing.Point(638, 5);
+            this.UploadToAppFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.UploadToAppFolderButton.Name = "UploadToAppFolderButton";
+            this.UploadToAppFolderButton.Size = new System.Drawing.Size(120, 51);
+            this.UploadToAppFolderButton.TabIndex = 40;
+            this.UploadToAppFolderButton.Tag = "Create a new folder inside the AppFolder";
+            this.UploadToAppFolderButton.Text = "AppFol. Upl.";
+            this.UploadToAppFolderButton.UseVisualStyleBackColor = true;
+            this.UploadToAppFolderButton.Click += new System.EventHandler(this.UploadToAppFolderButton_Click);
+            // 
+            // DownloadFromAppFolderButton
+            // 
+            this.DownloadFromAppFolderButton.Location = new System.Drawing.Point(638, 61);
+            this.DownloadFromAppFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.DownloadFromAppFolderButton.Name = "DownloadFromAppFolderButton";
+            this.DownloadFromAppFolderButton.Size = new System.Drawing.Size(120, 51);
+            this.DownloadFromAppFolderButton.TabIndex = 41;
+            this.DownloadFromAppFolderButton.Tag = "Create a new folder inside the AppFolder";
+            this.DownloadFromAppFolderButton.Text = "AppFl. Downl";
+            this.DownloadFromAppFolderButton.UseVisualStyleBackColor = true;
+            this.DownloadFromAppFolderButton.Click += new System.EventHandler(this.DownloadFromAppFolderButton_Click);
+            // 
+            // GetFilesInFolderInAppFolderButton
+            // 
+            this.GetFilesInFolderInAppFolderButton.Location = new System.Drawing.Point(512, 172);
+            this.GetFilesInFolderInAppFolderButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.GetFilesInFolderInAppFolderButton.Name = "GetFilesInFolderInAppFolderButton";
+            this.GetFilesInFolderInAppFolderButton.Size = new System.Drawing.Size(120, 51);
+            this.GetFilesInFolderInAppFolderButton.TabIndex = 42;
+            this.GetFilesInFolderInAppFolderButton.Text = "AppFl. Fil in F";
+            this.GetFilesInFolderInAppFolderButton.UseVisualStyleBackColor = true;
+            this.GetFilesInFolderInAppFolderButton.Click += new System.EventHandler(this.GetFilesInFolderInAppFolderButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1612, 951);
+            this.ClientSize = new System.Drawing.Size(1616, 951);
             this.Controls.Add(this.OneDriveTypeCombo);
             this.Controls.Add(this.UseProxyCheckBox);
             this.Controls.Add(this.AccessTokenValidLabel);
@@ -587,6 +668,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OneDrive API Test";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.OneDriveCommandsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -637,6 +719,12 @@
         private System.Windows.Forms.Button AddPermissionButton;
         private System.Windows.Forms.Button ChangePermissionButton;
         private System.Windows.Forms.Button RemovePermissionsButton;
+        private System.Windows.Forms.Button GetAppFolderMetadataButton;
+        private System.Windows.Forms.Button GetAppFolderFilesButton;
+        private System.Windows.Forms.Button AppFolderCreateFolderButton;
+        private System.Windows.Forms.Button UploadToAppFolderButton;
+        private System.Windows.Forms.Button DownloadFromAppFolderButton;
+        private System.Windows.Forms.Button GetFilesInFolderInAppFolderButton;
     }
 }
 

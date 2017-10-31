@@ -7,6 +7,7 @@ using KoenZomers.OneDrive.Api.Helpers;
 using System.Collections.Generic;
 using System.Net.Http;
 using KoenZomers.OneDrive.Api.Enums;
+using System.IO;
 
 namespace KoenZomers.OneDrive.Api
 {
@@ -157,53 +158,6 @@ namespace KoenZomers.OneDrive.Api
         #endregion
 
         #region Public Methods - Graph API Only
-
-        /// <summary>
-        /// Returns all the items that have been shared by others with the current user
-        /// </summary>
-        /// <returns>Collection with items that have been shared by others with the current user</returns>
-        public override async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
-        {
-            var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/sharedWithMe");
-            return oneDriveItems;
-        }
-
-        /// <summary>
-        /// Searches for items on OneDrive with the provided query
-        /// </summary>
-        /// <param name="query">Search query to use</param>
-        /// <returns>All OneDrive items resulting from the search</returns>
-        public override async Task<IList<OneDriveItem>> Search(string query)
-        {
-            return await base.SearchInternal($"drive/root/search(q='{query}')");
-        }
-
-        /// <summary>
-        /// Sends a HTTP POST to OneDrive to copy an item on OneDrive
-        /// </summary>
-        /// <param name="oneDriveSource">The OneDrive Item to be copied</param>
-        /// <param name="oneDriveDestinationParent">The OneDrive parent item to copy the item into</param>
-        /// <param name="destinationName">The name of the item at the destination where it will be copied to</param>
-        /// <returns>True if successful, false if failed</returns>
-        protected override async Task<bool> CopyItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent, string destinationName)
-        {
-            // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id, "/copy");
-
-            // Construct the OneDriveParentItemReference entity with the item to be copied details
-            var requestBody = new OneDriveParentItemReference
-            {
-                ParentReference = new OneDriveItemReference
-                {
-                    Id = oneDriveDestinationParent.Id
-                },
-                Name = destinationName
-            };
-
-            // Call the OneDrive webservice
-            var result = await SendMessageReturnBool(requestBody, HttpMethod.Post, completeUrl, HttpStatusCode.Accepted, true);
-            return result;
-        }
 
         #region Sharing
 
@@ -471,6 +425,285 @@ namespace KoenZomers.OneDrive.Api
 
         #endregion
 
+        #region AppFolder commands
+
+        #region Retrieving data from the AppFolder
+
+        /// <summary>
+        /// Gets the AppFolder root its metadata
+        /// </summary>
+        /// <returns>OneDriveItem object with the information about the current App Registration its AppFolder</returns>
+        public async Task<OneDriveItem> GetAppFolderMetadata()
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/special/approot");
+
+            var result = await SendMessageReturnOneDriveItem<OneDriveItem>(string.Empty, HttpMethod.Get, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the first batch of the files in the AppFolder
+        /// </summary>
+        /// <returns>Collection with OneDriveItem objects one for each file in the the current App Registration its AppFolder</returns>
+        public async Task<OneDriveItemCollection> GetAppFolderChildren()
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/special/approot/children");
+
+            var result = await SendMessageReturnOneDriveItem<OneDriveItemCollection>(string.Empty, HttpMethod.Get, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Gets all files in the AppFolder
+        /// </summary>
+        /// <returns>Collection with OneDriveItem objects one for each file in the the current App Registration its AppFolder</returns>
+        public async Task<OneDriveItem[]> GetAllAppFolderChildren()
+        {
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/special/approot/children");
+
+            var result = await GetAllChildrenInternal(completeUrl);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a folder in the AppFolder
+        /// </summary>
+        /// <param name="folderName">Name of the folder to create within the AppFolder</param>
+        /// <returns>OneDriveItem object representing the newly created folder inside the AppFolder</returns>
+        public async Task<OneDriveItem> CreateAppFolderFolder(string folderName)
+        {
+            var result = await CreateFolderInternal("drive/special/approot/children", folderName);
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the folder with the provided name from the AppFolder or creates it if it doesn't exist yet
+        /// </summary>
+        /// <param name="folderName">Name of the folder to retrieve or create within the AppFolder</param>
+        /// <returns>OneDriveItem object representing the requested folder inside the AppFolder</returns>
+        public async Task<OneDriveItem> GetAppFolderFolderOrCreate(string folderName)
+        {
+            // Try to get the folder
+            var folder = await GetData<OneDriveItem>(string.Concat("drive/special/approot/children/", folderName));
+
+            if (folder != null)
+            {
+                // Folder found, return it
+                return folder;
+            }
+
+            // Folder not found, create it
+            return await CreateAppFolderFolder(folderName);
+        }
+
+        #endregion
+
+        #region Uploading files to AppFolder
+
+        /// <summary>
+        /// Uploads the provided file to the AppFolder on OneDrive keeping the original filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolder(string filePath)
+        {
+            return await UploadFileToAppFolderAs(filePath, null);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to the AppFolder on OneDrive using the provided filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderAs(string filePath, string fileName)
+        {
+            if (!File.Exists(filePath))
+            {
+                throw new ArgumentException("Provided file could not be found", nameof(filePath));
+            }
+
+            // Get a reference to the file to upload
+            var fileToUpload = new FileInfo(filePath);
+
+            // If no filename has been provided, use the same filename as the original file has
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = fileToUpload.Name;
+            }
+
+            // Verify if the filename does not contain any for OneDrive illegal characters
+            if (!ValidFilename(fileName))
+            {
+                throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(filePath));
+            }
+
+            // Verify which upload method should be used
+            if (fileToUpload.Length <= MaximumBasicFileUploadSizeInBytes)
+            {
+                // Use the basic upload method                
+                return await UploadFileToAppFolderViaSimpleUpload(fileToUpload, fileName);
+            }
+
+            // Use the resumable upload method
+            return await UploadFileToAppFolderViaResumableUpload(fileToUpload, fileName);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to the AppFolder on OneDrive using the provided filename
+        /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public virtual async Task<OneDriveItem> UploadFileToAppFolderAs(Stream fileStream, string fileName)
+        {
+            if (fileStream == null || fileStream == Stream.Null)
+            {
+                throw new ArgumentNullException(nameof(fileStream));
+            }
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+
+            // Verify if the filename does not contain any for OneDrive illegal characters
+            if (!ValidFilename(fileName))
+            {
+                throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(fileName));
+            }
+
+            // Verify which upload method should be used
+            if (fileStream.Length <= MaximumBasicFileUploadSizeInBytes)
+            {
+                // Use the basic upload method                
+                return await UploadFileToAppFolderViaSimpleUpload(fileStream, fileName);
+            }
+
+            // Use the resumable upload method
+            return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName);
+        }
+
+        /// <summary>
+        /// Performs a file upload to the AppFolder on OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+        /// </summary>
+        /// <param name="file">File reference to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <returns>The resulting OneDrive item representing the uploaded file</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderViaSimpleUpload(FileInfo file, string fileName)
+        {
+            // Read the file to upload
+            using (var fileStream = file.OpenRead())
+            {
+                return await UploadFileToAppFolderViaSimpleUpload(fileStream, fileName);
+            }
+        }
+
+        /// <summary>
+        /// Performs a file upload to the AppFolder on OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+        /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <returns>The resulting OneDrive item representing the uploaded file</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderViaSimpleUpload(Stream fileStream, string fileName)
+        {
+            // Construct the complete URL to call
+            var oneDriveUrl = string.Concat(OneDriveApiBaseUrl, "drive/special/approot:/", fileName, ":/content");
+
+            return await UploadFileViaSimpleUploadInternal(fileStream, oneDriveUrl);
+        }
+
+        /// <summary>
+        /// Initiates a resumable upload session to the AppFolder on OneDrive. It doesn't perform the actual upload yet.
+        /// </summary>
+        /// <param name="fileName">Filename to store the uploaded content under</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        protected async Task<OneDriveUploadSession> CreateResumableUploadSessionForAppFolder(string fileName)
+        {
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/special/approot:/", fileName, ":/createUploadSession");
+            return await CreateResumableUploadSessionInternal(completeUrl);
+        }
+
+        /// <summary>
+        /// Uploads a file to the AppFolder on OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="file">FileInfo instance pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <returns></returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(FileInfo file, string fileName, short fragmentSizeInKiloByte = 5000)
+        {
+            // Open the source file for reading
+            using (var fileStream = file.OpenRead())
+            {
+                return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName, fragmentSizeInKiloByte);
+            }
+        }
+
+        /// <summary>
+        /// Uploads a file to the AppFolder on OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="fileStream">Stream pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(Stream fileStream, string fileName, short fragmentSizeInKiloByte = 5000)
+        {
+            var oneDriveUploadSession = await CreateResumableUploadSessionForAppFolder(fileName);
+            return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInKiloByte);
+        }
+
+        #endregion
+
+        #endregion
+
+        /// <summary>
+        /// Returns all the items that have been shared by others with the current user
+        /// </summary>
+        /// <returns>Collection with items that have been shared by others with the current user</returns>
+        public override async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
+        {
+            var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/sharedWithMe");
+            return oneDriveItems;
+        }
+
+        /// <summary>
+        /// Searches for items on OneDrive with the provided query
+        /// </summary>
+        /// <param name="query">Search query to use</param>
+        /// <returns>All OneDrive items resulting from the search</returns>
+        public override async Task<IList<OneDriveItem>> Search(string query)
+        {
+            return await base.SearchInternal($"drive/root/search(q='{query}')");
+        }
+
+        /// <summary>
+        /// Sends a HTTP POST to OneDrive to copy an item on OneDrive
+        /// </summary>
+        /// <param name="oneDriveSource">The OneDrive Item to be copied</param>
+        /// <param name="oneDriveDestinationParent">The OneDrive parent item to copy the item into</param>
+        /// <param name="destinationName">The name of the item at the destination where it will be copied to</param>
+        /// <returns>True if successful, false if failed</returns>
+        protected override async Task<bool> CopyItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent, string destinationName)
+        {
+            // Construct the complete URL to call
+            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id, "/copy");
+
+            // Construct the OneDriveParentItemReference entity with the item to be copied details
+            var requestBody = new OneDriveParentItemReference
+            {
+                ParentReference = new OneDriveItemReference
+                {
+                    Id = oneDriveDestinationParent.Id
+                },
+                Name = destinationName
+            };
+
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnBool(requestBody, HttpMethod.Post, completeUrl, HttpStatusCode.Accepted, true);
+            return result;
+        }
+
         /// <summary>
         /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
         /// </summary>
@@ -481,7 +714,16 @@ namespace KoenZomers.OneDrive.Api
         {
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
+            return await CreateResumableUploadSessionInternal(completeUrl);
+        }
 
+        /// <summary>
+        /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+        /// </summary>
+        /// <param name="oneDriveUrl">Complete URL to call to create the resumable upload session</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        protected async Task<OneDriveUploadSession> CreateResumableUploadSessionInternal(string oneDriveUrl)
+        {
             // Construct the OneDriveUploadSessionItemContainer entity with the upload details
             // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
             var uploadItemContainer = new OneDriveUploadSessionItemContainer
@@ -493,7 +735,7 @@ namespace KoenZomers.OneDrive.Api
             };
 
             // Call the OneDrive webservice
-            var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, oneDriveUrl, HttpStatusCode.OK);
             return result;
         }
 
