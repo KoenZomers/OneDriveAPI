@@ -1557,11 +1557,11 @@ namespace KoenZomers.OneDrive.Api
             {
                 UseDefaultCredentials = ProxyCredential == null,
                 UseProxy = ProxyConfiguration != null,
-                Proxy = ProxyConfiguration,
-                //Credentials = ProxyCredential
+                Proxy = ProxyConfiguration
             };
 
-            if (ProxyCredential != null)
+            // Check if we need specific credentials for the proxy
+            if (ProxyCredential != null && httpClientHandler.Proxy != null)
             {
                 httpClientHandler.Proxy.Credentials = ProxyCredential;
             }

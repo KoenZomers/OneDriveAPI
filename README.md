@@ -65,6 +65,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.0.3.1 - December 31, 2017
+
+- Bugfix: when you would provide proxy credentials but not a proxy server, the API would throw an exception when trying to connect
+
 2.0.3.0 - October 31, 2017
 
 - Added the following methods to work with [AppFolders](https://docs.microsoft.com/en-us/onedrive/developer/rest-api/concepts/special-folders-appfolder): GetAppFolderMetadata, GetAppFolderChildren, GetAllAppFolderChildren, CreateAppFolderFolder, GetAppFolderFolderOrCreate, UploadFileToAppFolder, UploadFileToAppFolderAs, UploadFileToAppFolderViaSimpleUpload, UploadFileToAppFolderViaResumableUpload. All of these only work when connecting through the Graph API. To download files from the AppFolder, you can use the regular DownloadItem methods. To upload a file to a subfolder of the AppFolder you can use the regular UploadFile methods.
