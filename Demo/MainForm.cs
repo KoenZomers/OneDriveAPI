@@ -36,9 +36,9 @@ namespace AuthenticatorApp
             _configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             RefreshToken = _configuration.AppSettings.Settings["OneDriveApiRefreshToken"].Value;
-
             RefreshTokenTextBox.Text = RefreshToken;
-            OneDriveTypeCombo.SelectedIndex = 0;
+
+            SharePointSiteUrlTextBox.Text = _configuration.AppSettings.Settings["SharePointApiSiteUri"].Value;            
         }
 
         /// <summary>
@@ -64,6 +64,10 @@ namespace AuthenticatorApp
                 case 2:
                     OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
                     break;
+
+                case 3:
+                    OneDriveApi = new SharePointApi(_configuration.AppSettings.Settings["SharePointApiClientID"].Value, _configuration.AppSettings.Settings["SharePointApiClientSecret"].Value, new Uri(SharePointSiteUrlTextBox.Text));
+                    break;
             }
 
             OneDriveApi.ProxyConfiguration = UseProxyCheckBox.Checked ? System.Net.WebRequest.DefaultWebProxy : null;
@@ -72,7 +76,7 @@ namespace AuthenticatorApp
         private void MainForm_Load(object sender, EventArgs e)
         {
             // Make the Graph API the default choice
-            OneDriveTypeCombo.SelectedIndex = OneDriveTypeCombo.Items.Count - 1;
+            OneDriveTypeCombo.SelectedIndex = 2;
         }
 
         private async void AuthenticationBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
@@ -644,6 +648,11 @@ namespace AuthenticatorApp
             {
                 JsonResultTextBox.Text = "No folder found in the AppFolder root";
             }
+        }
+
+        private void OneDriveTypeCombo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SharePointSiteUrlTextBox.Enabled = OneDriveTypeCombo.SelectedIndex == 3;
         }
     }
 }
