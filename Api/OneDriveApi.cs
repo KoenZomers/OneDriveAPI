@@ -395,7 +395,21 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
         public virtual async Task<OneDriveItemCollection> GetChildrenByParentItem(OneDriveItem item)
         {
-            return await GetData<OneDriveItemCollection>(string.Concat("drive/items/", item.Id, "/children"));
+            // Construct the complete URL to call
+            string completeUrl;
+            if (item.RemoteItem != null)
+            {
+                // Item to get the children from is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
+            }
+
+            else
+            {
+                // Item to get the children from resides on the current user its drive
+                completeUrl = string.Concat("drive/items/", item.Id, "/children");
+            }
+
+            return await GetData<OneDriveItemCollection>(completeUrl);
         }
 
         /// <summary>
@@ -405,7 +419,21 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem array containing all items in the requested folder</returns>
         public virtual async Task<OneDriveItem[]> GetAllChildrenByParentItem(OneDriveItem item)
         {
-            return await GetAllChildrenInternal(string.Concat("drive/items/", item.Id, "/children"));
+            // Construct the complete URL to call
+            string completeUrl;
+            if (item.RemoteItem != null)
+            {
+                // Item to get the children from is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
+            }
+
+            else
+            {
+                // Item to get the children from resides on the current user its drive
+                completeUrl = string.Concat("drive/items/", item.Id, "/children");
+            }
+
+            return await GetAllChildrenInternal(completeUrl);
         }
 
         /// <summary>
@@ -607,7 +635,21 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="oneDriveItem">The OneDriveItem reference to delete from OneDrive</param>
         public virtual async Task<bool> Delete(OneDriveItem oneDriveItem)
         {
-            return await DeleteItemInternal(string.Concat("drive/items/", oneDriveItem.Id));
+            // Construct the complete URL to call
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item to delete is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id);
+            }
+
+            else
+            {
+                // Item to delete resides on the current user its drive
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id);
+            }
+
+            return await DeleteItemInternal(completeUrl);
         }
 
         /// <summary>
@@ -940,7 +982,21 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
         public virtual async Task<OneDriveItem> CreateFolder(OneDriveItem parentItem, string folderName)
         {
-            return await CreateFolderInternal(string.Concat("drive/items/", parentItem.Id, "/children"), folderName);
+            // Construct the complete URL to call
+            string completeUrl;
+            if (parentItem.RemoteItem != null)
+            {
+                // Item where to create a new folder is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", parentItem.RemoteItem.ParentReference.DriveId, "/items/", parentItem.RemoteItem.Id, "/children");
+            }
+
+            else
+            {
+                // Item where to create a new folder resides on the current user its drive
+                completeUrl = string.Concat("drive/items/", parentItem.Id, "/children");
+            }
+
+            return await CreateFolderInternal(completeUrl, folderName);
         }
 
         /// <summary>
@@ -1474,14 +1530,26 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<bool> CopyItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent, string destinationName)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id, "/action.copy");
+            string completeUrl;
+            if (oneDriveSource.RemoteItem != null)
+            {
+                // Item to copy is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id, "/action.copy");
+            }
+
+            else
+            {
+                // Item to copy resides on the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id, "/action.copy");
+            }
 
             // Construct the OneDriveParentItemReference entity with the item to be copied details
             var requestBody = new OneDriveParentItemReference
             {
                 ParentReference = new OneDriveItemReference
                 {
-                    Id = oneDriveDestinationParent.Id
+                    Id = oneDriveDestinationParent.Id,
+                    DriveId = oneDriveDestinationParent.ParentReference.DriveId
                 },
                 Name = destinationName
             };
@@ -1500,14 +1568,26 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<bool> MoveItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id);
+            string completeUrl;
+            if (oneDriveSource.RemoteItem != null)
+            {
+                // Item to copy is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id);
+            }
+
+            else
+            {
+                // Item to copy resides on the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id);
+            }
 
             // Construct the OneDriveParentItemReference entity with the item to be moved details
             var requestBody = new OneDriveParentItemReference
             {
                 ParentReference = new OneDriveItemReference
                 {
-                    Id = oneDriveDestinationParent.Id
+                    Id = oneDriveDestinationParent.Id,
+                    DriveId = oneDriveDestinationParent.ParentReference.DriveId
                 },
             };
 
@@ -1525,7 +1605,18 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<bool> RenameItemInternal(OneDriveItem oneDriveSource, string name)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id);
+            string completeUrl;
+            if (oneDriveSource.RemoteItem != null)
+            {
+                // Item to copy is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id);
+            }
+
+            else
+            {
+                // Item to copy resides on the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id);
+            }
 
             // Construct the OneDriveItem entity with the item to be renamed details
             var requestBody = new OneDriveItem
