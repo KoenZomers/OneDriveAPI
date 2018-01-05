@@ -791,9 +791,21 @@ namespace KoenZomers.OneDrive.Api
             // Construct the complete URL to call
             var completeUrl = url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? url : string.Concat(GraphApiBaseUrl, url);
 
-            // Call the OneDrive webservice
-            var result = await SendMessageReturnOneDriveItem<T>("", HttpMethod.Get, completeUrl, HttpStatusCode.OK);
-            return result;
+            return await base.GetData<T>(completeUrl);
+        }
+
+        /// <summary>
+        /// Retrieves data from the OneDrive API
+        /// </summary>
+        /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
+        /// <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
+        /// <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
+        protected override async Task<T> GetData<T>(string url)
+        {
+            // If the request starts with drives/, it should get the Graph API URL without me in front of it
+            var completeUrl = url.StartsWith("drives/", StringComparison.InvariantCultureIgnoreCase) ? string.Concat(GraphApiBaseUrl, url) : url;
+
+            return await base.GetData<T>(completeUrl);
         }
 
         #endregion

@@ -400,7 +400,7 @@ namespace KoenZomers.OneDrive.Api
             if (item.RemoteItem != null)
             {
                 // Item to get the children from is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
+                completeUrl = string.Concat("drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
             }
 
             else
@@ -424,7 +424,7 @@ namespace KoenZomers.OneDrive.Api
             if (item.RemoteItem != null)
             {
                 // Item to get the children from is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
+                completeUrl = string.Concat("drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
             }
 
             else
@@ -640,7 +640,7 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveItem.RemoteItem != null)
             {
                 // Item to delete is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id);
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id);
             }
 
             else
@@ -987,7 +987,7 @@ namespace KoenZomers.OneDrive.Api
             if (parentItem.RemoteItem != null)
             {
                 // Item where to create a new folder is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", parentItem.RemoteItem.ParentReference.DriveId, "/items/", parentItem.RemoteItem.Id, "/children");
+                completeUrl = string.Concat("drives/", parentItem.RemoteItem.ParentReference.DriveId, "/items/", parentItem.RemoteItem.Id, "/children");
             }
 
             else
@@ -1495,7 +1495,7 @@ namespace KoenZomers.OneDrive.Api
         /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
         /// <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
         /// <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
-        protected async Task<T> GetData<T>(string url) where T : OneDriveItemBase
+        protected virtual async Task<T> GetData<T>(string url) where T : OneDriveItemBase
         {
             // Construct the complete URL to call
             var completeUrl = url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? url : string.Concat(OneDriveApiBaseUrl, url);
