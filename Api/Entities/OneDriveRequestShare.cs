@@ -12,5 +12,11 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// </summary>
         [JsonProperty("type")]
         public Enums.OneDriveLinkType SharingType { get; set; }
+
+        /// <summary>
+        /// Scope of the access to the shared item
+        /// </summary>
+        [JsonProperty("scope", NullValueHandling = NullValueHandling.Ignore)]
+        public Enums.OneDriveSharingScope? Scope { get; set; }
     }
 }

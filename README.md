@@ -65,6 +65,11 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.0.4.3 - January 5, 2018
+
+- Fixed issue with ShareItem methods returning NULL if the item was already shared
+- Added option to provide a OneDriveSharingScope to ShareItem when connecting through Graph API or to a OneDrive for Business to choose between an anonymous link or a link that only people in the same organisation can use. The scope is not supported with OneDrive Personal.
+
 2.0.4.2 - January 5, 2018
 
 - Fixed issues with some methods using /sites/ while prepedning /me

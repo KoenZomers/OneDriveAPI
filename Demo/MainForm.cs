@@ -363,7 +363,7 @@ namespace AuthenticatorApp
         /// </summary>
         private async void ShareButton_Click(object sender, EventArgs e)
         {
-            var data = await OneDriveApi.ShareItem("Test", OneDriveLinkType.Edit);
+            var data = await ((OneDriveGraphApi) OneDriveApi).ShareItem("Test", OneDriveLinkType.Edit, OneDriveSharingScope.Anonymous);
             JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 

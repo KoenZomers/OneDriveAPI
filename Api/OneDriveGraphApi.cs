@@ -184,6 +184,30 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
+        /// Shares a OneDrive item by creating an anonymous link to the item
+        /// </summary>
+        /// <param name="itemPath">The path to the OneDrive item to share</param>
+        /// <param name="linkType">Type of sharing to request</param>
+        /// <param name="scope">Scope defining who has access to the shared item</param>
+        /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
+        public async Task<OneDrivePermission> ShareItem(string itemPath, OneDriveLinkType linkType, OneDriveSharingScope scope)
+        {
+            return await ShareItemInternal(string.Concat("drive/root:/", itemPath, ":/createLink"), linkType, scope);
+        }
+
+        /// <summary>
+        /// Shares a OneDrive item by creating an anonymous link to the item
+        /// </summary>
+        /// <param name="item">The OneDrive item to share</param>
+        /// <param name="linkType">Type of sharing to request</param>
+        /// <param name="scope">Scope defining who has access to the shared item</param>
+        /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
+        public async Task<OneDrivePermission> ShareItem(OneDriveItem item, OneDriveLinkType linkType, OneDriveSharingScope scope)
+        {
+            return await ShareItemInternal(string.Concat("drive/items/", item.Id, "/createLink"), linkType, scope);
+        }
+
+        /// <summary>
         /// Returns all the items that have been shared by others with the current user
         /// </summary>
         /// <returns>Collection with items that have been shared by others with the current user</returns>

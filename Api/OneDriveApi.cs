@@ -1086,17 +1086,18 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="oneDriveRequestUrl">The OneDrive request url which creates the share</param>
         /// <param name="linkType">Type of sharing to request</param>
+        /// <param name="scope">Scope defining who has access to the shared item (not supported with OneDrive Personal)</param>
         /// <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        protected virtual async Task<OneDrivePermission> ShareItemInternal(string oneDriveRequestUrl, OneDriveLinkType linkType)
+        protected virtual async Task<OneDrivePermission> ShareItemInternal(string oneDriveRequestUrl, OneDriveLinkType linkType, OneDriveSharingScope? scope = null)
         {
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBaseUrl, oneDriveRequestUrl);
 
             // Construct the OneDriveRequestShare entity with the sharing details
-            var requestShare = new OneDriveRequestShare { SharingType = linkType };
+            var requestShare = new OneDriveRequestShare { SharingType = linkType, Scope = scope };
 
             // Call the OneDrive webservice
-            var result = await SendMessageReturnOneDriveItem<OneDrivePermission>(requestShare, HttpMethod.Post, completeUrl, HttpStatusCode.Created);
+            var result = await SendMessageReturnOneDriveItem<OneDrivePermission>(requestShare, HttpMethod.Post, completeUrl);
             return result;
         }
 
@@ -1689,7 +1690,7 @@ namespace KoenZomers.OneDrive.Api
         {
             using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url))
             {
-                if (expectedHttpStatusCode.HasValue && response != null && response.StatusCode == expectedHttpStatusCode.Value)
+                if (!expectedHttpStatusCode.HasValue || (expectedHttpStatusCode.HasValue && response != null && response.StatusCode == expectedHttpStatusCode.Value))
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
                     return responseString;

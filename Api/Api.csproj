@@ -111,6 +111,7 @@
     <Compile Include="Enums\OneDriveAsyncJobType.cs" />
     <Compile Include="Enums\OneDriveDriveType.cs" />
     <Compile Include="Enums\OneDriveKnownFolder.cs" />
+    <Compile Include="Enums\OneDriveSharingScope.cs" />
     <Compile Include="Enums\OneDriveLinkType.cs" />
     <Compile Include="Enums\OneDriveQuotaState.cs" />
     <Compile Include="Enums\OneDriveResyncLogic.cs" />
