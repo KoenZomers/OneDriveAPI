@@ -230,9 +230,9 @@ namespace KoenZomers.OneDrive.Api
         /// Returns all the items that have been shared by others through OneDrive for Business with the current user
         /// </summary>
         /// <returns>Collection with items that have been shared by others with the current user</returns>
-        public override async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
+        public override async Task<OneDriveItemCollection> GetSharedWithMe()
         {
-            var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/view.sharedWithMe");
+            var oneDriveItems = await GetData<OneDriveItemCollection>("drive/view.sharedWithMe");
             return oneDriveItems;
         }
 

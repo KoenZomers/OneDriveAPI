@@ -65,6 +65,12 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.0.4.0 - January 5, 2018
+
+- Added the following methods to get items from items shared from other drives: GetDrive, GetChildrenFromDriveByFolderId, GetAllChildrenFromDriveByFolderId, GetItemFromDriveById
+- Updated DownloadItem and all UploadItem methods to also work when providing a OneDriveItem which is retrieved through one of the above methods to download or upload an item residing on another drive
+- Breaking change: GetSharedWithMe now returns a collection of OneDriveItem entities instead of the OneDriveSharedWithMeItem type. The OneDriveSharedWithMeItem type is no longer being used.
+
 2.0.3.1 - December 31, 2017
 
 - Bugfix: when you would provide proxy credentials but not a proxy server, the API would throw an exception when trying to connect
