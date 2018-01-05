@@ -297,11 +297,29 @@ namespace KoenZomers.OneDrive.Api
         #region Public Methods - Getting content
 
         /// <summary>
-        /// Retrieves the OneDrive drive information
+        /// Retrieves the current OneDrive drive information
         /// </summary>
         public virtual async Task<OneDriveDrive> GetDrive()
         {
             return await GetData<OneDriveDrive>("drive");
+        }
+
+        /// <summary>
+        /// Retrieves the OneDrive drive information from the provided drive
+        /// </summary>
+        /// <param name="driveId">Id of the drive to retrieve</param>
+        public virtual async Task<OneDriveDrive> GetDrive(string driveId)
+        {
+            return await GetData<OneDriveDrive>($"drives/{driveId}");
+        }
+
+        /// <summary>
+        /// Retrieves the current OneDrive drive information from the provided drive
+        /// </summary>
+        /// <param name="drive">Drive to retrieve</param>
+        public virtual async Task<OneDriveDrive> GetDrive(OneDriveDrive drive)
+        {
+            return await GetDrive(drive.Id);
         }
 
         /// <summary>
@@ -453,13 +471,35 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Retrieves the OneDrive Item by it's unique identifier
+        /// Retrieves the OneDrive Item from the current drive by it's unique identifier
         /// </summary>
         /// <param name="id">Unique identifier of the OneDrive item to retrieve</param>
         /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
         public virtual async Task<OneDriveItem> GetItemById(string id)
         {
             return await GetData<OneDriveItem>(string.Concat("drive/items/", id));
+        }
+
+        /// <summary>
+        /// Retrieves the OneDrive Item from the provided drive by it's unique identifier
+        /// </summary>
+        /// <param name="id">Unique identifier of the OneDrive item to retrieve</param>
+        /// <param name="driveId">Id of the drive on which the item resides</param>
+        /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        public virtual async Task<OneDriveItem> GetItemFromDriveById(string id, string driveId)
+        {
+            return await GetData<OneDriveItem>(string.Concat("drives/", driveId, "/items/", id));
+        }
+
+        /// <summary>
+        /// Retrieves the OneDrive Item from the provided drive by it's unique identifier
+        /// </summary>
+        /// <param name="id">Unique identifier of the OneDrive item to retrieve</param>
+        /// <param name="drive">Drive on which the item resides</param>
+        /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        public virtual async Task<OneDriveItem> GetItemFromDriveById(string id, OneDriveDrive drive)
+        {
+            return await GetData<OneDriveItem>(string.Concat("drives/", drive.Id, "/items/", id));
         }
 
         /// <summary>
@@ -696,7 +736,18 @@ namespace KoenZomers.OneDrive.Api
         public virtual async Task<bool> DownloadItemAndSaveAs(OneDriveItem oneDriveItem, string saveAs)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item to download is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
+            }
+
+            else
+            {
+                // Item to download resides on the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+            }
 
             using (var stream = await DownloadItemInternal(oneDriveItem, completeUrl))
             {
@@ -727,7 +778,18 @@ namespace KoenZomers.OneDrive.Api
         public virtual async Task<Stream> DownloadItem(OneDriveItem oneDriveItem)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item to download is shared from another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
+            }
+
+            else
+            {
+                // Item to download resides on the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+            }
             return await DownloadItemInternal(oneDriveItem, completeUrl);
         }
 
@@ -907,10 +969,56 @@ namespace KoenZomers.OneDrive.Api
         /// Returns all the items that have been shared by others with the current user
         /// </summary>
         /// <returns>Collection with items that have been shared by others with the current user</returns>
-        public virtual async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
+        public virtual async Task<OneDriveItemCollection> GetSharedWithMe()
         {
-            var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/oneDrive.sharedWithMe");
+            var oneDriveItems = await GetData<OneDriveItemCollection>("drive/oneDrive.sharedWithMe");
             return oneDriveItems;
+        }
+
+        /// <summary>
+        /// Retrieves the first batch of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+        /// </summary>
+        /// <param name="folderId">Id of the folder to retrieve the items of</param>
+        /// <param name="driveId">Id of the drive on which the folder resides</param>
+        /// <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
+        public async Task<OneDriveItemCollection> GetChildrenFromDriveByFolderId(string driveId, string folderId)
+        {
+            var oneDriveItems = await GetData<OneDriveItemCollection>($"drives/{driveId}/items/{folderId}/children");
+            return oneDriveItems;
+        }
+
+        /// <summary>
+        /// Retrieves the first batch of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+        /// </summary>
+        /// <param name="folder">Folder to retrieve the items of</param>
+        /// <param name="drive">Drive on which the folder resides</param>
+        /// <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
+        public async Task<OneDriveItemCollection> GetChildrenFromDriveByFolderId(OneDriveDrive drive, OneDriveItem folder)
+        {
+            var oneDriveItems = await GetChildrenFromDriveByFolderId(drive.Id, folder.Id);
+            return oneDriveItems;
+        }
+
+        /// <summary>
+        /// Retrieves all the of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+        /// </summary>
+        /// <param name="folderId">Id of the folder to retrieve the items of</param>
+        /// <param name="driveId">Id of the drive on which the folder resides</param>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        public virtual async Task<OneDriveItem[]> GetAllChildrenFromDriveByFolderId(string driveId, string folderId)
+        {
+            return await GetAllChildrenInternal($"drives/{driveId}/items/{folderId}/children");
+        }
+
+        /// <summary>
+        /// Retrieves all the of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+        /// </summary>
+        /// <param name="folder">Folder to retrieve the items of</param>
+        /// <param name="drive">Drive on which the folder resides</param>
+        /// <returns>OneDriveItem array containing all items in the requested folder</returns>
+        public virtual async Task<OneDriveItem[]> GetAllChildrenFromDriveByFolderId(OneDriveDrive drive, OneDriveItem folder)
+        {
+            return await GetAllChildrenFromDriveByFolderId(drive.Id, folder.Id);
         }
 
         #endregion
@@ -1029,9 +1137,20 @@ namespace KoenZomers.OneDrive.Api
         public async Task<OneDriveItem> UploadFileViaSimpleUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem)
         {
             // Construct the complete URL to call
-            var oneDriveUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/children/", fileName, "/content");
+            }
 
-            return await UploadFileViaSimpleUploadInternal(fileStream, oneDriveUrl);
+            else
+            {
+                // Item will be uploaded to the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
+            }
+
+            return await UploadFileViaSimpleUploadInternal(fileStream, completeUrl);
         }
 
         /// <summary>
@@ -1152,7 +1271,18 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/upload.createSession");
+            }
+
+            else
+            {
+                // Item will be uploaded to the current user its drive
+                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
+            }
 
             // Construct the OneDriveUploadSessionItemContainer entity with the upload details
             // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive

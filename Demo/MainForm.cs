@@ -284,20 +284,31 @@ namespace AuthenticatorApp
         /// </summary>
         private async void DownloadButton_Click(object sender, EventArgs e)
         {
-            var item = await OneDriveApi.GetItem("Test.txt");
-            if (item != null)
+            // Retrieve the items in the root of the OneDrive
+            var items = await OneDriveApi.GetDriveRootChildren();
+
+            // Ensure there are items in the root of this OneDrive
+            if(items.Collection.Length == 0)
             {
-                using (var stream = await OneDriveApi.DownloadItem(item))
-                {
-                    using (var writer = new StreamReader(stream))
-                    {
-                        JsonResultTextBox.Text = await writer.ReadToEndAsync();
-                    }
-                }
+                JsonResultTextBox.Text = "OneDrive is empty, nothing to download";
+                return;
             }
-            else
+
+            // Find the first file of which its filename ends with .txt
+            var firstTextFileItem = items.Collection.FirstOrDefault(i => i.Name.EndsWith(".txt"));
+            if (firstTextFileItem == null)
             {
-                JsonResultTextBox.Text = "Unable to find Test.txt in the OneDrive root";
+                JsonResultTextBox.Text = "No .txt file found in the root of this OneDrive to download";
+                return;
+            }
+
+            // Download the .txt file and render its contents in the output window
+            using (var stream = await OneDriveApi.DownloadItem(firstTextFileItem))
+            {
+                using (var writer = new StreamReader(stream))
+                {
+                    JsonResultTextBox.Text = await writer.ReadToEndAsync();
+                }
             }
         }
 
@@ -645,6 +656,51 @@ namespace AuthenticatorApp
                 JsonResultTextBox.Text = "No folder found in the AppFolder root";
             }
         }
+
+        /// <summary>
+        /// Returns all OneDrive items in a folder on another drive that has been shared with the current user
+        /// </summary>
+        private async void GetChildrenFromOtherDriveButton_Click(object sender, EventArgs e)
+        {
+            // Retrieve the items shared with the current user
+            var sharedWithMe = await OneDriveApi.GetSharedWithMe();
+
+            // Check if any items are shared and if so if there's a shared folder among it
+            if(sharedWithMe.Collection.Length == 0)
+            {
+                JsonResultTextBox.Text = "No items are shared with this user";
+                return;
+            }
+            if(sharedWithMe.Collection.All(item => item.RemoteItem.Folder != null))
+            {
+                JsonResultTextBox.Text = "No folder is shared with this user";
+                return;
+            }
+
+            // Take the first folder item shared with the current user and retrieve its children
+            var sharedWithMeItem = sharedWithMe.Collection.First(item => item.RemoteItem.Folder != null);
+            var data = await OneDriveApi.GetChildrenFromDriveByFolderId(sharedWithMeItem.RemoteItem.ParentReference.DriveId, sharedWithMeItem.Id);
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
+        }
+
+        /// <summary>
+        /// Gets another drive which has an item shared with the current user
+        /// </summary>
+        private async void GetOtherDriveButton_Click(object sender, EventArgs e)
+        {
+            // Retrieve the items shared with the current user
+            var sharedWithMe = await OneDriveApi.GetSharedWithMe();
+
+            // Check if any items are shared and if so if there's a shared folder among it
+            if (sharedWithMe.Collection.Length == 0)
+            {
+                JsonResultTextBox.Text = "No items are shared with this user";
+                return;
+            }
+
+            // Take the first item shared with the current user and retrieve the drive information on which it is stored
+            var data = await OneDriveApi.GetDrive(sharedWithMe.Collection[0].RemoteItem.ParentReference.DriveId);
+            JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
+        }
     }
 }
-

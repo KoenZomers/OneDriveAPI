@@ -183,6 +183,16 @@ namespace KoenZomers.OneDrive.Api
             return await ShareItemInternal(string.Concat("drive/items/", item.Id, "/createLink"), linkType);
         }
 
+        /// <summary>
+        /// Returns all the items that have been shared by others with the current user
+        /// </summary>
+        /// <returns>Collection with items that have been shared by others with the current user</returns>
+        public override async Task<OneDriveItemCollection> GetSharedWithMe()
+        {
+            var oneDriveItems = await GetData<OneDriveItemCollection>("drive/sharedWithMe");
+            return oneDriveItems;
+        }
+
         #endregion
 
         #region Adding permissions
@@ -656,16 +666,6 @@ namespace KoenZomers.OneDrive.Api
         #endregion
 
         #endregion
-
-        /// <summary>
-        /// Returns all the items that have been shared by others with the current user
-        /// </summary>
-        /// <returns>Collection with items that have been shared by others with the current user</returns>
-        public override async Task<OneDriveSharedWithMeItemCollection> GetSharedWithMe()
-        {
-            var oneDriveItems = await GetData<OneDriveSharedWithMeItemCollection>("drive/sharedWithMe");
-            return oneDriveItems;
-        }
 
         /// <summary>
         /// Searches for items on OneDrive with the provided query
