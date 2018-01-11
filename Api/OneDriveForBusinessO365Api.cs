@@ -308,6 +308,20 @@ namespace KoenZomers.OneDrive.Api
             return result;
         }
 
+        /// <summary>
+        /// Constructs the complete Url to be called based on the part of the url provided that contains the command
+        /// </summary>
+        /// <param name="commandUrl">Part of the URL to call that contains the command to execute for the API that is being called</param>
+        /// <returns>Full URL to call the API</returns>
+        protected override string ConstructCompleteUrl(string commandUrl)
+        {
+            if (commandUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return commandUrl;
+            }
+            return string.Concat(commandUrl.StartsWith("drives/", StringComparison.InvariantCultureIgnoreCase) ? OneDriveApiBaseUrl.EndsWith("me/") ? OneDriveApiBaseUrl.Remove(OneDriveApiBaseUrl.LastIndexOf("me/", StringComparison.OrdinalIgnoreCase)) : OneDriveApiBaseUrl : OneDriveApiBaseUrl, commandUrl);
+        }
+
         #endregion
     }
 }

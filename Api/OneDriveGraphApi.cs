@@ -40,9 +40,14 @@ namespace KoenZomers.OneDrive.Api
         protected override string AccessTokenUri => "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 
         /// <summary>
-        /// Defines the maximum allowed file size that can be used for basic uploads. Should be set 4 MB as described in the API documentation at https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_uploadcontent .
+        /// Defines the maximum allowed file size that can be used for basic uploads. Should be set 4 MB as described in the API documentation at https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_uploadcontent
         /// </summary>
         public new static long MaximumBasicFileUploadSizeInBytes = 4 * 1024;
+
+        /// <summary>
+        /// Size of the chunks to upload when using the resumable upload method. Must be a multiple of 327680 bytes. See https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/driveitem_createuploadsession#best-practices
+        /// </summary>
+        public new long ResumableUploadChunkSizeInBytes = 10485760;
 
         /// <summary>
         /// The default scopes to request access to at the Graph API
@@ -580,7 +585,7 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Use the resumable upload method
-            return await UploadFileToAppFolderViaResumableUpload(fileToUpload, fileName);
+            return await UploadFileToAppFolderViaResumableUpload(fileToUpload, fileName, null);
         }
 
         /// <summary>
@@ -614,7 +619,7 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Use the resumable upload method
-            return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName);
+            return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName, null);
         }
 
         /// <summary>
@@ -663,14 +668,14 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="file">FileInfo instance pointing to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
         /// <returns></returns>
-        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(FileInfo file, string fileName, short fragmentSizeInKiloByte = 5000)
+        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(FileInfo file, string fileName, long? fragmentSizeInBytes)
         {
             // Open the source file for reading
             using (var fileStream = file.OpenRead())
             {
-                return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName, fragmentSizeInKiloByte);
+                return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName, fragmentSizeInBytes);
             }
         }
 
@@ -679,12 +684,12 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="fileStream">Stream pointing to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <param name="fragmentSizeInKiloByte">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
         /// <returns>OneDriveItem instance representing the uploaded item</returns>
-        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(Stream fileStream, string fileName, short fragmentSizeInKiloByte = 5000)
+        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(Stream fileStream, string fileName, long? fragmentSizeInByte)
         {
             var oneDriveUploadSession = await CreateResumableUploadSessionForAppFolder(fileName);
-            return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInKiloByte);
+            return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInByte);
         }
 
         #endregion
@@ -711,7 +716,22 @@ namespace KoenZomers.OneDrive.Api
         protected override async Task<bool> CopyItemInternal(OneDriveItem oneDriveSource, OneDriveItem oneDriveDestinationParent, string destinationName)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id, "/copy");
+            string completeUrl;
+            if (oneDriveSource.RemoteItem != null)
+            {
+                // Item will be copied from another drive
+                completeUrl = string.Concat("drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id, "/copy");
+            }
+            else if (!string.IsNullOrEmpty(oneDriveSource.ParentReference.DriveId))
+            {
+                // Item will be coped from another drive
+                completeUrl = string.Concat("drives/", oneDriveSource.ParentReference.DriveId, "/items/", oneDriveSource.Id, "/copy");
+            }
+            else
+            {
+                // Item will be copied frp, the current user its drive
+                completeUrl = string.Concat("drive/items/", oneDriveSource.Id, "/copy");
+            }
 
             // Construct the OneDriveParentItemReference entity with the item to be copied details
             var requestBody = new OneDriveParentItemReference
@@ -728,6 +748,8 @@ namespace KoenZomers.OneDrive.Api
             return result;
         }
 
+        #region File Uploading
+
         /// <summary>
         /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
         /// </summary>
@@ -737,7 +759,25 @@ namespace KoenZomers.OneDrive.Api
         protected override async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/", fileName, ":/createUploadSession");
+            }
+            else if (!string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
+            }
+            else
+            {
+                // Item will be uploaded to the current user its drive
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
+            }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
+
             return await CreateResumableUploadSessionInternal(completeUrl);
         }
 
@@ -756,17 +796,31 @@ namespace KoenZomers.OneDrive.Api
                 {
                     FilenameConflictBehavior = NameConflictBehavior.Replace
                 }
-            };
-
-            // Call the OneDrive webservice
+            };   
+            
+            // Call the Graph API webservice
             var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, oneDriveUrl, HttpStatusCode.OK);
             return result;
         }
 
+
         /// <summary>
-        /// Gets the root SharePoint site
+        /// Uploads a file to OneDrive using the resumable file upload method
         /// </summary>
-        /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
+        /// <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        protected override async Task<OneDriveItem> UploadFileViaResumableUploadInternal(Stream fileStream, OneDriveUploadSession oneDriveUploadSession, long? fragmentSizeInBytes)
+        {
+            return await base.UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInBytes ?? ResumableUploadChunkSizeInBytes);
+        }
+
+        #endregion
+
+            /// <summary>
+            /// Gets the root SharePoint site
+            /// </summary>
+            /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
         public virtual async Task<SharePointSite> GetSiteRoot()
         {
             return await GetGraphData<SharePointSite>("sites/root");
@@ -819,17 +873,17 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Retrieves data from the OneDrive API
+        /// Constructs the complete Url to be called based on the part of the url provided that contains the command
         /// </summary>
-        /// <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
-        /// <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
-        /// <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
-        protected override async Task<T> GetData<T>(string url)
+        /// <param name="commandUrl">Part of the URL to call that contains the command to execute for the API that is being called</param>
+        /// <returns>Full URL to call the API</returns>
+        protected override string ConstructCompleteUrl(string commandUrl)
         {
-            // If the request starts with drives/, it should get the Graph API URL without me in front of it
-            var completeUrl = url.StartsWith("drives/", StringComparison.InvariantCultureIgnoreCase) ? string.Concat(GraphApiBaseUrl, url) : url;
-
-            return await base.GetData<T>(completeUrl);
+            if(commandUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return commandUrl;
+            }
+            return string.Concat(commandUrl.StartsWith("drives/", StringComparison.InvariantCultureIgnoreCase) ? GraphApiBaseUrl : OneDriveApiBaseUrl, commandUrl);
         }
 
         #endregion

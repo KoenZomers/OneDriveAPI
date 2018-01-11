@@ -65,7 +65,12 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Defines the maximum allowed file size that can be used for basic uploads
         /// </summary>
-        public static long MaximumBasicFileUploadSizeInBytes = 4 * 1024;
+        public static long MaximumBasicFileUploadSizeInBytes = 4 * 1024000;
+
+        /// <summary>
+        /// Size of the chunks to upload when using the resumable upload method
+        /// </summary>
+        public long ResumableUploadChunkSizeInBytes = 5000000;
 
         #endregion
 
@@ -402,7 +407,11 @@ namespace KoenZomers.OneDrive.Api
                 // Item to get the children from is shared from another drive
                 completeUrl = string.Concat("drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
             }
-
+            else if (!string.IsNullOrEmpty(item.ParentReference.DriveId))
+            {
+                // Item to get the children from is shared from another drive
+                completeUrl = string.Concat("drives/", item.ParentReference.DriveId, "/items/", item.Id, "/children");
+            }
             else
             {
                 // Item to get the children from resides on the current user its drive
@@ -426,7 +435,11 @@ namespace KoenZomers.OneDrive.Api
                 // Item to get the children from is shared from another drive
                 completeUrl = string.Concat("drives/", item.RemoteItem.ParentReference.DriveId, "/items/", item.RemoteItem.Id, "/children");
             }
-
+            else if (!string.IsNullOrEmpty(item.ParentReference.DriveId))
+            {
+                // Item to get the children from is shared from another drive
+                completeUrl = string.Concat("drives/", item.ParentReference.DriveId, "/items/", item.Id, "/children");
+            }
             else
             {
                 // Item to get the children from resides on the current user its drive
@@ -480,7 +493,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
         public virtual async Task<OneDriveItem> GetItemInFolder(OneDriveItem folder, string fileName)
         {
-            var itemsInFolder = await GetAllChildrenByFolderId(folder.Id);
+            var itemsInFolder = await GetAllChildrenByParentItem(folder);
             var item = itemsInFolder.FirstOrDefault(i => string.Equals(i.Name, fileName, StringComparison.InvariantCultureIgnoreCase));
             return item;
         }
@@ -642,7 +655,11 @@ namespace KoenZomers.OneDrive.Api
                 // Item to delete is shared from another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id);
             }
-
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item to delete is shared from another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id);
+            }
             else
             {
                 // Item to delete resides on the current user its drive
@@ -782,14 +799,20 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveItem.RemoteItem != null)
             {
                 // Item to download is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
             }
-
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item to download is shared from another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, "/content");
+            }
             else
             {
                 // Item to download resides on the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id, "/content");
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             using (var stream = await DownloadItemInternal(oneDriveItem, completeUrl))
             {
@@ -824,14 +847,21 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveItem.RemoteItem != null)
             {
                 // Item to download is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
             }
-
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item to download is shared from another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, "/content");
+            }
             else
             {
                 // Item to download resides on the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/content");
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id, "/content");
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
+
             return await DownloadItemInternal(oneDriveItem, completeUrl);
         }
 
@@ -910,7 +940,7 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Use the resumable upload method
-            return await UploadFileViaResumableUpload(fileToUpload, fileName, oneDriveItem);
+            return await UploadFileViaResumableUpload(fileToUpload, fileName, oneDriveItem, null);
         }
 
         /// <summary>
@@ -949,7 +979,7 @@ namespace KoenZomers.OneDrive.Api
             }
 
             // Use the resumable upload method
-            return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem);
+            return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem, null);
         }
 
         /// <summary>
@@ -1091,7 +1121,7 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<OneDrivePermission> ShareItemInternal(string oneDriveRequestUrl, OneDriveLinkType linkType, OneDriveSharingScope? scope = null)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, oneDriveRequestUrl);
+            var completeUrl = ConstructCompleteUrl(oneDriveRequestUrl);
 
             // Construct the OneDriveRequestShare entity with the sharing details
             var requestShare = new OneDriveRequestShare { SharingType = linkType, Scope = scope };
@@ -1110,7 +1140,7 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<OneDriveItem> CreateFolderInternal(string oneDriveRequestUrl, string folderName)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, oneDriveRequestUrl);            
+            var completeUrl = ConstructCompleteUrl(oneDriveRequestUrl);            
 
             // Construct the JSON to send in the POST message
             var newFolder = new OneDriveCreateFolder { Name = folderName, Folder = new object() };
@@ -1198,14 +1228,20 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveItem.RemoteItem != null)
             {
                 // Item will be uploaded to another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/children/", fileName, "/content");
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/children/", fileName, "/content");
             }
-
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, "/children/", fileName, "/content");
+            }
             else
             {
                 // Item will be uploaded to the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id, "/children/", fileName, "/content");
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             return await UploadFileViaSimpleUploadInternal(fileStream, completeUrl);
         }
@@ -1299,7 +1335,7 @@ namespace KoenZomers.OneDrive.Api
         public async Task<OneDriveItem> UploadFileViaResumableUpload(string filePath, string fileName, OneDriveItem oneDriveItem)
         {
             var file = new FileInfo(filePath);
-            return await UploadFileViaResumableUpload(file, fileName, oneDriveItem);
+            return await UploadFileViaResumableUpload(file, fileName, oneDriveItem, null);
         }
 
         /// <summary>
@@ -1308,14 +1344,14 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="file">FileInfo instance pointing to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
         /// <returns></returns>
-        public async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        public virtual async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem, long? fragmentSizeInBytes)
         {
             // Open the source file for reading
             using (var fileStream = file.OpenRead())
             {
-                return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem, fragmentSizeInKiloByte);
+                return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem, fragmentSizeInBytes);
             }
         }
 
@@ -1332,14 +1368,20 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveItem.RemoteItem != null)
             {
                 // Item will be uploaded to another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/upload.createSession");
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/upload.createSession");
             }
-
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, ":/upload.createSession");
+            }
             else
             {
                 // Item will be uploaded to the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             // Construct the OneDriveUploadSessionItemContainer entity with the upload details
             // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
@@ -1362,22 +1404,31 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="fileStream">Stream pointing to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
         /// <returns>OneDriveItem instance representing the uploaded item</returns>
-        public async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, short fragmentSizeInKiloByte = 5000)
+        public virtual async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, long? fragmentSizeInBytes)
         {
             var oneDriveUploadSession = await CreateResumableUploadSession(fileName, oneDriveItem);
-            return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInKiloByte);
+            return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInBytes);
         }
 
         /// <summary>
         /// Uploads a file to OneDrive using the resumable file upload method
         /// </summary>
         /// <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
-        /// <param name="fragmentSizeInKiloByte">Size in kilobytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Default is 5000 which means 5 MB fragments will be used.</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
         /// <returns>OneDriveItem instance representing the uploaded item</returns>
-        protected async Task<OneDriveItem> UploadFileViaResumableUploadInternal(Stream fileStream, OneDriveUploadSession oneDriveUploadSession, short fragmentSizeInKiloByte = 5000)
+        protected virtual async Task<OneDriveItem> UploadFileViaResumableUploadInternal(Stream fileStream, OneDriveUploadSession oneDriveUploadSession, long? fragmentSizeInBytes)
         {
+            if(fileStream == null)
+            {
+                throw new ArgumentNullException("fileStream");
+            }
+            if(oneDriveUploadSession == null)
+            {
+                throw new ArgumentNullException("oneDriveUploadSession");
+            }
+
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
 
@@ -1397,7 +1448,7 @@ namespace KoenZomers.OneDrive.Api
                 long currentPosition = 0;
 
                 // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
-                var fragmentBuffer = new byte[fragmentSizeInKiloByte*1000];
+                var fragmentBuffer = new byte[fragmentSizeInBytes ?? ResumableUploadChunkSizeInBytes];
 
                 // Create an HTTPClient instance to communicate with the REST API of OneDrive to perform the upload 
                 using (var client = CreateHttpClient(accessToken.AccessToken))
@@ -1499,7 +1550,7 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<T> GetData<T>(string url) where T : OneDriveItemBase
         {
             // Construct the complete URL to call
-            var completeUrl = url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? url : string.Concat(OneDriveApiBaseUrl, url);
+            var completeUrl = ConstructCompleteUrl(url);
 
             // Call the OneDrive webservice
             var result = await SendMessageReturnOneDriveItem<T>("", HttpMethod.Get, completeUrl, HttpStatusCode.OK);
@@ -1514,7 +1565,7 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<bool> DeleteItemInternal(string oneDriveUrl)
         {
             // Construct the complete URL to call
-            var completeUrl = string.Concat(OneDriveApiBaseUrl, oneDriveUrl);
+            var completeUrl = ConstructCompleteUrl(oneDriveUrl);
 
             // Call the OneDrive webservice
             var result = await SendMessageReturnBool(null, HttpMethod.Delete, completeUrl, HttpStatusCode.NoContent);
@@ -1535,14 +1586,15 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveSource.RemoteItem != null)
             {
                 // Item to copy is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id, "/action.copy");
+                completeUrl = string.Concat("drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id, "/action.copy");
             }
-
             else
             {
                 // Item to copy resides on the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id, "/action.copy");
+                completeUrl = string.Concat("drive/items/", oneDriveSource.Id, "/action.copy");
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             // Construct the OneDriveParentItemReference entity with the item to be copied details
             var requestBody = new OneDriveParentItemReference
@@ -1573,14 +1625,15 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveSource.RemoteItem != null)
             {
                 // Item to copy is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id);
+                completeUrl = string.Concat("drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id);
             }
-
             else
             {
                 // Item to copy resides on the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id);
+                completeUrl = string.Concat("drive/items/", oneDriveSource.Id);
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             // Construct the OneDriveParentItemReference entity with the item to be moved details
             var requestBody = new OneDriveParentItemReference
@@ -1610,14 +1663,15 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveSource.RemoteItem != null)
             {
                 // Item to copy is shared from another drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id);
+                completeUrl = string.Concat("drives/", oneDriveSource.RemoteItem.ParentReference.DriveId, "/items/", oneDriveSource.RemoteItem.Id);
             }
-
             else
             {
                 // Item to copy resides on the current user its drive
-                completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/items/", oneDriveSource.Id);
+                completeUrl = string.Concat("drive/items/", oneDriveSource.Id);
             }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             // Construct the OneDriveItem entity with the item to be renamed details
             var requestBody = new OneDriveItem
@@ -1798,6 +1852,17 @@ namespace KoenZomers.OneDrive.Api
             }
 
             return httpClient;
+        }
+
+        /// <summary>
+        /// Constructs the complete Url to be called based on the part of the url provided that contains the command
+        /// </summary>
+        /// <param name="commandUrl">Part of the URL to call that contains the command to execute for the API that is being called</param>
+        /// <returns>Full URL to call the API</returns>
+        protected virtual string ConstructCompleteUrl(string commandUrl)
+        {
+            // Check if the commandUrl is already a full URL, if so leave it as is. If not, prepend it with the Api Base URL.
+            return commandUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? commandUrl : string.Concat(OneDriveApiBaseUrl, commandUrl);
         }
 
         #endregion

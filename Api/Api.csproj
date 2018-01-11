@@ -88,6 +88,8 @@
     <Compile Include="Entities\OneDriveCreateFolder.cs" />
     <Compile Include="Entities\OneDriveUploadProgressChangedEventArgs.cs" />
     <Compile Include="Entities\OneDriveUploadSession.cs" />
+    <Compile Include="Entities\GraphApiUploadSessionItem.cs" />
+    <Compile Include="Entities\GraphApiUploadSessionItemContainer.cs" />
     <Compile Include="Entities\OneDriveUploadSessionItemContainer.cs" />
     <Compile Include="Entities\OneDriveUploadSessionItem.cs" />
     <Compile Include="Entities\OneDriveUserProfile.cs" />

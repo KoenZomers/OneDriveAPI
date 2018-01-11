@@ -65,6 +65,12 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.1.0.0 - January 11, 2018
+
+- Various bugfixes
+- Mayor updates to most of the methods to properly support working with shared items from other drives
+- NOTICE: This version is not 100% backwards compatible with the previous version. To enable the shared items functionality to work I had to break through the golden rule to try to keep backwards compatibility. The changes required to your code should be minimal though.
+
 2.0.4.3 - January 5, 2018
 
 - Fixed issue with ShareItem methods returning NULL if the item was already shared
@@ -107,15 +113,6 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 - Changed the default limit for deciding between the Simple Upload and Resumable Upload from 5 MB to 4 MB [as per Microsoft recommendations](https://dev.onedrive.com/items/upload_put.htm)
 - All methods in the base OneDrive class are now virtual so you can easily override them in your inherited code if you wish to do so
 - Added methods to query for basic SharePoint Online site data as exposed by the [Graph API v1.0](https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/resources/sharepoint). Only the beta of the Graph API supports working with list items and files on SharePoint Online. As the beta is not intended for production use, I haven't implemented these methods.
-
-1.6.7.0 - August 18, 2017
-
-- Compiled both the API and demo application against the .NET Framework 4.5.2 since 4.5 has gone out of support by Microsoft
-- Added event UploadProgressChanged which reports back on the upload progress. This is implemented in the demo application under the Upload button. Be sure to upload a file larger than 5 MB to see it working as it's only used with the UploadFileViaResumableUpload method. Thanks to [sza110](https://github.com/sza110) for writing [this functionality](https://github.com/sza110/OneDriveAPI/commit/5ae44e089ef1e61b6672bee16d66b6a89917d241).
-
-1.6.6.2 & 1.6.6.3 - June 29, 2017
-
-- Wrapped the upload response with a new InvalidResponseException type which contains the message received from OneDrive when it is unable to parse it back to the expected type.
 
 [Version History](./VersionHistory.md)
 
