@@ -78,7 +78,7 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 2.0.4.2 - January 5, 2018
 
-- Fixed issues with some methods using /sites/ while prepedning /me
+- Fixed issues with some methods using /sites/ while prepending /me
 
 2.0.4.1 - January 5, 2018
 
