@@ -1235,6 +1235,11 @@ namespace KoenZomers.OneDrive.Api
                 // Item will be uploaded to another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, "/children/", fileName, "/content");
             }
+            else if(!string.IsNullOrEmpty(oneDriveItem.WebUrl) && oneDriveItem.WebUrl.Contains("cid="))
+            {
+                // Item will be uploaded to another drive. Used by OneDrive Personal when using a shared item.
+                completeUrl = string.Concat("drives/", oneDriveItem.WebUrl.Remove(0, oneDriveItem.WebUrl.IndexOf("cid=") + 4), "/items/", oneDriveItem.Id, "/children/", fileName, "/content");
+            }
             else
             {
                 // Item will be uploaded to the current user its drive
@@ -1368,12 +1373,17 @@ namespace KoenZomers.OneDrive.Api
             if (oneDriveItem.RemoteItem != null)
             {
                 // Item will be uploaded to another drive
-                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/upload.createSession");
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/", fileName, ":/upload.createSession");
             }
             else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
             {
                 // Item will be uploaded to another drive
-                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, ":/upload.createSession");
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
+            }
+            else if (!string.IsNullOrEmpty(oneDriveItem.WebUrl) && oneDriveItem.WebUrl.Contains("cid="))
+            {
+                // Item will be uploaded to another drive. Used by OneDrive Personal when using a shared item.
+                completeUrl = string.Concat("drives/", oneDriveItem.WebUrl.Remove(0, oneDriveItem.WebUrl.IndexOf("cid=") + 4), "/items/", oneDriveItem.Id, ":/", fileName, ":/upload.createSession");
             }
             else
             {

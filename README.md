@@ -65,6 +65,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.1.0.1 - January 12, 2018
+
+- Bufixes in uploading
+
 2.1.0.0 - January 11, 2018
 
 - Various bugfixes

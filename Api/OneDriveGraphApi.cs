@@ -765,10 +765,15 @@ namespace KoenZomers.OneDrive.Api
                 // Item will be uploaded to another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/", fileName, ":/createUploadSession");
             }
-            else if (!string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
             {
                 // Item will be uploaded to another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
+            }
+            else if (!string.IsNullOrEmpty(oneDriveItem.WebUrl) && oneDriveItem.WebUrl.Contains("cid="))
+            {
+                // Item will be uploaded to another drive. Used by OneDrive Personal when using a shared item.
+                completeUrl = string.Concat("drives/", oneDriveItem.WebUrl.Remove(0, oneDriveItem.WebUrl.IndexOf("cid=") + 4), "/items/", oneDriveItem.Id, ":/", fileName, ":/createUploadSession");
             }
             else
             {
@@ -803,7 +808,6 @@ namespace KoenZomers.OneDrive.Api
             return result;
         }
 
-
         /// <summary>
         /// Uploads a file to OneDrive using the resumable file upload method
         /// </summary>
@@ -817,10 +821,10 @@ namespace KoenZomers.OneDrive.Api
 
         #endregion
 
-            /// <summary>
-            /// Gets the root SharePoint site
-            /// </summary>
-            /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
+        /// <summary>
+        /// Gets the root SharePoint site
+        /// </summary>
+        /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
         public virtual async Task<SharePointSite> GetSiteRoot()
         {
             return await GetGraphData<SharePointSite>("sites/root");
