@@ -30,6 +30,8 @@ OR to get an instance to a OneDrive for Business account, simply use:
 KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret);
 ```
 
+!! Notice: Microsoft will turn off the Office 365 Discovery API on November 1, 2019 which is being used by the OneDrive for Business Api. Use the OneDriveGraphApi instead to avoid your application to stop working on this date !!
+
 If you're not sure which of these to use, go with the Microsoft Graph using the Azure AD v2.0 endpoint.
 
 If you want it to work through a HTTPS proxy, simply provide the proxy configuration by setting the ProxyConfiguration property:
