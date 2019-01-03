@@ -130,7 +130,7 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// The conflict resolution behavior for actions that create a new item. An item will never be returned with this annotation. Write-only.
         /// </summary>
         [JsonProperty("@name.conflictBehavior", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public NameConflictBehavior? NameConflictBehaiorAnnotation { get; set; }
+        public NameConflictBehavior? NameConflictBehahiorAnnotation { get; set; }
 
         /// <summary>
         /// A Url that can be used to download this file's content. Authentication is not required with this URL. Read-only.

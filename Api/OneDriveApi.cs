@@ -1336,7 +1336,7 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="filePath">Path to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
         public async Task<OneDriveItem> UploadFileViaResumableUpload(string filePath, string fileName, OneDriveItem oneDriveItem)
         {
             var file = new FileInfo(filePath);
@@ -1350,7 +1350,7 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
         /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
         public virtual async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem, long? fragmentSizeInBytes)
         {
             // Open the source file for reading

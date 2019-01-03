@@ -6,7 +6,7 @@ namespace KoenZomers.OneDrive.Api.Entities
 {
     internal class OneDriveUploadSessionItem
     {
-        [JsonProperty("@name.conflictBehavior", DefaultValueHandling = DefaultValueHandling.Ignore), JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty("@name.conflictBehavior", DefaultValueHandling = DefaultValueHandling.Populate), JsonConverter(typeof(StringEnumConverter))]
         public NameConflictBehavior FilenameConflictBehavior { get; set; }
 
         [JsonProperty("name", DefaultValueHandling = DefaultValueHandling.Ignore)]

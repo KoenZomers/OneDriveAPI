@@ -546,7 +546,18 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
         public async Task<OneDriveItem> UploadFileToAppFolder(string filePath)
         {
-            return await UploadFileToAppFolderAs(filePath, null);
+            return await UploadFileToAppFolder(filePath, NameConflictBehavior.Replace);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to the AppFolder on OneDrive keeping the original filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolder(string filePath, NameConflictBehavior nameConflictBehavior)
+        {
+            return await UploadFileToAppFolderAs(filePath, null, nameConflictBehavior);
         }
 
         /// <summary>
@@ -556,6 +567,18 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="fileName">Filename to assign to the file on OneDrive</param>
         /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
         public async Task<OneDriveItem> UploadFileToAppFolderAs(string filePath, string fileName)
+        {
+            return await UploadFileToAppFolderAs(filePath, fileName, NameConflictBehavior.Replace);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to the AppFolder on OneDrive using the provided filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderAs(string filePath, string fileName, NameConflictBehavior nameConflictBehavior)
         {
             if (!File.Exists(filePath))
             {
@@ -575,13 +598,6 @@ namespace KoenZomers.OneDrive.Api
             if (!ValidFilename(fileName))
             {
                 throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(filePath));
-            }
-
-            // Verify which upload method should be used
-            if (fileToUpload.Length <= MaximumBasicFileUploadSizeInBytes)
-            {
-                // Use the basic upload method                
-                return await UploadFileToAppFolderViaSimpleUpload(fileToUpload, fileName);
             }
 
             // Use the resumable upload method
@@ -655,8 +671,9 @@ namespace KoenZomers.OneDrive.Api
         /// Initiates a resumable upload session to the AppFolder on OneDrive. It doesn't perform the actual upload yet.
         /// </summary>
         /// <param name="fileName">Filename to store the uploaded content under</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
         /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        protected async Task<OneDriveUploadSession> CreateResumableUploadSessionForAppFolder(string fileName)
+        protected async Task<OneDriveUploadSession> CreateResumableUploadSessionForAppFolder(string fileName, NameConflictBehavior nameConflictBehavior = NameConflictBehavior.Replace)
         {
             // Construct the complete URL to call
             var completeUrl = string.Concat(OneDriveApiBaseUrl, "drive/special/approot:/", fileName, ":/createUploadSession");
@@ -669,8 +686,21 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="file">FileInfo instance pointing to the file to upload</param>
         /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
         /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
-        /// <returns></returns>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
         public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(FileInfo file, string fileName, long? fragmentSizeInBytes)
+        {
+            return await UploadFileToAppFolderViaResumableUpload(file, fileName, fragmentSizeInBytes, NameConflictBehavior.Replace);
+        }
+
+        /// <summary>
+        /// Uploads a file to the AppFolder on OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="file">FileInfo instance pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(FileInfo file, string fileName, long? fragmentSizeInBytes, NameConflictBehavior nameConflictBehavior)
         {
             // Open the source file for reading
             using (var fileStream = file.OpenRead())
@@ -688,7 +718,20 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>OneDriveItem instance representing the uploaded item</returns>
         public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(Stream fileStream, string fileName, long? fragmentSizeInByte)
         {
-            var oneDriveUploadSession = await CreateResumableUploadSessionForAppFolder(fileName);
+            return await UploadFileToAppFolderViaResumableUpload(fileStream, fileName, fragmentSizeInByte, NameConflictBehavior.Replace);
+        }
+
+        /// <summary>
+        /// Uploads a file to the AppFolder on OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="fileStream">Stream pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="fragmentSizeInKiloByte">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileToAppFolderViaResumableUpload(Stream fileStream, string fileName, long? fragmentSizeInByte, NameConflictBehavior nameConflictBehavior)
+        {
+            var oneDriveUploadSession = await CreateResumableUploadSessionForAppFolder(fileName, nameConflictBehavior);
             return await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInByte);
         }
 
@@ -751,12 +794,191 @@ namespace KoenZomers.OneDrive.Api
         #region File Uploading
 
         /// <summary>
+        /// Uploads the provided file to OneDrive keeping the original filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFile(string filePath, OneDriveItem oneDriveItem, NameConflictBehavior nameConflictBehavior)
+        {
+            return await UploadFileAs(filePath, null, oneDriveItem, nameConflictBehavior);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFile(string filePath, string oneDriveFolder, NameConflictBehavior nameConflictBehavior)
+        {
+            var oneDriveItem = await GetItem(oneDriveFolder);
+            return await UploadFile(filePath, oneDriveItem, nameConflictBehavior);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(Stream fileStream, string fileName, string oneDriveFolder, NameConflictBehavior nameConflictBehavior)
+        {
+            var oneDriveItem = await GetItem(oneDriveFolder);
+            return await UploadFileAs(fileStream, fileName, oneDriveItem, nameConflictBehavior);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(string filePath, string fileName, string oneDriveFolder, NameConflictBehavior nameConflictBehavior)
+        {
+            var oneDriveItem = await GetItem(oneDriveFolder);
+            return await UploadFileAs(filePath, fileName, oneDriveItem, nameConflictBehavior);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
+        /// <param name="filePath">Full path to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(string filePath, string fileName, OneDriveItem oneDriveItem, NameConflictBehavior nameConflictBehavior)
+        {
+            if (!File.Exists(filePath))
+            {
+                throw new ArgumentException("Provided file could not be found", nameof(filePath));
+            }
+
+            // Get a reference to the file to upload
+            var fileToUpload = new FileInfo(filePath);
+
+            // If no filename has been provided, use the same filename as the original file has
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = fileToUpload.Name;
+            }
+
+            // Verify if the filename does not contain any for OneDrive illegal characters
+            if (!ValidFilename(fileName))
+            {
+                throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(filePath));
+            }
+
+            // Use the resumable upload method since the simple upload method doesn't support naming conflict behavior
+            return await UploadFileViaResumableUpload(fileToUpload, fileName, oneDriveItem, null, nameConflictBehavior);
+        }
+
+        /// <summary>
+        /// Uploads the provided file to OneDrive using the provided filename
+        /// </summary>
+        /// <param name="fileStream">Stream to the file to upload</param>
+        /// <param name="fileName">Filename to assign to the file on OneDrive</param>
+        /// <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        public async Task<OneDriveItem> UploadFileAs(Stream fileStream, string fileName, OneDriveItem oneDriveItem, NameConflictBehavior nameConflictBehavior)
+        {
+            if (fileStream == null || fileStream == Stream.Null)
+            {
+                throw new ArgumentNullException(nameof(fileStream));
+            }
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+            if (oneDriveItem == null)
+            {
+                throw new ArgumentNullException(nameof(oneDriveItem));
+            }
+
+            // Verify if the filename does not contain any for OneDrive illegal characters
+            if (!ValidFilename(fileName))
+            {
+                throw new ArgumentException("Provided file contains illegal characters in its filename", nameof(fileName));
+            }
+
+            // Use the resumable upload method since the simple upload method doesn't support naming conflict behavior
+            return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem, null, nameConflictBehavior);
+        }
+
+        /// <summary>
+        /// Uploads a file to OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="fileStream">Stream pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(Stream fileStream, string fileName, OneDriveItem oneDriveItem, long? fragmentSizeInBytes, NameConflictBehavior nameConflictBehavior)
+        {
+            var oneDriveUploadSession = await CreateResumableUploadSession(fileName, oneDriveItem, nameConflictBehavior);
+            return oneDriveUploadSession != null ? await UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInBytes) : null;
+        }
+
+        /// <summary>
+        /// Uploads a file to OneDrive using the resumable file upload method
+        /// </summary>
+        /// <param name="file">FileInfo instance pointing to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+        /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(FileInfo file, string fileName, OneDriveItem oneDriveItem, long? fragmentSizeInBytes, NameConflictBehavior nameConflictBehavior)
+        {
+            // Open the source file for reading
+            using (var fileStream = file.OpenRead())
+            {
+                return await UploadFileViaResumableUpload(fileStream, fileName, oneDriveItem, fragmentSizeInBytes, nameConflictBehavior);
+            }
+        }
+
+        /// <summary>
+        /// Uploads a file to OneDrive using the resumable method. Better for large files or unstable network connections.
+        /// </summary>
+        /// <param name="filePath">Path to the file to upload</param>
+        /// <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+        /// <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveItem instance representing the uploaded item</returns>
+        public async Task<OneDriveItem> UploadFileViaResumableUpload(string filePath, string fileName, OneDriveItem oneDriveItem, NameConflictBehavior nameConflictBehavior)
+        {
+            var file = new FileInfo(filePath);
+            return await UploadFileViaResumableUpload(file, fileName, oneDriveItem, null, nameConflictBehavior);
+        }
+
+        /// <summary>
         /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
         /// </summary>
         /// <param name="fileName">Filename to store the uploaded content under</param>
         /// <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
         /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
         protected override async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem)
+        {
+            return await CreateResumableUploadSession(fileName, oneDriveItem, NameConflictBehavior.Replace);
+        }
+
+        /// <summary>
+        /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+        /// </summary>
+        /// <param name="fileName">Filename to store the uploaded content under</param>
+        /// <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        protected async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem, NameConflictBehavior nameConflictBehavior)
         {
             // Construct the complete URL to call
             string completeUrl;
@@ -783,15 +1005,16 @@ namespace KoenZomers.OneDrive.Api
 
             completeUrl = ConstructCompleteUrl(completeUrl);
 
-            return await CreateResumableUploadSessionInternal(completeUrl);
+            return await CreateResumableUploadSessionInternal(completeUrl, nameConflictBehavior);
         }
 
         /// <summary>
         /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
         /// </summary>
         /// <param name="oneDriveUrl">Complete URL to call to create the resumable upload session</param>
+        /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
         /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        protected async Task<OneDriveUploadSession> CreateResumableUploadSessionInternal(string oneDriveUrl)
+        protected async Task<OneDriveUploadSession> CreateResumableUploadSessionInternal(string oneDriveUrl, NameConflictBehavior nameConflictBehavior = NameConflictBehavior.Replace)
         {
             // Construct the OneDriveUploadSessionItemContainer entity with the upload details
             // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
@@ -799,7 +1022,7 @@ namespace KoenZomers.OneDrive.Api
             {
                 Item = new OneDriveUploadSessionItem
                 {
-                    FilenameConflictBehavior = NameConflictBehavior.Replace
+                    FilenameConflictBehavior = nameConflictBehavior
                 }
             };   
             

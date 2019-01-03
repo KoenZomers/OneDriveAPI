@@ -67,6 +67,12 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.1.1.0 - January 4, 2019
+
+- Fixed a typo in NameConflictBeha*v*iorAnnotation. Thanks to Daniel Ethier for reporting this.
+- Implemented the ability to specify the NameConflictBehavior when uploading a file. The enumerator provides the option to overwrite the existing file, rename the file that is being uploaded or to fail the upload in the situation where a similarly named file already exists in the target location on OneDrive. Note that the SimpleUpload method does not support providing a NameConflictBehavior so it will always use the ResumableUpload method.
+- Included the documentation XML file which should bring the inline comments to your application from where you add the NuGet or assembly reference
+
 2.1.0.1 - January 12, 2018
 
 - Bufixes in uploading
