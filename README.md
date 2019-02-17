@@ -67,7 +67,7 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
-2.1.2.0 - February 17, 2019
+2.1.2.1 - February 17, 2019
 
 - Fixed bug in OneDrive for Business provider causing an error like "OAuth2 Authorization code was already redeemed" introduced by an API change on the Microsoft side when trying to authenticate
 
