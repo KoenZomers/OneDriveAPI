@@ -142,7 +142,7 @@ namespace KoenZomers.OneDrive.Api
 
             OneDriveApiBaseUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
 
-            var oneDriveForBusinessAccessToken = await GetAccessTokenFromAuthorizationToken(authorizationToken, oneDriveForBusinessService.ServiceResourceId);
+            var oneDriveForBusinessAccessToken = await GetAccessTokenFromRefreshToken(discoveryAccessToken.RefreshToken, oneDriveForBusinessService.ServiceResourceId);
             return oneDriveForBusinessAccessToken;
         }
 
