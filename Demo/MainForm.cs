@@ -7,7 +7,7 @@ using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Enums;
 using System.Linq;
 
-namespace AuthenticatorApp
+namespace KoenZomers.OneDrive.AuthenticatorApp
 {
     public partial class MainForm : Form
     {

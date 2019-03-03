@@ -7,9 +7,9 @@
     <ProjectGuid>{6BC98275-D540-42C6-996D-15D0A5BF2110}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AuthenticatorApp</RootNamespace>
-    <AssemblyName>AuthenticatorApp</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>KoenZomers.OneDrive.AuthenticatorApp</RootNamespace>
+    <AssemblyName>KoenZomers.OneDrive.AuthenticatorApp</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -84,9 +84,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Api\Api.csproj">
-      <Project>{3c80ef7e-5a02-429d-86e7-542f9a88933d}</Project>
-      <Name>Api</Name>
+    <ProjectReference Include="..\DotNetStandardApi\.NET Standard API.csproj">
+      <Project>{441342cc-529b-4ac1-8fa6-446697e2c39e}</Project>
+      <Name>.NET Standard API</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

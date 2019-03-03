@@ -1,4 +1,4 @@
-﻿namespace AuthenticatorApp
+﻿namespace KoenZomers.OneDrive.AuthenticatorApp
 {
     partial class MainForm
     {

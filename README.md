@@ -1,7 +1,7 @@
 # OneDriveAPI
-OneDrive API in C#
+OneDrive API in .NET Standard 2.0
 
-Easy to use lightweight framework to communicate with the OneDrive and OneDrive for Business through either the Azure AD (api.onedrive.com & tenant-my.sharepoint.com/_api or the Azure AD V2.0 (graph.microsoft.com) endpoint. It allows communication through one unified piece of code with:
+Easy to use lightweight framework to communicate with the OneDrive Personal and OneDrive for Business through either the Azure AD (api.onedrive.com & tenant-my.sharepoint.com/_api or the Azure AD V2.0 (graph.microsoft.com) endpoint. It allows communication through one unified piece of code with:
 
 - OneDrive Personal
 - OneDrive for Business
@@ -66,6 +66,12 @@ Package statistics:
 https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
+
+2.2.0.0 - March 3, 2019
+
+- Converted the API from the .NET Framework to .NET Standard 2.0 so it can also be used on non Windows environments
+- Upgraded to use Newtonsoft JSON 12.0.1
+- Upgraded the Demo Application to use a proper namespace and be compiled against the .NET Framework 4.6.2 instead of 4.5.2
 
 2.1.2.1 - February 17, 2019
 
@@ -186,7 +192,7 @@ If you wish to use the OneDrive API, you need to register your own Client ID / C
 
 ## Feedback
 
-Feedback is very welcome. If you believe something is not working well or could be improved, feel free to drop me an e-mail.
+Feedback is very welcome. If you believe something is not working well or could be improved, feel free to drop me an e-mail or [create an issue](https://github.com/KoenZomers/OneDriveAPI/issues).
 
 Koen Zomers
-mail@koenzomers.nl
+koen@zomers.eu
