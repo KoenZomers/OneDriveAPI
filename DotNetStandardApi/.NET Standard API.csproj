@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>C:\Code\GitHub\OneDriveAPI\Api\KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
     <Version>2.2.0.0</Version>
     <Authors>Koen Zomers</Authors>
     <Company>Koen Zomers</Company>
@@ -26,10 +26,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>C:\Code\GitHub\OneDriveAPI\DotNetStandardApi\KoenZomers.OneDrive.Api.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\Api\KoenZomers.OneDrive.Api.snk" Link="KoenZomers.OneDrive.Api.snk" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
