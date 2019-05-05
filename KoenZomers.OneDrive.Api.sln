@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{8B6344
 		Images\SolutionExplorer.png = Images\SolutionExplorer.png
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = ".NET Standard API", "DotNetStandardApi\.NET Standard API.csproj", "{441342CC-529B-4AC1-8FA6-446697E2C39E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "Api\API.csproj", "{441342CC-529B-4AC1-8FA6-446697E2C39E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
