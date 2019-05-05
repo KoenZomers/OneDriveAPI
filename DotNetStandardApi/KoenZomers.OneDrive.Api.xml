@@ -264,6 +264,11 @@
             If containing information, it regards a OneDriveItem stored on another OneDrive but linked by the current OneDrive
             </summary>
         </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveItem.Shared">
+            <summary>
+            Information about the owner of a shared item
+            </summary>
+        </member>
         <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveItemBase.OriginalJson">
             <summary>
             The original raw JSON message
@@ -479,6 +484,11 @@
             Url to use with the WebDav protocol to access this item
             </summary>
         </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveRemoteItem.Shared">
+            <summary>
+            Information about the owner of the shared item
+            </summary>
+        </member>
         <member name="T:KoenZomers.OneDrive.Api.Entities.OneDriveRequestShare">
             <summary>
             Message to request sharing of an item
@@ -492,6 +502,16 @@
         <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveRequestShare.Scope">
             <summary>
             Scope of the access to the shared item
+            </summary>
+        </member>
+        <member name="T:KoenZomers.OneDrive.Api.Entities.OneDriveSharedItem">
+            <summary>
+            Represents an item that has been shared
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveSharedItem.Owner">
+            <summary>
+            The user account that owns the shared item
             </summary>
         </member>
         <member name="T:KoenZomers.OneDrive.Api.Entities.OneDriveSharedWithMeItem">
@@ -565,6 +585,36 @@
             </summary>
             <param name="bytesSent">Amount of bytes already sent</param>
             <param name="totalBytes">Amount of total bytes to transmit</param>
+        </member>
+        <member name="T:KoenZomers.OneDrive.Api.Entities.OneDriveUserProfile">
+            <summary>
+            Represents an user
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveUserProfile.Id">
+            <summary>
+            Unique identifier of the user
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveUserProfile.DisplayName">
+            <summary>
+            Friendly name of the user
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveUserProfile.EmailAddress">
+            <summary>
+            E-mail address of the user
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveUserProfile.Username">
+            <summary>
+            Username of the user
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveUserProfile.Organization">
+            <summary>
+            Organization the user belongs to
+            </summary>
         </member>
         <member name="T:KoenZomers.OneDrive.Api.Entities.ServiceDiscoveryItem">
             <summary>
@@ -1136,6 +1186,22 @@
             <param name="oneDriveItem">OneDriveItem to download its contents of</param>
             <returns>Stream with the contents of the item on OneDrive</returns>
         </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads the provided file to OneDrive updating the original file
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem the item of which its contents should be updated</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads the provided file to OneDrive keeping the original filename
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFile(System.String,System.String)">
             <summary>
             Uploads the provided file to OneDrive
@@ -1168,7 +1234,7 @@
             </summary>
             <param name="filePath">Full path to the file to upload</param>
             <param name="fileName">Filename to assign to the file on OneDrive</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
             <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileAs(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
@@ -1177,15 +1243,7 @@
             </summary>
             <param name="fileStream">Stream to the file to upload</param>
             <param name="fileName">Filename to assign to the file on OneDrive</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads the provided file to OneDrive keeping the original filename
-            </summary>
-            <param name="filePath">Full path to the file to upload</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
             <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateFolder(System.String,System.String)">
@@ -1290,13 +1348,37 @@
             <param name="completeUrl">Complete URL from where to download the file</param>
             <returns>Stream with the downloaded content</returns>
         </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUpload(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="filePath">File reference to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaSimpleUpload(System.IO.FileInfo,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="file">FileInfo reference to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaSimpleUpload(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="fileStream">Stream to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem of the existing item that should be updated on OneDrive</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUpload(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
             <summary>
             Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
             </summary>
             <param name="fileStream">Stream to the file to upload</param>
             <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
             <returns>The resulting OneDrive item representing the uploaded file</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUploadInternal(System.IO.Stream,System.String)">
@@ -1331,7 +1413,7 @@
             </summary>
             <param name="filePath">Path to the file to upload</param>
             <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaResumableUpload(System.IO.FileInfo,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
@@ -1340,17 +1422,9 @@
             </summary>
             <param name="file">FileInfo instance pointing to the file to upload</param>
             <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
             <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
-            </summary>
-            <param name="fileName">Filename to store the uploaded content under</param>
-            <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
-            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaResumableUpload(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
             <summary>
@@ -1358,6 +1432,32 @@
             </summary>
             <param name="fileStream">Stream pointing to the file to upload</param>
             <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaResumableUpload(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads a file to OneDrive updating the contents of an existing file using the resumable method. Better for large files or unstable network connections.
+            </summary>
+            <param name="filePath">Path to the file to upload</param>
+            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaResumableUpload(System.IO.FileInfo,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive updating the contents of an existing file using the resumable file upload method
+            </summary>
+            <param name="file">FileInfo instance pointing to the file to upload</param>
+            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaResumableUpload(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive updating the contents of an existing file using the resumable file upload method
+            </summary>
+            <param name="fileStream">Stream pointing to the file to upload</param>
             <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
             <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
@@ -1366,9 +1466,25 @@
             <summary>
             Uploads a file to OneDrive using the resumable file upload method
             </summary>
+            <param name="fileStream">Stream pointing to the file to upload</param>
             <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
             <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateResumableUploadSession(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Initiates a resumable upload session to OneDrive to overwrite an existing file. It doesn't perform the actual upload yet.
+            </summary>
+            <param name="oneDriveItem">OneDriveItem item for which updated content will be uploaded</param>
+            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+            </summary>
+            <param name="fileName">Filename to store the uploaded content under</param>
+            <param name="oneDriveFolder">OneDriveItem container in which the file should be uploaded</param>
+            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetData``1(System.String)">
             <summary>
@@ -2094,7 +2210,7 @@
             </summary>
             <param name="fileStream">Stream pointing to the file to upload</param>
             <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="fragmentSizeInKiloByte">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
+            <param name="fragmentSizeInByte">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileToAppFolderViaResumableUpload(System.IO.Stream,System.String,System.Nullable{System.Int64},KoenZomers.OneDrive.Api.Enums.NameConflictBehavior)">
@@ -2103,7 +2219,7 @@
             </summary>
             <param name="fileStream">Stream pointing to the file to upload</param>
             <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="fragmentSizeInKiloByte">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
+            <param name="fragmentSizeInByte">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
             <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
         </member>

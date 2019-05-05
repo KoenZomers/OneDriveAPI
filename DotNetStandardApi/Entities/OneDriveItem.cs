@@ -164,5 +164,11 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// </summary>
         [JsonProperty("remoteItem", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public OneDriveRemoteItem RemoteItem{ get; set; }
+
+        /// <summary>
+        /// Information about the owner of a shared item
+        /// </summary>
+        [JsonProperty("shared")]
+        public OneDriveSharedItem Shared { get; set; }
     }
 }

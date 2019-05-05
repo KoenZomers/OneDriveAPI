@@ -1,30 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
-    <Version>2.2.0.0</Version>
+    <Version>2.2.1.0</Version>
     <Authors>Koen Zomers</Authors>
     <Company>Koen Zomers</Company>
     <Description>API in .NET Standard to communicate with OneDrive Personal and OneDrive for Business</Description>
     <PackageProjectUrl>https://github.com/KoenZomers/OneDriveAPI</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>- Converted the API from the .NET Framework to .NET Standard 2.0 so it can also be used on non Windows environments
-- Upgraded to use Newtonsoft JSON 12.0.1
-- Upgraded the Demo Application to use a proper namespace and be compiled against the .NET Framework 4.6.2 instead of 4.5.2
-</PackageReleaseNotes>
+    <PackageReleaseNotes>- Added several UpdateFile methods to allow for updating the contents of an existing file. The normal UploadFile throws an exception in some cases if you try to upload a file to the same location, especially when the item is shared with the user and resides on another drive. To aid in that scenario, use the UpdateFile methods
+- Added OneDriveSharedItem entity which will expose information on the owner of a shared item
+- Several smaller fixes</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
     <Copyright>Koen Zomers</Copyright>
+    <RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Code\GitHub\OneDriveAPI\DotNetStandardApi\KoenZomers.OneDrive.Api.xml</DocumentationFile>
+    <DocumentationFile>KoenZomers.OneDrive.Api.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Code\GitHub\OneDriveAPI\DotNetStandardApi\KoenZomers.OneDrive.Api.xml</DocumentationFile>
+    <DocumentationFile>KoenZomers.OneDrive.Api.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

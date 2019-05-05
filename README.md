@@ -67,6 +67,12 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.2.1.0 - May 5, 2019
+
+- Added several UpdateFile methods to allow for updating the contents of an existing file. The normal UploadFile throws an exception in some cases if you try to upload a file to the same location, especially when the item is shared with the user and resides on another drive. To aid in that scenario, use the UpdateFile methods
+- Added OneDriveSharedItem entity which will expose information on the owner of a shared item
+- Several smaller fixes
+
 2.2.0.0 - March 3, 2019
 
 - Converted the API from the .NET Framework to .NET Standard 2.0 so it can also be used on non Windows environments

@@ -84,5 +84,11 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// </summary>
         [JsonProperty("webDavUrl", NullValueHandling = NullValueHandling.Ignore)]
         public string WebDavUrl { get; set; }
+
+        /// <summary>
+        /// Information about the owner of the shared item
+        /// </summary>
+        [JsonProperty("shared")]
+        public OneDriveSharedItem Shared { get; set; }
     }
 }
