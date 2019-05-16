@@ -965,17 +965,6 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="fileName">Filename to store the uploaded content under</param>
         /// <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
-        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        protected override async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem)
-        {
-            return await CreateResumableUploadSession(fileName, oneDriveItem, NameConflictBehavior.Replace);
-        }
-
-        /// <summary>
-        /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
-        /// </summary>
-        /// <param name="fileName">Filename to store the uploaded content under</param>
-        /// <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
         /// <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
         /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
         protected async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveItem, NameConflictBehavior nameConflictBehavior)
@@ -1040,6 +1029,101 @@ namespace KoenZomers.OneDrive.Api
         protected override async Task<OneDriveItem> UploadFileViaResumableUploadInternal(Stream fileStream, OneDriveUploadSession oneDriveUploadSession, long? fragmentSizeInBytes)
         {
             return await base.UploadFileViaResumableUploadInternal(fileStream, oneDriveUploadSession, fragmentSizeInBytes ?? ResumableUploadChunkSizeInBytes);
+        }
+
+        /// <summary>
+        /// Initiates a resumable upload session to OneDrive to overwrite an existing file. It doesn't perform the actual upload yet.
+        /// </summary>
+        /// <param name="oneDriveItem">OneDriveItem item for which updated content will be uploaded</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        protected override async Task<OneDriveUploadSession> CreateResumableUploadSession(OneDriveItem oneDriveItem)
+        {
+            // Construct the complete URL to call
+            string completeUrl;
+            if (oneDriveItem.RemoteItem != null)
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/createUploadSession");
+            }
+            else if (oneDriveItem.ParentReference != null && !string.IsNullOrEmpty(oneDriveItem.ParentReference.DriveId))
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, "/createUploadSession");
+            }
+            else if (!string.IsNullOrEmpty(oneDriveItem.WebUrl) && oneDriveItem.WebUrl.Contains("cid="))
+            {
+                // Item will be uploaded to another drive. Used by OneDrive Personal when using a shared item.
+                completeUrl = string.Concat("drives/", oneDriveItem.WebUrl.Remove(0, oneDriveItem.WebUrl.IndexOf("cid=") + 4), "/items/", oneDriveItem.Id, "/createUploadSession");
+            }
+            else
+            {
+                // Item will be uploaded to the current user its drive
+                completeUrl = string.Concat("drive/items/", oneDriveItem.Id, "/createUploadSession");
+            }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
+
+            // Construct the OneDriveUploadSessionItemContainer entity with the upload details
+            // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
+            var uploadItemContainer = new OneDriveUploadSessionItemContainer
+            {
+                Item = new OneDriveUploadSessionItem
+                {
+                    FilenameConflictBehavior = NameConflictBehavior.Replace
+                }
+            };
+
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            return result;
+        }
+
+        /// <summary>
+        /// Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+        /// </summary>
+        /// <param name="fileName">Filename to store the uploaded content under</param>
+        /// <param name="oneDriveFolder">OneDriveItem container in which the file should be uploaded</param>
+        /// <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        protected override async Task<OneDriveUploadSession> CreateResumableUploadSession(string fileName, OneDriveItem oneDriveFolder)
+        {
+            // Construct the complete URL to call
+            string completeUrl;
+            if (oneDriveFolder.RemoteItem != null)
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveFolder.RemoteItem.ParentReference.DriveId, "/items/", oneDriveFolder.RemoteItem.Id, ":/", fileName, ":/createUploadSession");
+            }
+            else if (oneDriveFolder.ParentReference != null && !string.IsNullOrEmpty(oneDriveFolder.ParentReference.DriveId))
+            {
+                // Item will be uploaded to another drive
+                completeUrl = string.Concat("drives/", oneDriveFolder.ParentReference.DriveId, "/items/", oneDriveFolder.Id, ":/", fileName, ":/createUploadSession");
+            }
+            else if (!string.IsNullOrEmpty(oneDriveFolder.WebUrl) && oneDriveFolder.WebUrl.Contains("cid="))
+            {
+                // Item will be uploaded to another drive. Used by OneDrive Personal when using a shared item.
+                completeUrl = string.Concat("drives/", oneDriveFolder.WebUrl.Remove(0, oneDriveFolder.WebUrl.IndexOf("cid=") + 4), "/items/", oneDriveFolder.Id, ":/", fileName, ":/createUploadSession");
+            }
+            else
+            {
+                // Item will be uploaded to the current user its drive
+                completeUrl = string.Concat("drive/items/", oneDriveFolder.Id, ":/", fileName, ":/createUploadSession");
+            }
+
+            completeUrl = ConstructCompleteUrl(completeUrl);
+
+            // Construct the OneDriveUploadSessionItemContainer entity with the upload details
+            // Add the conflictbehavior header to always overwrite the file if it already exists on OneDrive
+            var uploadItemContainer = new OneDriveUploadSessionItemContainer
+            {
+                Item = new OneDriveUploadSessionItem
+                {
+                    FilenameConflictBehavior = NameConflictBehavior.Replace
+                }
+            };
+
+            // Call the OneDrive webservice
+            var result = await SendMessageReturnOneDriveItem<OneDriveUploadSession>(uploadItemContainer, HttpMethod.Post, completeUrl, HttpStatusCode.OK);
+            return result;
         }
 
         #endregion

@@ -67,6 +67,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.3.0.2 - May 16, 2019
+
+- Fixed a bug when uploading files larger than 5 MB throwing an exception stating that the oneDriveUploadSession is NULL
+
 2.3.0.1 - May 5, 2019
 
 - Recompiled to support multi platform to support .NET Standard 2.0, .NET Framework 4.5.2, .NET Framework 4.7.2 and .NET Core 2.0

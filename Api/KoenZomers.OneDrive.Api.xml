@@ -2329,14 +2329,6 @@
             <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
         </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
-            </summary>
-            <param name="fileName">Filename to store the uploaded content under</param>
-            <param name="oneDriveItem">OneDriveItem container in which the file should be uploaded</param>
-            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Enums.NameConflictBehavior)">
             <summary>
             Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
@@ -2361,6 +2353,21 @@
             <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
             <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Initiates a resumable upload session to OneDrive to overwrite an existing file. It doesn't perform the actual upload yet.
+            </summary>
+            <param name="oneDriveItem">OneDriveItem item for which updated content will be uploaded</param>
+            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+            </summary>
+            <param name="fileName">Filename to store the uploaded content under</param>
+            <param name="oneDriveFolder">OneDriveItem container in which the file should be uploaded</param>
+            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetSiteRoot">
             <summary>
