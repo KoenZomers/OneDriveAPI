@@ -11,7 +11,7 @@
     <Description>API in .NET Standard 2.0, .NET Framework 4.5.2, .NET Framework 4.7.2 and .NET Core 2.0 to communicate with OneDrive Personal and OneDrive for Business</Description>
     <PackageProjectUrl>https://github.com/KoenZomers/OneDriveAPI</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>- Fixed a bug when uploading files larger than 5 MB throwing an exception stating that the oneDriveUploadSession is NULL</PackageReleaseNotes>
+    <PackageReleaseNotes>- Merged [PR 20](https://github.com/KoenZomers/OneDriveAPI/pull/20) to allow for providing a client secret with the OneDrive Graph API</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
     <Copyright>Koen Zomers</Copyright>
     <RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
