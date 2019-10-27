@@ -67,7 +67,8 @@ namespace KoenZomers.OneDrive.Api
         /// Instantiates a new instance of the Graph API
         /// </summary>
         /// <param name="applicationId">Microsoft Application ID to use to connect</param>
-        public OneDriveGraphApi(string applicationId) : base(applicationId, null)
+        /// <param name="clientSecret">Microsoft Application secret to use to connect</param>
+        public OneDriveGraphApi(string applicationId, string clientSecret = null) : base(applicationId, clientSecret)
         {
             OneDriveApiBaseUrl = GraphApiBaseUrl + "me/";
         }
@@ -112,6 +113,8 @@ namespace KoenZomers.OneDrive.Api
             queryBuilder.Add("code", authorizationToken);
             queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
             queryBuilder.Add("grant_type", "authorization_code");
+            if (ClientSecret != null)
+                queryBuilder.Add("client_secret", ClientSecret);
             return await PostToTokenEndPoint(queryBuilder);
         }
 
@@ -142,6 +145,8 @@ namespace KoenZomers.OneDrive.Api
             queryBuilder.Add("refresh_token", refreshToken);
             queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
             queryBuilder.Add("grant_type", "refresh_token");
+            if (ClientSecret != null)
+                queryBuilder.Add("client_secret", ClientSecret);
             return await PostToTokenEndPoint(queryBuilder);
         }
 
