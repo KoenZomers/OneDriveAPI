@@ -67,6 +67,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.3.1.0 - October 27, 2019
+
+- Merged [PR 20](https://github.com/KoenZomers/OneDriveAPI/pull/20) to allow for providing a client secret with the OneDrive Graph API
+
 2.3.0.2 - May 16, 2019
 
 - Fixed a bug when uploading files larger than 5 MB throwing an exception stating that the oneDriveUploadSession is NULL
