@@ -1,6 +1,8 @@
 # OneDriveAPI
 OneDrive API in .NET Standard 2.0, .NET Framework 4.5.2, .NET Framework 4.7.2 and .NET Core 2.0
 
+![](https://img.shields.io/github/issues/koenzomers/OneDriveAPI.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
 Easy to use lightweight framework to communicate with the OneDrive Personal and OneDrive for Business through either the Azure AD (api.onedrive.com & tenant-my.sharepoint.com/_api or the Azure AD V2.0 (graph.microsoft.com) endpoint. It allows communication through one unified piece of code with:
 
 - OneDrive Personal
@@ -66,6 +68,10 @@ Package statistics:
 https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
+
+2.3.1.0 - October 27, 2019
+
+- Merged [PR 20](https://github.com/KoenZomers/OneDriveAPI/pull/20) to allow for providing a client secret with the OneDrive Graph API
 
 2.3.0.2 - May 16, 2019
 
@@ -153,57 +159,22 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 [Version History](./VersionHistory.md)
 
-## Register your own Client ID / Client Secret
+## Register your own Client ID
 
-If you wish to use the OneDrive API, you need to register your own Client ID / Client Secret. Depending on whether you want to target OneDrive for Consumers or OneDrive for Business, follow the steps below to do so.
+If you wish to use the OneDrive API through the Microsoft Graph API, you need to register your own Client ID. Follow the steps below to do so.
 
-### OneDrive via Azure AD v2.0 / Microsoft Graph (recommended)
-
-1. Go to https://apps.dev.microsoft.com
-2. Log in with your Microsoft or school or work account
-3. Click on "Add an app" next to "Converged applications"
-4. Give it any name you'd like and uncheck the "Let us help you get started" box
-5. Click Create
-6. Copy the Application Id shown on the screen and use it in this app for the GraphApiApplicationId App.config AppSetting. Make sure you set the redirect URL to https://login.microsoftonline.com/common/oauth2/nativeclient. Allow implicit flow can stay unchecked, logout URL can be left empty, Microsoft Graph Permissions not need to be specified here.
-
-### OneDrive for Consumers via Azure AD / api.onedrive.com
-
-** NOTE: Microsoft updated the web interface, so the steps below have been updated to reflect this (August 9, 2016) **
-
-1. Go to https://account.live.com/developers/applications/index
-2. Log in with your Microsoft Account
-3. Click on "Add an app" next to the "My applications" section
-4. Give it any name you would like and click on "Create application"
-5. It will show you the Application Id which you have copy to the App.config OneDriveConsumerApiClientID field
-6. Click on "Generate New Password" under "Application Secrets"
-7. Copy the generated password from the "New password generated" dialog and paste it to the App.config OneDriveConsumerApiClientSecret field and click OK
-8. Click on "Add Platform" under "Platforms"
-9. Click on "Web"
-10. Ensure the "Allow Implicit Flow" is checked, enter a URL in the "Redirect URIs" field. This can be any URL. Just beware that this URL will receive your access token, so use a site that belongs to you. I'll use https://apps.zomers.eu . Make sure "Live SDK support" at the bottom is checked. Click on "Save" at the bottom.
-11. Copy the same URI you've used at the previous step to the App.config OneDriveConsumerApiRedirectUri field
-12. Run the demo application and click on "Authorize"
-
-### OneDrive for Business via Azure AD / tenant-my.microsoft.com
-
-1. Go to https://manage.windowsazure.com
-2. Click on Active Directory in the left navigation bar
-3. Click on your Azure Active Directory name
-4. At the top, click on Applications
-5. At the bottom, click on Add
-6. Click on "Add an application my organization is developing"
-7. Enter any name you would like, choose "Web application and/or web api" as the type, *regardless whether or not you will be using the OneDrive API in a web application*
-8. As the sign-on URL, enter: https://login.live.com/oauth20_desktop.srf . As the App ID URI enter anything you would like. It must be in an URL format. I.e. https://apps.zomers.eu/myonedriveapiapp
-9. Once the application is created, click on Configure at the top
-10. If you want users outside of your own Azure Active Directory to be able to log in to the OneDrive API, switch "Application is multi-tenant" to YES. If only users from your own Azure Active Directory will be using the OneDrive API, keep it at NO.
-11. Click the green Add application button at the bottom
-12. Click on Office 365 SharePoint Online and then on the round checkmark buttom at the bottom right
-13. At the bottom under "permissions to other applications" ensure that for Windows Azure Active Directory under Delegated Permissions "Sign in and read user profile" is checked. Click on the dropdown for Delegated Permissions in the line that reads "Office 365 SharePoint Online" and select "Read and write user files"
-14. Click on Save at the bottom
-15. Under keys select 1 or 2 years in the dropdown and click Save again at the bottom
-16. After it's done processing your changes, it will show the client secret in the line under keys where you just used the dropdown. Copy this value to notepad. This is the client secret and only will be visible once and never again.
-17. Copy the Client ID field at the top.
-18. Replace the Client ID and Client Secret in your App.config where you will be using the OneDrive API. Use the DemoApplication its app.config for a sample of this.
-19. Run the demo application, select "OneDrive for Business O365" and click on "Authorize"
+1. Go to https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
+2. At the top, click on New registration
+3. Enter any name for the application that you would like
+4. Under _Supported account types_ select _Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)_
+5. Under _Platform configuration_ select _Client Application_
+6. Hit the _Register_ button at the bottom
+7. Click on _Add a platform_ followed by clicking on _Mobile and desktop applications_
+8. Select the two proposed options for _https://login.microsoftonline.com/common/oauth2/nativeclient_ and _https://login.live.com/oauth20_desktop.srf_ and click on _Configure_ at the bottom
+9. In the left menu bar, click on _Overview_
+10. Copy the _Application (client) ID_ from the section at the top
+11. Set the [ClientId](https://github.com/KoenZomers/OneDriveAPI/blob/f32d39891614d47efc9b5cb50d9500ca239751a0/Api/OneDriveApi.cs#L28) through your code to the application ID retrieved at the previous step. If you want to use the DemoApplication included with this code to test your new application registration, open its App.config file and replace the value for `<add key="GraphApiApplicationId" value="5bbbcf45-3ca9-47cf-8c2f-0ecdcf587332"/>` with the application ID retrieved at the previous step.
+12. Run the demo application, select "Graph API (Consumer & Business)" and click on "Authorize"
 
 ## Feedback
 

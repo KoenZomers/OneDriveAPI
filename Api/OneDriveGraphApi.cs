@@ -67,7 +67,8 @@ namespace KoenZomers.OneDrive.Api
         /// Instantiates a new instance of the Graph API
         /// </summary>
         /// <param name="applicationId">Microsoft Application ID to use to connect</param>
-        public OneDriveGraphApi(string applicationId) : base(applicationId, null)
+        /// <param name="clientSecret">Microsoft Application secret to use to connect</param>
+        public OneDriveGraphApi(string applicationId, string clientSecret = null) : base(applicationId, clientSecret)
         {
             OneDriveApiBaseUrl = GraphApiBaseUrl + "me/";
         }
@@ -112,6 +113,8 @@ namespace KoenZomers.OneDrive.Api
             queryBuilder.Add("code", authorizationToken);
             queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
             queryBuilder.Add("grant_type", "authorization_code");
+            if (ClientSecret != null)
+                queryBuilder.Add("client_secret", ClientSecret);
             return await PostToTokenEndPoint(queryBuilder);
         }
 
@@ -119,7 +122,6 @@ namespace KoenZomers.OneDrive.Api
         /// Gets an access token from the provided refresh token using the default scopes defined in DefaultScopes
         /// </summary>
         /// <param name="refreshToken">Refresh token</param>
-        /// <param name="scopes">Scopes to request access for</param>
         /// <returns>Access token for the Graph API</returns>
         /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
         protected override async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
@@ -142,6 +144,8 @@ namespace KoenZomers.OneDrive.Api
             queryBuilder.Add("refresh_token", refreshToken);
             queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
             queryBuilder.Add("grant_type", "refresh_token");
+            if (ClientSecret != null)
+                queryBuilder.Add("client_secret", ClientSecret);
             return await PostToTokenEndPoint(queryBuilder);
         }
 
@@ -452,7 +456,7 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Lists all permissions on a OneDrive item
         /// </summary>
-        /// <param name="itemPath">The OneDrive item to retrieve the permissions of</param>
+        /// <param name="item">The OneDrive item to retrieve the permissions of</param>
         /// <returns>Collection with OneDrivePermission objects which indicate the permissions on the item</returns>
         public async Task<OneDriveCollectionResponse<OneDrivePermission>> ListPermissions(OneDriveItem item)
         {
@@ -1023,6 +1027,7 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Uploads a file to OneDrive using the resumable file upload method
         /// </summary>
+        /// <param name="fileStream">Stream with the content to upload</param>
         /// <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
         /// <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
         /// <returns>OneDriveItem instance representing the uploaded item</returns>
@@ -1161,7 +1166,6 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Gets a SharePoint site belonging to a group
         /// </summary>
-        /// <param name="hostname"></param>
         /// <param name="groupId">Unique identifier of group to retrieve the associated SharePoint site for</param>
         /// <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
         public virtual async Task<SharePointSite> GetSiteByGroupId(string groupId)

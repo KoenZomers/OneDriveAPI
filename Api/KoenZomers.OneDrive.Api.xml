@@ -1873,11 +1873,12 @@
             Base URL of the Graph API
             </summary>
         </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.#ctor(System.String)">
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.#ctor(System.String,System.String)">
             <summary>
             Instantiates a new instance of the Graph API
             </summary>
             <param name="applicationId">Microsoft Application ID to use to connect</param>
+            <param name="clientSecret">Microsoft Application secret to use to connect</param>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAuthenticationUri">
             <summary>
