@@ -94,7 +94,7 @@ namespace KoenZomers.OneDrive.Api.Helpers
                         stringBuilder.Append(SeperatorCharacter);
                 }
                 stringBuilder.Append(keyValuePair.Key);
-                stringBuilder.Append('=');
+                stringBuilder.Append(KeyValueJoinCharacter);
                 stringBuilder.Append(Uri.EscapeDataString(keyValuePair.Value));
             }
             return stringBuilder.ToString();
