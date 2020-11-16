@@ -779,6 +779,7 @@ namespace KoenZomers.OneDrive.Api
                 // Item will be copied frp, the current user its drive
                 completeUrl = string.Concat("drive/items/", oneDriveSource.Id, "/copy");
             }
+            completeUrl = ConstructCompleteUrl(completeUrl);
 
             // Construct the OneDriveParentItemReference entity with the item to be copied details
             var requestBody = new OneDriveParentItemReference

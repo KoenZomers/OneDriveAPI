@@ -5,18 +5,18 @@
     <AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
-    <Version>2.3.1.0</Version>
+    <Version>2.3.1.1</Version>
     <Authors>Koen Zomers</Authors>
     <Company>Koen Zomers</Company>
     <Description>API in .NET Standard 2.0, .NET Framework 4.5.2, .NET Framework 4.7.2 and .NET Core 2.0 to communicate with OneDrive Personal and OneDrive for Business</Description>
     <PackageProjectUrl>https://github.com/KoenZomers/OneDriveAPI</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>- Merged [PR 20](https://github.com/KoenZomers/OneDriveAPI/pull/20) to allow for providing a client secret with the OneDrive Graph API</PackageReleaseNotes>
+    <PackageReleaseNotes>- Fixed bug in using copy [Issue 24](https://github.com/KoenZomers/OneDriveAPI/issues/24)</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
     <Copyright>Koen Zomers</Copyright>
     <RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
-    <AssemblyVersion>2.3.1.0</AssemblyVersion>
-    <FileVersion>2.3.1.0</FileVersion>
+    <AssemblyVersion>2.3.1.1</AssemblyVersion>
+    <FileVersion>2.3.1.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">

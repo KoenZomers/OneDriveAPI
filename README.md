@@ -69,6 +69,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.3.1.1 - November 16, 2020
+
+- Fixed bug in using copy [Issue 24](https://github.com/KoenZomers/OneDriveAPI/issues/24). Thanks to [Eirielson Rodrigues](https://github.com/eirielson) for reporting this!
+
 2.3.1.0 - October 27, 2019
 
 - Merged [PR 20](https://github.com/KoenZomers/OneDriveAPI/pull/20) to allow for providing a client secret with the OneDrive Graph API

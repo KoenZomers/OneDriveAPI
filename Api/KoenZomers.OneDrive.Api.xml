@@ -751,6 +751,87 @@
             <param name="errorDetails">Details returned by the OneDrive API about why the request failed (optional)</param>
             <param name="innerException">Inner exception that was thrown to indicate failure of the operation (optional)</param>
         </member>
+        <member name="T:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder">
+            <summary>
+            Helper class for building querystrings
+            </summary>
+        </member>
+        <member name="F:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder._parameters">
+            <summary>
+            Collection of parameters in the querystring
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.HasKeys">
+            <summary>
+            Boolean indicating if the querystring has any items in it
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.StartCharacter">
+            <summary>
+            Character to start the querystring with. Defaults to not including it.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.SeperatorCharacter" -->
+        <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.KeyValueJoinCharacter">
+            <summary>
+            Character used to separate the keys from its value sin the querystring. Defaults to =.
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.Item(System.String)">
+            <summary>
+            Allows retrieval or setting the value of items in the querystring
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.Keys">
+            <summary>
+            Collection with keys of the parameters in this querystring
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.#ctor">
+            <summary>
+            Instantiates a new empty querystring
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.#ctor(System.String,System.String)">
+            <summary>
+            Instantiates a new querystring and adds the provided key and value to it
+            </summary>
+            <param name="key">Key to add</param>
+            <param name="value">Value to add</param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.Clear">
+            <summary>
+            Removes all items from the querystring
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.ContainsKey(System.String)">
+            <summary>
+            Returns a boolean indicating if a specific key exists in the querystring
+            </summary>
+            <param name="key">Name of the key to validate if it exists</param>
+            <returns>Boolean indicating if the provided key exists in the querystring</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.Add(System.String,System.String)">
+            <summary>
+            Adds an item to the querystring
+            </summary>
+            <param name="key">Key of the item to add</param>
+            <param name="value">Value of the item to add</param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.Remove(System.String)">
+            <summary>
+            Removes a specific key from the querystring
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.ToString">
+            <summary>
+            Outputs the entire querystring
+            </summary>
+            <returns>Querystring</returns>
+        </member>
         <member name="T:KoenZomers.OneDrive.Api.OneDriveApi">
             <summary>
             Base OneDrive API functionality that is valid for either the Consumer OneDrive or the OneDrive for Business platform
@@ -1908,7 +1989,6 @@
             Gets an access token from the provided refresh token using the default scopes defined in DefaultScopes
             </summary>
             <param name="refreshToken">Refresh token</param>
-            <param name="scopes">Scopes to request access for</param>
             <returns>Access token for the Graph API</returns>
             <exception cref="T:KoenZomers.OneDrive.Api.Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
         </member>
@@ -2087,7 +2167,7 @@
             <summary>
             Lists all permissions on a OneDrive item
             </summary>
-            <param name="itemPath">The OneDrive item to retrieve the permissions of</param>
+            <param name="item">The OneDrive item to retrieve the permissions of</param>
             <returns>Collection with OneDrivePermission objects which indicate the permissions on the item</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAppFolderMetadata">
@@ -2351,6 +2431,7 @@
             <summary>
             Uploads a file to OneDrive using the resumable file upload method
             </summary>
+            <param name="fileStream">Stream with the content to upload</param>
             <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
             <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
@@ -2395,7 +2476,6 @@
             <summary>
             Gets a SharePoint site belonging to a group
             </summary>
-            <param name="hostname"></param>
             <param name="groupId">Unique identifier of group to retrieve the associated SharePoint site for</param>
             <returns>SharePointSite instance containing the details of the requested site in SharePoint</returns>
         </member>
