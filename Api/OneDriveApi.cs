@@ -354,13 +354,23 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Retrieves the first batch of children under the provided OneDrive path
+        /// Retrieves the first batch of children under the provided OneDrive path. Use GetNextChildrenByPath and provide the NextLink from the results to fetch the next batch.
         /// </summary>
         /// <param name="path">Path within OneDrive to retrieve the child items of</param>
         /// <returns>OneDriveItemCollection containing the first batch of items in the requested folder</returns>
         public virtual async Task<OneDriveItemCollection> GetChildrenByPath(string path)
         {
             return await GetData<OneDriveItemCollection>(string.Concat("drive/root:/", path, ":/children"));
+        }
+
+        /// <summary>
+        /// Retrieves a next batch of children using the provided full SkipToken path
+        /// </summary>
+        /// <param name="skipTokenUrl">Full URL from a NextLink in the response of a GetChildrenByPath request</param>
+        /// <returns>OneDriveItemCollection containing the next batch of items in the requested folder</returns>
+        public virtual async Task<OneDriveItemCollection> GetNextChildrenByPath(string skipTokenUrl)
+        {
+            return await GetData<OneDriveItemCollection>(skipTokenUrl);
         }
 
         /// <summary>

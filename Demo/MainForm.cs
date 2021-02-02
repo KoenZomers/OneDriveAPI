@@ -266,8 +266,14 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private async void GetByPathButton_Click(object sender, EventArgs e)
         {            
-            var data = await OneDriveApi.GetChildrenByPath("Demo");
+            var data = await OneDriveApi.GetChildrenByPath("Test");
             JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
+
+            if (data.NextLink != null)
+            {
+                var nextData = await OneDriveApi.GetNextChildrenByPath(data.NextLink);
+                JsonResultTextBox.Text += nextData != null ? nextData.OriginalJson : "";
+            }            
         }
 
         /// <summary>

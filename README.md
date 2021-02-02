@@ -69,6 +69,10 @@ https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
 
+2.3.2.0 - February 2, 2021
+
+- Added ```public virtual async Task<OneDriveItemCollection> GetNextChildrenByPath(string skipTokenUrl)``` which allows file requests from using i.e. ```public virtual async Task<OneDriveItemCollection> GetChildrenByPath(string path)``` on a large folder containing more than 100 files to retrieve the next batch of files. If your intend is to get all the results, use ```public virtual async Task<OneDriveItem[]> GetAllChildrenByPath(string path)``` instead. [Issue 28](https://github.com/KoenZomers/OneDriveAPI/issues/28)
+
 2.3.1.1 - November 16, 2020
 
 - Fixed bug in using copy [Issue 24](https://github.com/KoenZomers/OneDriveAPI/issues/24). Thanks to [Eirielson Rodrigues](https://github.com/eirielson) for reporting this!

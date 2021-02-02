@@ -5,18 +5,18 @@
     <AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
-    <Version>2.3.1.1</Version>
+    <Version>2.3.2.0</Version>
     <Authors>Koen Zomers</Authors>
     <Company>Koen Zomers</Company>
     <Description>API in .NET Standard 2.0, .NET Framework 4.5.2, .NET Framework 4.7.2 and .NET Core 2.0 to communicate with OneDrive Personal and OneDrive for Business</Description>
     <PackageProjectUrl>https://github.com/KoenZomers/OneDriveAPI</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>- Fixed bug in using copy [Issue 24](https://github.com/KoenZomers/OneDriveAPI/issues/24)</PackageReleaseNotes>
+    <PackageReleaseNotes>- Added ```public virtual async Task&lt;OneDriveItemCollection&gt; GetNextChildrenByPath(string skipTokenUrl)``` which allows file requests from using i.e. ```public virtual async Task&lt;OneDriveItemCollection&gt; GetChildrenByPath(string path)``` on a large folder containing more than 100 files to retrieve the next batch of files. If your intend is to get all the results, use ```public virtual async Task&lt;OneDriveItem[]&gt; GetAllChildrenByPath(string path)``` instead. [Issue 28](https://github.com/KoenZomers/OneDriveAPI/issues/28)</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
     <Copyright>Koen Zomers</Copyright>
     <RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
-    <AssemblyVersion>2.3.1.1</AssemblyVersion>
-    <FileVersion>2.3.1.1</FileVersion>
+    <AssemblyVersion>2.3.2.0</AssemblyVersion>
+    <FileVersion>2.3.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
