@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveParentItemReference : OneDriveItemBase
     {
-        [JsonProperty("parentReference")]
+        [JsonPropertyName("parentReference")]
         public OneDriveItemReference ParentReference { get; set; }
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
     }
 }

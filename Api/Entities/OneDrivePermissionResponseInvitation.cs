@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,13 +10,13 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// E-mail address of the user being invited
         /// </summary>
-        [JsonProperty("email")]
+        [JsonPropertyName("email")]
         public string Email { get; set; }
 
         /// <summary>
         /// Boolean indicating if the user is required to sign in before the OneDrive item can be accessed
         /// </summary>
-        [JsonProperty("signInRequired")]
+        [JsonPropertyName("signInRequired")]
         public bool SignInRequired { get; set; }
     }
 }

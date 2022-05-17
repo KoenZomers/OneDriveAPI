@@ -1,32 +1,32 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDrivePhotoFacet
     {
-        [JsonProperty("takenDateTime")]
+        [JsonPropertyName("takenDateTime")]
         public DateTimeOffset TakenDateTime { get; set; }
 
-        [JsonProperty("cameraMake")]
+        [JsonPropertyName("cameraMake")]
         public string CameraMake { get; set; }
         
-        [JsonProperty("cameraModel")]
+        [JsonPropertyName("cameraModel")]
         public string CameraModel { get; set; }
 
-        [JsonProperty("fNumber")]
+        [JsonPropertyName("fNumber")]
         public double FStop { get; set; }
 
-        [JsonProperty("exposureDenominator")]
+        [JsonPropertyName("exposureDenominator")]
         public double ExposureDenominator { get; set; }
 
-        [JsonProperty("exposureNumerator")]
+        [JsonPropertyName("exposureNumerator")]
         public double ExposureNumerator { get; set; }
 
-        [JsonProperty("focalLength")]
+        [JsonPropertyName("focalLength")]
         public double FocalLength { get; set; }
 
-        [JsonProperty("iso")]
+        [JsonPropertyName("iso")]
         public int ISO { get; set; }
     }
 }

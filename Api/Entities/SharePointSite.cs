@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using System;
 
 namespace KoenZomers.OneDrive.Api.Entities
@@ -12,46 +12,46 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// Date and time at which the site was created
         /// </summary>
-        [JsonProperty("createdDateTime")]
+        [JsonPropertyName("createdDateTime")]
         public DateTime? CreatedDateTime { get; set; }
 
         /// <summary>
         /// Description of the site
         /// </summary>
-        [JsonProperty("description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
 
         /// <summary>
         /// Unique identifier of the site
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Date and time at which the site was last modified
         /// </summary>
-        [JsonProperty("lastModifiedDateTime")]
+        [JsonPropertyName("lastModifiedDateTime")]
         public DateTime? LastModifiedDateTime { get; set; }
 
         /// <summary>
         /// Name of the site
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Full URL to where the site resides
         /// </summary>
-        [JsonProperty("webUrl")]
+        [JsonPropertyName("webUrl")]
         public string WebUrl { get; set; }
 
-        //[JsonProperty("siteCollection")]
+        //[JsonPropertyName("siteCollection")]
         //public SiteCollection SiteCollection { get; set; }
 
         /// <summary>
         /// Title of the site
         /// </summary>
-        [JsonProperty("displayName")]
+        [JsonPropertyName("displayName")]
         public string DisplayName { get; set; }
     }
 }

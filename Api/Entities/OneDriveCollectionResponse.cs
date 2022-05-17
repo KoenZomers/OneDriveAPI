@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveCollectionResponse<T> : OneDriveItemBase
     {
-        [JsonProperty("value")]
+        [JsonPropertyName("value")]
         public T[] Collection { get; set; }
 
-        [JsonProperty("@odata.nextLink")]
+        [JsonPropertyName("@odata.nextLink")]
         public string NextLink { get; set; }
     }
 }

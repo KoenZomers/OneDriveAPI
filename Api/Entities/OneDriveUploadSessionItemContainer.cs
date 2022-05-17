@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     internal class OneDriveUploadSessionItemContainer : OneDriveItemBase
     {
-        [JsonProperty("item", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("item")]
         public OneDriveUploadSessionItem Item { get; set; }
     }
 }

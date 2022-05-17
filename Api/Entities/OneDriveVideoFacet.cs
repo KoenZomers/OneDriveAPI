@@ -1,19 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveVideoFacet
     {
-        [JsonProperty("bitrate")]
+        [JsonPropertyName("bitrate")]
         public long Bitrate { get; set; }
 
-        [JsonProperty("duration")]
+        [JsonPropertyName("duration")]
         public long Duration { get; set; }
 
-        [JsonProperty("height")]
+        [JsonPropertyName("height")]
         public int Height { get; set; }
 
-        [JsonProperty("width")]
+        [JsonPropertyName("width")]
         public int Width { get; set; }
     }
 }

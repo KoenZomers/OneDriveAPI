@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,25 +10,25 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The grant created for an individual to access the OneDrive item
         /// </summary>
-        [JsonProperty("grantedTo")]
+        [JsonPropertyName("grantedTo")]
         public OneDrivePermissionResponseGrant GrantedTo { get; set; }
 
         /// <summary>
         /// Unique identifier of the grant
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Invitation for a specific user to access the OneDrive item
         /// </summary>
-        [JsonProperty("invitation")]
+        [JsonPropertyName("invitation")]
         public OneDrivePermissionResponseInvitation Invitation { get; set; }
 
         /// <summary>
         /// The roles assigned to the item
         /// </summary>
-        [JsonProperty("roles")]
+        [JsonPropertyName("roles")]
         public string[] Roles { get; set; }
     }
 }

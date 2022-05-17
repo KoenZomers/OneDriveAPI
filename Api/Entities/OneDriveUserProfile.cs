@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,31 +10,31 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// Unique identifier of the user
         /// </summary>
-        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Friendly name of the user
         /// </summary>
-        [JsonProperty("displayName", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("displayName")]
         public string DisplayName { get; set; }
 
         /// <summary>
         /// E-mail address of the user
         /// </summary>
-        [JsonProperty("emailAddress", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("emailAddress")]
         public string EmailAddress { get; set; }
 
         /// <summary>
         /// Username of the user
         /// </summary>
-        [JsonProperty("username", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("username")]
         public string Username { get; set; }
 
         /// <summary>
         /// Organization the user belongs to
         /// </summary>
-        [JsonProperty("organization", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("organization")]
         public string Organization { get; set; }
     }
 }

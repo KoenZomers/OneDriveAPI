@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,7 +10,7 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The user account that owns the shared item
         /// </summary>
-        [JsonProperty("owner")]
+        [JsonPropertyName("owner")]
         public OneDriveIdentitySet Owner { get; set; }
     }
 }

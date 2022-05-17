@@ -54,6 +54,31 @@
             The unique identifier for the recipient in the directory
             </summary>
         </member>
+        <member name="T:KoenZomers.OneDrive.Api.Entities.OneDriveErrorDetail">
+            <summary>
+            Details about an error that occurred
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveErrorDetail.Code">
+            <summary>
+            Error code
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveErrorDetail.Message">
+            <summary>
+            Error message
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveErrorDetail.Target">
+            <summary>
+            Target platform
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveErrorDetail.InnerError">
+            <summary>
+            Error occurring that lead to this error
+            </summary>
+        </member>
         <member name="T:KoenZomers.OneDrive.Api.Entities.OneDriveForBusinessSharePointId">
             <summary>
             Entity representing a reference to a SharePoint list in OneDrive for Business

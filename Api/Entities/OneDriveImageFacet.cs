@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveImageFacet
     {
-        [JsonProperty("width")]
+        [JsonPropertyName("width")]
         public int Width { get; set; }
-        [JsonProperty("height")]
+        [JsonPropertyName("height")]
         public int Height { get; set; }
     }
 }

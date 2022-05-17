@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KoenZomers.OneDrive.AuthenticatorApp</RootNamespace>
     <AssemblyName>KoenZomers.OneDrive.AuthenticatorApp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -85,8 +85,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.1</Version>
+    <PackageReference Include="System.Text.Json">
+      <Version>6.0.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

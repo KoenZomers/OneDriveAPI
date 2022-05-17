@@ -1,6 +1,5 @@
 ﻿using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -12,31 +11,31 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// Total allowed storage space, in bytes
         /// </summary>
-        [JsonProperty("total")]
+        [JsonPropertyName("total")]
         public long Total { get; set; }
 
         /// <summary>
         /// Total space used, in bytes
         /// </summary>
-        [JsonProperty("used")]
+        [JsonPropertyName("used")]
         public long Used { get; set; }
 
         /// <summary>
         /// Total space remaining before reaching the quota limit, in bytes
         /// </summary>
-        [JsonProperty("remaining")]
+        [JsonPropertyName("remaining")]
         public long Remaining { get; set; }
 
         /// <summary>
         /// Total space consumed by files in the recycle bin, in bytes
         /// </summary>
-        [JsonProperty("deleted")]
+        [JsonPropertyName("deleted")]
         public long Deleted { get; set; }
 
         /// <summary>
         /// Enumeration value that indicates the state of the storage space
         /// </summary>
-        [JsonProperty("state"), JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("state")]
         public OneDriveQuotaState State { get; set; }
     }
 }

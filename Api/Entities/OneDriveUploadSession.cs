@@ -1,17 +1,17 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveUploadSession : OneDriveItemBase
     {
-        [JsonProperty("uploadUrl")]
+        [JsonPropertyName("uploadUrl")]
         public string UploadUrl { get; set; }
 
-        [JsonProperty("expirationDateTime")]
+        [JsonPropertyName("expirationDateTime")]
         public DateTimeOffset Expiration { get; set; }
 
-        [JsonProperty("nextExpectedRanges")]
+        [JsonPropertyName("nextExpectedRanges")]
         public string[] ExpectedRanges { get; set; }
     }
 }

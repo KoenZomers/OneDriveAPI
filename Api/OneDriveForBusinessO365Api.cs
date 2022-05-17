@@ -5,9 +5,10 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Helpers;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using KoenZomers.OneDrive.Api.Enums;
 using System.Net.Http;
+using System.Text.Json;
 
 namespace KoenZomers.OneDrive.Api
 {
@@ -178,7 +179,10 @@ namespace KoenZomers.OneDrive.Api
             // Get the first Office 365 Service
             try
             {
-                var discoveryResult = JsonConvert.DeserializeObject<ServiceDiscoverySet>(result);
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new JsonStringEnumConverter());
+
+                var discoveryResult = JsonSerializer.Deserialize<ServiceDiscoverySet>(result, options);
 
                 if (discoveryResult.Services.Count == 0)
                 {
@@ -188,7 +192,7 @@ namespace KoenZomers.OneDrive.Api
                 // Service discovery successful
                 return discoveryResult;
             }
-            catch (JsonReaderException e)
+            catch (JsonException e)
             {
                 throw new Exceptions.InvalidResponseException(result, e);
             }

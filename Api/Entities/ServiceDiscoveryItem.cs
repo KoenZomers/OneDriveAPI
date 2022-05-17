@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -7,16 +7,16 @@ namespace KoenZomers.OneDrive.Api.Entities
     /// </summary>
     public class ServiceDiscoveryItem
     {
-        [JsonProperty("serviceEndpointUri")]
+        [JsonPropertyName("serviceEndpointUri")]
         public string ServiceEndPointUri { get; set; }
 
-        [JsonProperty("serviceResourceId")]
+        [JsonPropertyName("serviceResourceId")]
         public string ServiceResourceId { get; set; }
 
-        [JsonProperty("capability")]
+        [JsonPropertyName("capability")]
         public string Capability { get; set; }
 
-        [JsonProperty("serviceApiVersion")]
+        [JsonPropertyName("serviceApiVersion")]
         public string ServiceApiVersion { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,7 +10,7 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The user that has been granted access
         /// </summary>
-        [JsonProperty("user")]
+        [JsonPropertyName("user")]
         public OneDriveUserProfile User { get; set; }
     }
 }

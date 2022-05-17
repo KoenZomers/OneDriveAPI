@@ -1,17 +1,16 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveAsyncTaskStatus : OneDriveItemBase
     {
-        [JsonProperty("operation"), JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("operation")]
         public Enums.OneDriveAsyncJobType Operation { get; set; }
 
-        [JsonProperty("percentageComplete")]
+        [JsonPropertyName("percentageComplete")]
         public double PercentComplete { get; set; }
 
-        [JsonProperty("status"), JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("status")]
         public Enums.OneDriveAsyncJobStatus Status { get; set; }
         
     }

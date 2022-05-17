@@ -1,6 +1,5 @@
 ﻿using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -12,25 +11,25 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The unique identifier of the drive
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Enumerated value that identifies the type of drive account. OneDrive drives will show as personal. 
         /// </summary>
-        [JsonProperty("driveType"), JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("driveType")]
         public OneDriveDriveType DriveType { get; set; }
 
         /// <summary>
         /// The user account that owns the drive
         /// </summary>
-        [JsonProperty("owner")]
+        [JsonPropertyName("owner")]
         public OneDriveIdentitySet Owner { get; set; }
 
         /// <summary>
         /// Information about the drive's storage space quota
         /// </summary>
-        [JsonProperty("quota")]
+        [JsonPropertyName("quota")]
         public OneDriveQuotaFacet Quota { get; set; }
     }
 }

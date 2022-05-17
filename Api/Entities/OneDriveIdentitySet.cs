@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,19 +10,19 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// An Identity resource that represents a user
         /// </summary>
-        [JsonProperty("user", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("user")]
         public OneDriveIdentity User { get; set; }
 
         /// <summary>
         /// An Identity resource that represents the application
         /// </summary>
-        [JsonProperty("device", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("device")]
         public OneDriveIdentity Device { get; set; }
 
         /// <summary>
         /// An Identity resource that represents the device
         /// </summary>
-        [JsonProperty("application", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("application")]
         public OneDriveIdentity Application { get; set; }
     }
 }

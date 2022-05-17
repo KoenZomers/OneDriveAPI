@@ -1,6 +1,5 @@
 ﻿using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -9,16 +8,16 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// Url to access the item on which the permissions are applied
         /// </summary>
-        [JsonProperty("webUrl")]
+        [JsonPropertyName("webUrl")]
         public string WebUrl { get; set; }
 
-        [JsonProperty("application")]
+        [JsonPropertyName("application")]
         public OneDriveIdentity Application { get; set; }
 
         /// <summary>
         /// Type of rights assigned to this item
         /// </summary>
-        [JsonProperty("type"), JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("type")]
         public OneDriveLinkType Type { get; set; }
     }
 }

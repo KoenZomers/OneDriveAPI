@@ -7,8 +7,6 @@ Easy to use lightweight framework to communicate with the OneDrive Personal and 
 
 - OneDrive Personal
 - OneDrive for Business
-- SharePoint Online (yet to come, work in progess)
-- SharePoint Server 2016 (yet to come, work in progess)
 
 The code contains a fully working demo Windows Forms application which shows you exactly how to use all of the functionality exposed in the OneDrive API.
 
@@ -68,6 +66,11 @@ Package statistics:
 https://www.nuget.org/packages/KoenZomers.OneDrive.Api
 
 ## Version History
+
+2.4.0.0 - May 18, 2022
+
+- Recompiled to support .NET Framework 4.8.0, .NET Core 3.1 and .NET 6.0
+- Removed Newtonsoft JSON dependency by switching to System.Text.Json
 
 2.3.2.0 - February 2, 2021
 

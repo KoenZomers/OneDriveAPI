@@ -1,19 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveThumbnailSet : OneDriveItemBase
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
-        [JsonProperty("small", NullValueHandling=NullValueHandling.Ignore)]
+        [JsonPropertyName("small")]
         public OneDriveThumbnail Small { get; set; }
 
-        [JsonProperty("medium", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("medium")]
         public OneDriveThumbnail Medium { get; set; }
 
-        [JsonProperty("large", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("large")]
         public OneDriveThumbnail Large { get; set; }
     }
 }

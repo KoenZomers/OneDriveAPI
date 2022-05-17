@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -8,7 +8,7 @@ namespace KoenZomers.OneDrive.Api.Entities
     /// </summary>
     public class ServiceDiscoverySet
     {
-        [JsonProperty("value")]
+        [JsonPropertyName("value")]
         public List<ServiceDiscoveryItem> Services { get; set; }
     }
 }

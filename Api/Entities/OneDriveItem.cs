@@ -1,6 +1,6 @@
 ﻿using System;
 using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -12,163 +12,163 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The unique identifier of the item within the Drive. Read-only.
         /// </summary>
-        [JsonProperty("id", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// The name of the item (filename and extension). Writable.
         /// </summary>
-        [JsonProperty("name", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// eTag for the entire item (metadata + content). Read-only.
         /// </summary>
-        [JsonProperty("etag", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("etag")]
         public string ETag { get; set; }
 
         /// <summary>
         /// An eTag for the content of the item. This eTag is not changed if only the metadata is changed. Read-only.
         /// </summary>
-        [JsonProperty("ctag", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("ctag")]
         public string CTag { get; set; }
 
         /// <summary>
         /// Identity of the user, device, and application which created the item. Read-only.
         /// </summary>
-        [JsonProperty("createdBy", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("createdBy")]
         public OneDriveIdentitySet CreatedBy { get; set; }
 
         /// <summary>
         /// Date and time of item creation. Read-only.
         /// </summary>
-        [JsonProperty("createdDateTime", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("createdDateTime")]
         public DateTimeOffset CreatedDateTime { get; set; }
 
         /// <summary>
         /// Identity of the user, device, and application which last modified the item. Read-only.
         /// </summary>
-        [JsonProperty("lastModifiedBy", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("lastModifiedBy")]
         public OneDriveIdentitySet LastModifiedBy { get; set; }
 
         /// <summary>
         /// Date and time the item was last modified. Read-only.
         /// </summary>
-        [JsonProperty("lastModifiedDateTime", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("lastModifiedDateTime")]
         public DateTimeOffset LastModifiedDateTime { get; set; }
 
         /// <summary>
         /// Size of the item in bytes. Read-only.
         /// </summary>
-        [JsonProperty("size", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("size")]
         public long Size { get; set; }
 
         /// <summary>
         /// URL that displays the resource in the browser. Read-only.
         /// </summary>
-        [JsonProperty("webUrl", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("webUrl")]
         public string WebUrl { get; set; }
 
         /// <summary>
         /// Parent information, if the item has a parent. Writeable
         /// </summary>
-        [JsonProperty("parentReference", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("parentReference")]
         public OneDriveItemReference ParentReference { get; set; }
 
         /// <summary>
         /// Folder metadata, if the item is a folder. Read-only.
         /// </summary>
-        [JsonProperty("folder", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("folder")]
         public OneDriveFolderFacet Folder { get; set; }
 
         /// <summary>
         /// File metadata, if the item is a file. Read-only.
         /// </summary>
-        [JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("file")]
         public OneDriveFileFacet File { get; set; }
 
         /// <summary>
         /// Image metadata, if the item is an image. Read-only.
         /// </summary>
-        [JsonProperty("image", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("image")]
         public OneDriveImageFacet Image { get; set; }
 
         /// <summary>
         ///  Photo metadata, if the item is a photo. Read-only. 
         /// </summary>
-        [JsonProperty("photo", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("photo")]
         public OneDrivePhotoFacet Photo { get; set; }
 
         /// <summary>
         /// Audio metadata, if the item is an audio file. Read-only.
         /// </summary>
-        [JsonProperty("audio", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("audio")]
         public OneDriveAudioFacet Audio { get; set; }
 
         /// <summary>
         /// Video metadata, if the item is a video. Read-only.
         /// </summary>
-        [JsonProperty("video", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("video")]
         public OneDriveVideoFacet Video { get; set; }
 
         /// <summary>
         /// Location metadata, if the item has location data. Read-only.
         /// </summary>
-        [JsonProperty("location", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("location")]
         public OneDriveLocationFacet Location { get; set; }
 
         /// <summary>
         /// Information about the deleted state of the item. Read-only.
         /// </summary>
-        [JsonProperty("deleted", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("deleted")]
         public OneDriveTombstoneFacet Deleted { get; set; }
 
-        [JsonProperty("specialFolder", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("specialFolder")]
         public OneDriveSpecialFolderFacet SpecialFolder { get; set; }
 
         /// <summary>
         /// The conflict resolution behavior for actions that create a new item. An item will never be returned with this annotation. Write-only.
         /// </summary>
-        [JsonProperty("@name.conflictBehavior", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("@name.conflictBehavior")]
         public NameConflictBehavior? NameConflictBehahiorAnnotation { get; set; }
 
         /// <summary>
         /// A Url that can be used to download this file's content. Authentication is not required with this URL. Read-only.
         /// </summary>
-        [JsonProperty("@content.downloadUrl", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("@content.downloadUrl")]
         public string DownloadUrlAnnotation { get; set; }
 
         /// <summary>
         /// When issuing a PUT request, this instance annotation can be used to instruct the service to download the contents of the URL, and store it as the file. Write-only.
         /// </summary>
-        [JsonProperty("@content.sourceUrl", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("@content.sourceUrl")]
         public string SourceUrlAnnotation { get; set; }
 
-        [JsonProperty("children@odata.nextLink", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("children@odata.nextLink")]
         public string ChildrenNextLinkAnnotation { get; set; }
 
         /// <summary>
         /// Collection containing ThumbnailSet objects associated with the item. For more info, see getting thumbnails.
         /// </summary>
-        [JsonProperty("thumbnails", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("thumbnails")]
         public OneDriveThumbnailSet[] Thumbnails { get; set; }
 
         /// <summary>
         /// Collection containing Item objects for the immediate children of Item. Only items representing folders have children.
         /// </summary>
-        [JsonProperty("children", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("children")]
         public OneDriveItem[] Children { get; set; }
 
         /// <summary>
         /// If containing information, it regards a OneDriveItem stored on another OneDrive but linked by the current OneDrive
         /// </summary>
-        [JsonProperty("remoteItem", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("remoteItem")]
         public OneDriveRemoteItem RemoteItem{ get; set; }
 
         /// <summary>
         /// Information about the owner of a shared item
         /// </summary>
-        [JsonProperty("shared")]
+        [JsonPropertyName("shared")]
         public OneDriveSharedItem Shared { get; set; }
     }
 }

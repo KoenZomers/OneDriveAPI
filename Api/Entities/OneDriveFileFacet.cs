@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveFileFacet
     {
-        [JsonProperty("hashes", DefaultValueHandling=DefaultValueHandling.Ignore)]
+        [JsonPropertyName("hashes")]
         public OneDriveHashesFacet Hashes { get; set; }
 
-        [JsonProperty("mimeType", DefaultValueHandling=DefaultValueHandling.Ignore)]
+        [JsonPropertyName("mimeType")]
         public string MimeType { get; set; }
     }
 }

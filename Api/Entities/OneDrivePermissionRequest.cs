@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -10,31 +10,31 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The personal message to add to the e-mail notification sent to invitees
         /// </summary>
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
 
         /// <summary>
         /// The type of permission, can be read or write
         /// </summary>
-        [JsonProperty("roles")]
+        [JsonPropertyName("roles")]
         public string[] Roles { get; set; }
 
         /// <summary>
         /// The people that should be invited to gain access to the OneDrive item
         /// </summary>
-        [JsonProperty("recipients")]
+        [JsonPropertyName("recipients")]
         public OneDriveDriveRecipient[] Recipients { get; set; }
 
         /// <summary>
         /// Boolean indicating if the invitee should sign in before being able to access the item
         /// </summary>
-        [JsonProperty("requireSignin")]
+        [JsonPropertyName("requireSignin")]
         public bool RequireSignin { get; set; }
 
         /// <summary>
         /// Boolean indicating if the invitee should receive an e-mail notification to indicate an item has been shared with them
         /// </summary>
-        [JsonProperty("sendInvitation")]
+        [JsonPropertyName("sendInvitation")]
         public bool SendInvitation { get; set; }
     }
 }

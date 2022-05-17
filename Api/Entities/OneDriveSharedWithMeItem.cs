@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -11,31 +11,31 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// Date and time at which the item was created
         /// </summary>
-        [JsonProperty("createdDateTime", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("createdDateTime")]
         public DateTime? CreatedDateTime { get; set; }
 
         /// <summary>
         /// Unique OneDrive item ID
         /// </summary>
-        [JsonProperty("id", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// Date and time at which this item was last modified
         /// </summary>
-        [JsonProperty("lastModifiedDateTime", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("lastModifiedDateTime")]
         public DateTime? LastModifiedDateTime { get; set; }
 
         /// <summary>
         /// Details of this item
         /// </summary>
-        [JsonProperty("remoteItem", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("remoteItem")]
         public OneDriveRemoteItem RemoteItem { get; set; }
 
         /// <summary>
         /// Size of this item
         /// </summary>
-        [JsonProperty("size", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("size")]
         public int Size { get; set; }
     }
 }

@@ -1,15 +1,14 @@
 ﻿using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     internal class OneDriveUploadSessionItem
     {
-        [JsonProperty("@name.conflictBehavior", DefaultValueHandling = DefaultValueHandling.Populate), JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("@name.conflictBehavior")]
         public NameConflictBehavior FilenameConflictBehavior { get; set; }
 
-        [JsonProperty("name", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("name")]
         public string Filename { get; set; }
     }
 }

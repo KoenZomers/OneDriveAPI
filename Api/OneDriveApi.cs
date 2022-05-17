@@ -11,7 +11,8 @@ using System.Web;
 using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Enums;
 using KoenZomers.OneDrive.Api.Helpers;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace KoenZomers.OneDrive.Api
 {
@@ -233,11 +234,14 @@ namespace KoenZomers.OneDrive.Api
                         var response = await client.SendAsync(request);
                         var responseBody = await response.Content.ReadAsStringAsync();
 
+                        var options = new JsonSerializerOptions();
+                        options.Converters.Add(new JsonStringEnumConverter());
+
                         // Verify if the request was successful (response status 200-299)
                         if (response.IsSuccessStatusCode)
                         {
                             // Successfully retrieved token, parse it from the response
-                            var appTokenResult = JsonConvert.DeserializeObject<OneDriveAccessToken>(responseBody);
+                            var appTokenResult = JsonSerializer.Deserialize<OneDriveAccessToken>(responseBody, options);
                             return appTokenResult;
                         }
 
@@ -246,7 +250,7 @@ namespace KoenZomers.OneDrive.Api
                         try
                         {
                             // Try to parse the response as a OneDrive API error message
-                            errorResult = JsonConvert.DeserializeObject<OneDriveError>(responseBody);
+                            errorResult = JsonSerializer.Deserialize<OneDriveError>(responseBody, options);
                         }
                         catch(Exception ex)
                         {
@@ -1395,12 +1399,15 @@ namespace KoenZomers.OneDrive.Api
                             // Convert the JSON result to its appropriate type
                             try
                             {
-                                var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
+                                var options = new JsonSerializerOptions();
+                                options.Converters.Add(new JsonStringEnumConverter());
+
+                                var responseOneDriveItem = JsonSerializer.Deserialize<OneDriveItem>(responseString, options);
                                 responseOneDriveItem.OriginalJson = responseString;
 
                                 return responseOneDriveItem;
                             }
-                            catch(JsonReaderException e)
+                            catch(JsonException e)
                             {
                                 throw new Exceptions.InvalidResponseException(responseString, e);
                             }
@@ -1624,12 +1631,15 @@ namespace KoenZomers.OneDrive.Api
                                             // Convert the JSON result to its appropriate type
                                             try
                                             {
-                                                var responseOneDriveItem = JsonConvert.DeserializeObject<OneDriveItem>(responseString);
+                                                var options = new JsonSerializerOptions();
+                                                options.Converters.Add(new JsonStringEnumConverter());
+
+                                                var responseOneDriveItem = JsonSerializer.Deserialize<OneDriveItem>(responseString, options);
                                                 responseOneDriveItem.OriginalJson = responseString;
 
                                                 return responseOneDriveItem;
                                             }
-                                            catch (JsonReaderException e)
+                                            catch (JsonException e)
                                             {
                                                 throw new Exceptions.InvalidResponseException(responseString, e);
                                             }
@@ -1903,9 +1913,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>Typed OneDrive entity with the result from the webservice</returns>
         protected virtual async Task<T> SendMessageReturnOneDriveItem<T>(OneDriveItemBase oneDriveItem, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode = null) where T : OneDriveItemBase
         {
-            var settings = new JsonSerializerSettings();
-            settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-            var bodyText = oneDriveItem != null ? JsonConvert.SerializeObject(oneDriveItem, settings) : null;
+            var bodyText = oneDriveItem != null ? JsonSerializer.Serialize(oneDriveItem) : null;
 
             return await SendMessageReturnOneDriveItem<T>(bodyText, httpMethod, url, expectedHttpStatusCode);
         }
@@ -1929,12 +1937,15 @@ namespace KoenZomers.OneDrive.Api
             // Convert the JSON result to its appropriate type
             try
             {
-                var responseOneDriveItem = JsonConvert.DeserializeObject<T>(responseString);
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new JsonStringEnumConverter());
+
+                var responseOneDriveItem = JsonSerializer.Deserialize<T>(responseString, options);
                 responseOneDriveItem.OriginalJson = responseString;
 
                 return responseOneDriveItem;
             }
-            catch (JsonReaderException e)
+            catch (JsonException e)
             {
                 throw new Exceptions.InvalidResponseException(responseString, e);
             }
@@ -1975,9 +1986,7 @@ namespace KoenZomers.OneDrive.Api
             string bodyText = null;
             if (oneDriveItem != null)
             {
-                var settings = new JsonSerializerSettings();
-                settings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                bodyText = JsonConvert.SerializeObject(oneDriveItem, settings);
+                bodyText = JsonSerializer.Serialize(oneDriveItem);
             }
 
             using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url, preferRespondAsync))

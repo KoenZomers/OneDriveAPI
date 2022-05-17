@@ -1,17 +1,17 @@
 ﻿using KoenZomers.OneDrive.Api.Enums;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveViewChangesResult : OneDriveItemCollection
     {
-        [JsonProperty("@changes.hasMoreChanges")]
+        [JsonPropertyName("@changes.hasMoreChanges")]
         public bool HasMoreChanges { get; set; }
 
-        [JsonProperty("@changes.token")]
+        [JsonPropertyName("@changes.token")]
         public string NextToken { get; set; }
 
-        [JsonProperty("@changes.resync", DefaultValueHandling=DefaultValueHandling.IgnoreAndPopulate)]
+        [JsonPropertyName("@changes.resync")]
         public OneDriveResyncLogicTypes ResyncBehavior { get; set; }
     }
 }

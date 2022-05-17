@@ -1,52 +1,52 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     public class OneDriveAudioFacet
     {
-        [JsonProperty("album", NullValueHandling=NullValueHandling.Ignore)]
+        [JsonPropertyName("album")]
         public string Album { get; set; }
 
-        [JsonProperty("albumArtist", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("albumArtist")]
         public string AlbumArtist { get; set; }
 
-        [JsonProperty("artist", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("artist")]
         public string Artist { get; set; }
 
-        [JsonProperty("bitrate", DefaultValueHandling=DefaultValueHandling.Ignore)]
+        [JsonPropertyName("bitrate")]
         public int BitRate { get; set; }
 
-        [JsonProperty("copyright", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("copyright")]
         public string Copyright { get; set; }
 
-        [JsonProperty("disc", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("disc")]
         public int Disc { get; set; }
 
-        [JsonProperty("discCount", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("discCount")]
         public int DiscCount { get; set; }
 
-        [JsonProperty("duration", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("duration")]
         public int Duration { get; set; }
 
-        [JsonProperty("genre", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("genre")]
         public string Genre { get; set; }
 
-        [JsonProperty("hasDrm", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("hasDrm")]
         public bool HasDrm { get; set; }
 
-        [JsonProperty("isVariableBitrate", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("isVariableBitrate")]
         public bool IsVariableBitRate { get; set; }
 
-        [JsonProperty("title", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [JsonProperty("track", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("track")]
         public int Track { get; set; }
 
-        [JsonProperty("trackCount", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("trackCount")]
         public int TrackCount { get; set; }
 
-        [JsonProperty("year", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyName("year")]
         public int Year { get; set; }
     }
 }

@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
     internal class OneDriveCreateFolder : OneDriveItemBase
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonProperty("folder")]
+        [JsonPropertyName("folder")]
         public object Folder { get; set; }
     }
 }
