@@ -1,5 +1,5 @@
 # OneDriveAPI
-OneDrive API in .NET Standard 2.0, .NET Framework 4.5.2, .NET Framework 4.7.2 and .NET Core 2.0
+OneDrive API in .NET Framework 4.8.0, .NET Core 3.1 and .NET 6.0
 
 ![](https://img.shields.io/github/issues/koenzomers/OneDriveAPI.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
