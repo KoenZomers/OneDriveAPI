@@ -21,6 +21,13 @@ namespace KoenZomers.OneDrive.Api
     /// </summary>
     public abstract class OneDriveApi
     {
+        public static JsonSerializerOptions JSONOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
         #region Properties
 
         /// <summary>
@@ -1914,15 +1921,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>Typed OneDrive entity with the result from the webservice</returns>
         protected virtual async Task<T> SendMessageReturnOneDriveItem<T>(OneDriveItemBase oneDriveItem, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode = null) where T : OneDriveItemBase
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                // Add the JsonStringEnumConverter
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
-            var bodyText = oneDriveItem != null ? JsonSerializer.Serialize(oneDriveItem, oneDriveItem.GetType(), options) : null;
+            var bodyText = oneDriveItem != null ? JsonSerializer.Serialize(oneDriveItem, oneDriveItem.GetType(), JSONOptions) : null;
 
             return await SendMessageReturnOneDriveItem<T>(bodyText, httpMethod, url, expectedHttpStatusCode);
         }
@@ -1992,11 +1991,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>Bool indicating if the HTTP response status from the webservice matched the provided expectedHttpStatusCode</returns>
         protected virtual async Task<bool> SendMessageReturnBool(OneDriveItemBase oneDriveItem, HttpMethod httpMethod, string url, HttpStatusCode expectedHttpStatusCode, bool preferRespondAsync = false)
         {
-            string bodyText = null;
-            if (oneDriveItem != null)
-            {
-                bodyText = JsonSerializer.Serialize(oneDriveItem);
-            }
+            var bodyText = oneDriveItem != null ? JsonSerializer.Serialize(oneDriveItem, oneDriveItem.GetType(), JSONOptions) : null;
 
             using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url, preferRespondAsync))
             {
