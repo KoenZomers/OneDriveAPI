@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using KoenZomers.OneDrive.Api.Enums;
+using System.Text.Json.Serialization;
 
 namespace KoenZomers.OneDrive.Api.Entities
 {
@@ -11,6 +12,6 @@ namespace KoenZomers.OneDrive.Api.Entities
         public object Folder { get; set; }
 
         [JsonPropertyName("@microsoft.graph.conflictBehavior")]
-        public string ConflictBehavior { get; set; } = "rename";
+        public NameConflictBehavior? NameConflictBehahiorAnnotation { get; set; }
     }
 }
