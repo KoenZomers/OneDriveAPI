@@ -129,7 +129,7 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// <summary>
         /// The conflict resolution behavior for actions that create a new item. An item will never be returned with this annotation. Write-only.
         /// </summary>
-        [JsonPropertyName("@name.conflictBehavior")]
+        [JsonPropertyName("@microsoft.graph.conflictBehavior")]
         public NameConflictBehavior? NameConflictBehahiorAnnotation { get; set; }
 
         /// <summary>
