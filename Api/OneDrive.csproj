@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net9.0</TargetFrameworks>
+		<AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
+		<Version>2.5.0.0</Version>
+		<Authors>Koen Zomers</Authors>
+		<Company>Koen Zomers</Company>
+		<Description>API in .NET 9.0 to communicate with OneDrive Personal and OneDrive for Business</Description>
+		<PackageProjectUrl>https://github.com/ispysoftware/OneDriveAPI</PackageProjectUrl>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageReleaseNotes>- Recompiled to support .NET Framework 9.0</PackageReleaseNotes>
+		<PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
+		<Copyright>Koen Zomers</Copyright>
+		<RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
+		<AssemblyVersion>2.5.0.0</AssemblyVersion>
+		<FileVersion>2.5.0.0</FileVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile>KoenZomers.OneDrive.Api.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DocumentationFile>KoenZomers.OneDrive.Api.xml</DocumentationFile>
+	</PropertyGroup>
+
+</Project>
