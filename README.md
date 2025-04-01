@@ -1,4 +1,7 @@
 # OneDriveAPI
+
+> Notice: Through the years I have enjoyed building and maintaining this code. Time however is scarse and as much as I would like to, I'm having too many projects to work on in my spare time, so I need to get rid of some, this unfortunately being one. I will therefore no longer maintain this code. Feel free to fork off of it and make your own version out of it. I'll be happy to link to it.
+
 OneDrive API in .NET Framework 4.8.0, .NET Core 3.1 and .NET 6.0
 
 ![](https://img.shields.io/github/issues/koenzomers/OneDriveAPI.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
