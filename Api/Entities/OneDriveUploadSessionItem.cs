@@ -5,7 +5,7 @@ namespace KoenZomers.OneDrive.Api.Entities
 {
     internal class OneDriveUploadSessionItem
     {
-        [JsonPropertyName("@name.conflictBehavior")]
+        [JsonPropertyName("@microsoft.graph.conflictBehavior")]
         public NameConflictBehavior FilenameConflictBehavior { get; set; }
 
         [JsonPropertyName("name")]
