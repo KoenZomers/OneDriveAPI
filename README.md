@@ -1,6 +1,6 @@
 # OneDriveAPI
 
-![](./Images/KoenZomers.OneDrive.Api.png)
+<img src="./Images/KoenZomers.OneDrive.Api.png" width="250" alt="OneDrive API logo" />
 
 OneDrive API in .NET Standard 2.0 and .NET 8.0
 
