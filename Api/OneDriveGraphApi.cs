@@ -1165,6 +1165,7 @@ namespace KoenZomers.OneDrive.Api
         /// Returns all the items that have been shared by others with the current user
         /// </summary>
         /// <returns>Collection with items that have been shared by others with the current user</returns>
+        [Obsolete("The Microsoft Graph 'sharedWithMe' API is deprecated and will operate in a degraded state until November 2026, after which it will stop returning data. Microsoft has not documented a direct replacement endpoint. See https://learn.microsoft.com/en-us/graph/api/drive-sharedwithme for details.")]
         public virtual async Task<OneDriveItemCollection> GetSharedWithMe()
         {
             var oneDriveItems = await GetData<OneDriveItemCollection>("drive/sharedWithMe");

@@ -499,6 +499,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// Gets all items in OneDrive that have been shared with the current user
         /// </summary>
+        /// <remarks>
+        /// Calls the now-deprecated GetSharedWithMe API (see OneDriveGraphApi.GetSharedWithMe for details).
+        /// This handler is marked Obsolete purely to suppress the resulting compiler warning at this call site.
+        /// </remarks>
+        [Obsolete]
         private async void SharedWithMeButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetSharedWithMe();
