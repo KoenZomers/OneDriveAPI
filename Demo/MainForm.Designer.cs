@@ -77,7 +77,6 @@
             this.GetRoodFolderButton = new System.Windows.Forms.Button();
             this.GetDriveButton = new System.Windows.Forms.Button();
             this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
-            this.OneDriveTypeCombo = new System.Windows.Forms.ComboBox();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,7 +92,7 @@
             this.AuthenticationBrowser.ScriptErrorsSuppressed = true;
             this.AuthenticationBrowser.Size = new System.Drawing.Size(1588, 380);
             this.AuthenticationBrowser.TabIndex = 0;
-            this.AuthenticationBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.AuthenticationBrowser_Navigated);
+            this.AuthenticationBrowser.Visible = false;
             // 
             // Step1Button
             // 
@@ -115,6 +114,7 @@
             this.CurrentUrlTextBox.Name = "CurrentUrlTextBox";
             this.CurrentUrlTextBox.Size = new System.Drawing.Size(1588, 26);
             this.CurrentUrlTextBox.TabIndex = 4;
+            this.CurrentUrlTextBox.Visible = false;
             // 
             // CurrentUrlLabel
             // 
@@ -125,6 +125,7 @@
             this.CurrentUrlLabel.Size = new System.Drawing.Size(99, 20);
             this.CurrentUrlLabel.TabIndex = 5;
             this.CurrentUrlLabel.Text = "Current URL";
+            this.CurrentUrlLabel.Visible = false;
             // 
             // AuthorizationCodeLabel
             // 
@@ -135,6 +136,7 @@
             this.AuthorizationCodeLabel.Size = new System.Drawing.Size(145, 20);
             this.AuthorizationCodeLabel.TabIndex = 7;
             this.AuthorizationCodeLabel.Text = "Authorization Code";
+            this.AuthorizationCodeLabel.Visible = false;
             // 
             // AuthorizationCodeTextBox
             // 
@@ -145,6 +147,7 @@
             this.AuthorizationCodeTextBox.Name = "AuthorizationCodeTextBox";
             this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(1588, 26);
             this.AuthorizationCodeTextBox.TabIndex = 6;
+            this.AuthorizationCodeTextBox.Visible = false;
             // 
             // AccessTokenLabel
             // 
@@ -652,26 +655,11 @@
             this.UseProxyCheckBox.Text = "Use Proxy";
             this.UseProxyCheckBox.UseVisualStyleBackColor = true;
             // 
-            // OneDriveTypeCombo
-            // 
-            this.OneDriveTypeCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.OneDriveTypeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OneDriveTypeCombo.FormattingEnabled = true;
-            this.OneDriveTypeCombo.Items.AddRange(new object[] {
-            "Graph API (Consumer & Business)"});
-            this.OneDriveTypeCombo.Location = new System.Drawing.Point(17, 15);
-            this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.OneDriveTypeCombo.Name = "OneDriveTypeCombo";
-            this.OneDriveTypeCombo.Size = new System.Drawing.Size(289, 28);
-            this.OneDriveTypeCombo.TabIndex = 19;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1616, 951);
-            this.Controls.Add(this.OneDriveTypeCombo);
             this.Controls.Add(this.UseProxyCheckBox);
             this.Controls.Add(this.AccessTokenValidLabel);
             this.Controls.Add(this.AccessTokenValidTextBox);
@@ -693,7 +681,6 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OneDrive API Test";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.OneDriveCommandsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -736,7 +723,6 @@
         private System.Windows.Forms.Button CopyButton;
         private System.Windows.Forms.Button MoveButton;
         private System.Windows.Forms.CheckBox UseProxyCheckBox;
-        private System.Windows.Forms.ComboBox OneDriveTypeCombo;
         private System.Windows.Forms.Button RenameButton;
         private System.Windows.Forms.Button SharedWithMeButton;
         private System.Windows.Forms.Button RootSiteButton;
