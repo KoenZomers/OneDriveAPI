@@ -643,7 +643,7 @@
             // UseProxyCheckBox
             // 
             this.UseProxyCheckBox.AutoSize = true;
-            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 75);
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 160);
             this.UseProxyCheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UseProxyCheckBox.Name = "UseProxyCheckBox";
             this.UseProxyCheckBox.Size = new System.Drawing.Size(106, 24);
@@ -664,10 +664,10 @@
             // 
             // SilentSignInButton
             // 
-            this.SilentSignInButton.Location = new System.Drawing.Point(25, 105);
+            this.SilentSignInButton.Location = new System.Drawing.Point(25, 78);
             this.SilentSignInButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SilentSignInButton.Name = "SilentSignInButton";
-            this.SilentSignInButton.Size = new System.Drawing.Size(246, 40);
+            this.SilentSignInButton.Size = new System.Drawing.Size(246, 66);
             this.SilentSignInButton.TabIndex = 22;
             this.SilentSignInButton.Text = "Silent Sign-in (cached account)";
             this.SilentSignInButton.UseVisualStyleBackColor = true;

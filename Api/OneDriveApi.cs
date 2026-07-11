@@ -141,10 +141,16 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Instantiates a new instance of a OneDrive API
         /// </summary>
-        /// <param name="clientId">OneDrive Client ID to use to connect</param>
+        /// <param name="clientId">OneDrive Client ID to use to connect. Must be provided by the consumer of this library - register your own app registration in the Microsoft Entra admin center (https://entra.microsoft.com).</param>
         /// <param name="clientSecret">OneDrive Client Secret to use to connect</param>
+        /// <exception cref="ArgumentException">Thrown when no clientId is provided</exception>
         protected OneDriveApi(string clientId, string clientSecret)
         {
+            if (string.IsNullOrWhiteSpace(clientId))
+            {
+                throw new ArgumentException("A client ID must be provided. Register your own app registration in the Microsoft Entra admin center (https://entra.microsoft.com) and provide its Application (client) ID.", nameof(clientId));
+            }
+
             ClientId = clientId;
             ClientSecret = clientSecret;
         }

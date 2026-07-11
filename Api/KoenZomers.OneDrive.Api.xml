@@ -958,8 +958,9 @@
             <summary>
             Instantiates a new instance of a OneDrive API
             </summary>
-            <param name="clientId">OneDrive Client ID to use to connect</param>
+            <param name="clientId">OneDrive Client ID to use to connect. Must be provided by the consumer of this library - register your own app registration in the Microsoft Entra admin center (https://entra.microsoft.com).</param>
             <param name="clientSecret">OneDrive Client Secret to use to connect</param>
+            <exception cref="T:System.ArgumentException">Thrown when no clientId is provided</exception>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.InitializeMsalClientApplication">
             <summary>
