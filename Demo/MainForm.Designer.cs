@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.AuthenticationBrowser = new System.Windows.Forms.WebBrowser();
-            this.Step1Button = new System.Windows.Forms.Button();
             this.CurrentUrlTextBox = new System.Windows.Forms.TextBox();
             this.CurrentUrlLabel = new System.Windows.Forms.Label();
             this.AuthorizationCodeLabel = new System.Windows.Forms.Label();
@@ -37,7 +37,6 @@
             this.AccessTokenLabel = new System.Windows.Forms.Label();
             this.AccessTokenTextBox = new System.Windows.Forms.TextBox();
             this.JsonResultTextBox = new System.Windows.Forms.TextBox();
-            this.RefreshTokenButton = new System.Windows.Forms.Button();
             this.RefreshTokenLabel = new System.Windows.Forms.Label();
             this.RefreshTokenTextBox = new System.Windows.Forms.TextBox();
             this.AccessTokenValidLabel = new System.Windows.Forms.Label();
@@ -76,9 +75,18 @@
             this.GetRootChildren = new System.Windows.Forms.Button();
             this.GetRoodFolderButton = new System.Windows.Forms.Button();
             this.GetDriveButton = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
-            this.OneDriveTypeCombo = new System.Windows.Forms.ComboBox();
+            this.RefreshTokenButton = new System.Windows.Forms.Button();
+            this.SilentSignInButton = new System.Windows.Forms.Button();
+            this.ClearCacheButton = new System.Windows.Forms.Button();
+            this.Step1Button = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.LogoPictureBox = new System.Windows.Forms.PictureBox();
             this.OneDriveCommandsPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LogoPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // AuthenticationBrowser
@@ -86,71 +94,64 @@
             this.AuthenticationBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 252);
+            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 289);
             this.AuthenticationBrowser.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthenticationBrowser.MinimumSize = new System.Drawing.Size(22, 25);
             this.AuthenticationBrowser.Name = "AuthenticationBrowser";
             this.AuthenticationBrowser.ScriptErrorsSuppressed = true;
-            this.AuthenticationBrowser.Size = new System.Drawing.Size(1588, 380);
+            this.AuthenticationBrowser.Size = new System.Drawing.Size(1969, 648);
             this.AuthenticationBrowser.TabIndex = 0;
-            this.AuthenticationBrowser.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.AuthenticationBrowser_Navigated);
-            // 
-            // Step1Button
-            // 
-            this.Step1Button.Location = new System.Drawing.Point(14, 182);
-            this.Step1Button.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.Step1Button.Name = "Step1Button";
-            this.Step1Button.Size = new System.Drawing.Size(120, 51);
-            this.Step1Button.TabIndex = 1;
-            this.Step1Button.Text = "Authorize";
-            this.Step1Button.UseVisualStyleBackColor = true;
-            this.Step1Button.Click += new System.EventHandler(this.Step1Button_Click);
+            this.AuthenticationBrowser.Visible = false;
             // 
             // CurrentUrlTextBox
             // 
             this.CurrentUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CurrentUrlTextBox.Location = new System.Drawing.Point(14, 671);
+            this.CurrentUrlTextBox.Location = new System.Drawing.Point(14, 1364);
             this.CurrentUrlTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CurrentUrlTextBox.Name = "CurrentUrlTextBox";
-            this.CurrentUrlTextBox.Size = new System.Drawing.Size(1588, 26);
+            this.CurrentUrlTextBox.Size = new System.Drawing.Size(2506, 26);
             this.CurrentUrlTextBox.TabIndex = 4;
+            this.CurrentUrlTextBox.Visible = false;
             // 
             // CurrentUrlLabel
             // 
             this.CurrentUrlLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CurrentUrlLabel.AutoSize = true;
-            this.CurrentUrlLabel.Location = new System.Drawing.Point(15, 646);
+            this.CurrentUrlLabel.Location = new System.Drawing.Point(15, 1339);
             this.CurrentUrlLabel.Name = "CurrentUrlLabel";
             this.CurrentUrlLabel.Size = new System.Drawing.Size(99, 20);
             this.CurrentUrlLabel.TabIndex = 5;
             this.CurrentUrlLabel.Text = "Current URL";
+            this.CurrentUrlLabel.Visible = false;
             // 
             // AuthorizationCodeLabel
             // 
             this.AuthorizationCodeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AuthorizationCodeLabel.AutoSize = true;
-            this.AuthorizationCodeLabel.Location = new System.Drawing.Point(14, 711);
+            this.AuthorizationCodeLabel.Location = new System.Drawing.Point(14, 1404);
             this.AuthorizationCodeLabel.Name = "AuthorizationCodeLabel";
             this.AuthorizationCodeLabel.Size = new System.Drawing.Size(145, 20);
             this.AuthorizationCodeLabel.TabIndex = 7;
             this.AuthorizationCodeLabel.Text = "Authorization Code";
+            this.AuthorizationCodeLabel.Visible = false;
             // 
             // AuthorizationCodeTextBox
             // 
             this.AuthorizationCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(12, 734);
+            this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(12, 1427);
             this.AuthorizationCodeTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthorizationCodeTextBox.Name = "AuthorizationCodeTextBox";
-            this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(1588, 26);
+            this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(2506, 26);
             this.AuthorizationCodeTextBox.TabIndex = 6;
+            this.AuthorizationCodeTextBox.Visible = false;
             // 
             // AccessTokenLabel
             // 
             this.AccessTokenLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AccessTokenLabel.AutoSize = true;
-            this.AccessTokenLabel.Location = new System.Drawing.Point(14, 878);
+            this.AccessTokenLabel.Location = new System.Drawing.Point(16, 953);
             this.AccessTokenLabel.Name = "AccessTokenLabel";
             this.AccessTokenLabel.Size = new System.Drawing.Size(109, 20);
             this.AccessTokenLabel.TabIndex = 9;
@@ -160,10 +161,10 @@
             // 
             this.AccessTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AccessTokenTextBox.Location = new System.Drawing.Point(12, 901);
+            this.AccessTokenTextBox.Location = new System.Drawing.Point(14, 976);
             this.AccessTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenTextBox.Name = "AccessTokenTextBox";
-            this.AccessTokenTextBox.Size = new System.Drawing.Size(1588, 26);
+            this.AccessTokenTextBox.Size = new System.Drawing.Size(1980, 26);
             this.AccessTokenTextBox.TabIndex = 8;
             this.AccessTokenTextBox.TextChanged += new System.EventHandler(this.AccessTokenTextBox_TextChanged);
             // 
@@ -172,31 +173,20 @@
             this.JsonResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 252);
+            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 289);
             this.JsonResultTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.JsonResultTextBox.Multiline = true;
             this.JsonResultTextBox.Name = "JsonResultTextBox";
             this.JsonResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.JsonResultTextBox.Size = new System.Drawing.Size(1587, 376);
+            this.JsonResultTextBox.Size = new System.Drawing.Size(1980, 648);
             this.JsonResultTextBox.TabIndex = 10;
             this.JsonResultTextBox.Visible = false;
-            // 
-            // RefreshTokenButton
-            // 
-            this.RefreshTokenButton.Location = new System.Drawing.Point(140, 182);
-            this.RefreshTokenButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.RefreshTokenButton.Name = "RefreshTokenButton";
-            this.RefreshTokenButton.Size = new System.Drawing.Size(120, 51);
-            this.RefreshTokenButton.TabIndex = 12;
-            this.RefreshTokenButton.Text = "Refresh";
-            this.RefreshTokenButton.UseVisualStyleBackColor = true;
-            this.RefreshTokenButton.Click += new System.EventHandler(this.RefreshTokenButton_Click);
             // 
             // RefreshTokenLabel
             // 
             this.RefreshTokenLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RefreshTokenLabel.AutoSize = true;
-            this.RefreshTokenLabel.Location = new System.Drawing.Point(15, 768);
+            this.RefreshTokenLabel.Location = new System.Drawing.Point(17, 1013);
             this.RefreshTokenLabel.Name = "RefreshTokenLabel";
             this.RefreshTokenLabel.Size = new System.Drawing.Size(114, 20);
             this.RefreshTokenLabel.TabIndex = 14;
@@ -206,17 +196,17 @@
             // 
             this.RefreshTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.RefreshTokenTextBox.Location = new System.Drawing.Point(14, 791);
+            this.RefreshTokenTextBox.Location = new System.Drawing.Point(16, 1036);
             this.RefreshTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenTextBox.Name = "RefreshTokenTextBox";
-            this.RefreshTokenTextBox.Size = new System.Drawing.Size(1588, 26);
+            this.RefreshTokenTextBox.Size = new System.Drawing.Size(1980, 26);
             this.RefreshTokenTextBox.TabIndex = 13;
             // 
             // AccessTokenValidLabel
             // 
             this.AccessTokenValidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AccessTokenValidLabel.AutoSize = true;
-            this.AccessTokenValidLabel.Location = new System.Drawing.Point(14, 822);
+            this.AccessTokenValidLabel.Location = new System.Drawing.Point(16, 1073);
             this.AccessTokenValidLabel.Name = "AccessTokenValidLabel";
             this.AccessTokenValidLabel.Size = new System.Drawing.Size(170, 20);
             this.AccessTokenValidLabel.TabIndex = 16;
@@ -226,15 +216,16 @@
             // 
             this.AccessTokenValidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AccessTokenValidTextBox.Location = new System.Drawing.Point(12, 846);
+            this.AccessTokenValidTextBox.Location = new System.Drawing.Point(14, 1096);
             this.AccessTokenValidTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenValidTextBox.Name = "AccessTokenValidTextBox";
-            this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1588, 26);
+            this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1980, 26);
             this.AccessTokenValidTextBox.TabIndex = 15;
             // 
             // OneDriveCommandsPanel
             // 
-            this.OneDriveCommandsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.OneDriveCommandsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OneDriveCommandsPanel.Controls.Add(this.GetOtherDriveButton);
             this.OneDriveCommandsPanel.Controls.Add(this.GetChildrenFromOtherDriveButton);
             this.OneDriveCommandsPanel.Controls.Add(this.GetFilesInFolderInAppFolderButton);
@@ -269,10 +260,10 @@
             this.OneDriveCommandsPanel.Controls.Add(this.GetRoodFolderButton);
             this.OneDriveCommandsPanel.Controls.Add(this.GetDriveButton);
             this.OneDriveCommandsPanel.Enabled = false;
-            this.OneDriveCommandsPanel.Location = new System.Drawing.Point(313, 11);
+            this.OneDriveCommandsPanel.Location = new System.Drawing.Point(328, 33);
             this.OneDriveCommandsPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
-            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1289, 238);
+            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1379, 238);
             this.OneDriveCommandsPanel.TabIndex = 17;
             // 
             // GetOtherDriveButton
@@ -641,45 +632,117 @@
             this.GetDriveButton.UseVisualStyleBackColor = true;
             this.GetDriveButton.Click += new System.EventHandler(this.GetDriveButton_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.UseProxyCheckBox);
+            this.panel1.Controls.Add(this.RefreshTokenButton);
+            this.panel1.Controls.Add(this.SilentSignInButton);
+            this.panel1.Controls.Add(this.ClearCacheButton);
+            this.panel1.Controls.Add(this.Step1Button);
+            this.panel1.Location = new System.Drawing.Point(18, 34);
+            this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(293, 237);
+            this.panel1.TabIndex = 20;
+            // 
             // UseProxyCheckBox
             // 
             this.UseProxyCheckBox.AutoSize = true;
-            this.UseProxyCheckBox.Location = new System.Drawing.Point(19, 140);
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 210);
             this.UseProxyCheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UseProxyCheckBox.Name = "UseProxyCheckBox";
             this.UseProxyCheckBox.Size = new System.Drawing.Size(106, 24);
-            this.UseProxyCheckBox.TabIndex = 18;
+            this.UseProxyCheckBox.TabIndex = 21;
             this.UseProxyCheckBox.Text = "Use Proxy";
             this.UseProxyCheckBox.UseVisualStyleBackColor = true;
             // 
-            // OneDriveTypeCombo
+            // RefreshTokenButton
             // 
-            this.OneDriveTypeCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.OneDriveTypeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OneDriveTypeCombo.FormattingEnabled = true;
-            this.OneDriveTypeCombo.Items.AddRange(new object[] {
-            "Consumer OneDrive",
-            "OneDrive for Business O365",
-            "Graph API (Consumer & Business)"});
-            this.OneDriveTypeCombo.Location = new System.Drawing.Point(17, 15);
-            this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.OneDriveTypeCombo.Name = "OneDriveTypeCombo";
-            this.OneDriveTypeCombo.Size = new System.Drawing.Size(289, 28);
-            this.OneDriveTypeCombo.TabIndex = 19;
+            this.RefreshTokenButton.Location = new System.Drawing.Point(151, 14);
+            this.RefreshTokenButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.RefreshTokenButton.Name = "RefreshTokenButton";
+            this.RefreshTokenButton.Size = new System.Drawing.Size(120, 73);
+            this.RefreshTokenButton.TabIndex = 20;
+            this.RefreshTokenButton.Text = "Refresh";
+            this.RefreshTokenButton.UseVisualStyleBackColor = true;
+            this.RefreshTokenButton.Click += new System.EventHandler(this.RefreshTokenButton_Click);
+            // 
+            // SilentSignInButton
+            // 
+            this.SilentSignInButton.Location = new System.Drawing.Point(25, 100);
+            this.SilentSignInButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SilentSignInButton.Name = "SilentSignInButton";
+            this.SilentSignInButton.Size = new System.Drawing.Size(246, 52);
+            this.SilentSignInButton.TabIndex = 22;
+            this.SilentSignInButton.Text = "Silent Sign-in (cached account)";
+            this.SilentSignInButton.UseVisualStyleBackColor = true;
+            this.SilentSignInButton.Click += new System.EventHandler(this.SilentSignInButton_Click);
+            // 
+            // ClearCacheButton
+            // 
+            this.ClearCacheButton.Location = new System.Drawing.Point(25, 156);
+            this.ClearCacheButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ClearCacheButton.Name = "ClearCacheButton";
+            this.ClearCacheButton.Size = new System.Drawing.Size(246, 40);
+            this.ClearCacheButton.TabIndex = 23;
+            this.ClearCacheButton.Text = "Clear MSAL Token Cache";
+            this.ClearCacheButton.UseVisualStyleBackColor = true;
+            this.ClearCacheButton.Click += new System.EventHandler(this.ClearCacheButton_Click);
+            // 
+            // Step1Button
+            // 
+            this.Step1Button.Location = new System.Drawing.Point(25, 14);
+            this.Step1Button.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Step1Button.Name = "Step1Button";
+            this.Step1Button.Size = new System.Drawing.Size(120, 73);
+            this.Step1Button.TabIndex = 19;
+            this.Step1Button.Text = "Authorize";
+            this.Step1Button.UseVisualStyleBackColor = true;
+            this.Step1Button.Click += new System.EventHandler(this.Step1Button_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(38, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(209, 25);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Step 1: Authenticate";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(320, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(214, 25);
+            this.label2.TabIndex = 22;
+            this.label2.Text = "Step 2: Call methods";
+            // 
+            // LogoPictureBox
+            // 
+            this.LogoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LogoPictureBox.BackColor = System.Drawing.Color.White;
+            this.LogoPictureBox.Location = new System.Drawing.Point(1713, 33);
+            this.LogoPictureBox.Name = "LogoPictureBox";
+            this.LogoPictureBox.Size = new System.Drawing.Size(270, 235);
+            this.LogoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.LogoPictureBox.TabIndex = 23;
+            this.LogoPictureBox.TabStop = false;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1616, 951);
-            this.Controls.Add(this.OneDriveTypeCombo);
-            this.Controls.Add(this.UseProxyCheckBox);
+            this.ClientSize = new System.Drawing.Size(2010, 1133);
+            this.Controls.Add(this.LogoPictureBox);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.AccessTokenValidLabel);
             this.Controls.Add(this.AccessTokenValidTextBox);
             this.Controls.Add(this.RefreshTokenLabel);
             this.Controls.Add(this.RefreshTokenTextBox);
-            this.Controls.Add(this.RefreshTokenButton);
             this.Controls.Add(this.JsonResultTextBox);
             this.Controls.Add(this.AccessTokenLabel);
             this.Controls.Add(this.AccessTokenTextBox);
@@ -687,16 +750,19 @@
             this.Controls.Add(this.AuthorizationCodeTextBox);
             this.Controls.Add(this.CurrentUrlLabel);
             this.Controls.Add(this.CurrentUrlTextBox);
-            this.Controls.Add(this.Step1Button);
             this.Controls.Add(this.AuthenticationBrowser);
             this.Controls.Add(this.OneDriveCommandsPanel);
+            this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(426, 374);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OneDrive API Test";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.OneDriveCommandsPanel.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LogoPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -705,7 +771,6 @@
         #endregion
 
         private System.Windows.Forms.WebBrowser AuthenticationBrowser;
-        private System.Windows.Forms.Button Step1Button;
         private System.Windows.Forms.TextBox CurrentUrlTextBox;
         private System.Windows.Forms.Label CurrentUrlLabel;
         private System.Windows.Forms.Label AuthorizationCodeLabel;
@@ -713,7 +778,6 @@
         private System.Windows.Forms.Label AccessTokenLabel;
         private System.Windows.Forms.TextBox AccessTokenTextBox;
         private System.Windows.Forms.TextBox JsonResultTextBox;
-        private System.Windows.Forms.Button RefreshTokenButton;
         private System.Windows.Forms.Label RefreshTokenLabel;
         private System.Windows.Forms.TextBox RefreshTokenTextBox;
         private System.Windows.Forms.Label AccessTokenValidLabel;
@@ -737,8 +801,6 @@
         private System.Windows.Forms.Button DownloadToButton;
         private System.Windows.Forms.Button CopyButton;
         private System.Windows.Forms.Button MoveButton;
-        private System.Windows.Forms.CheckBox UseProxyCheckBox;
-        private System.Windows.Forms.ComboBox OneDriveTypeCombo;
         private System.Windows.Forms.Button RenameButton;
         private System.Windows.Forms.Button SharedWithMeButton;
         private System.Windows.Forms.Button RootSiteButton;
@@ -754,6 +816,15 @@
         private System.Windows.Forms.Button GetFilesInFolderInAppFolderButton;
         private System.Windows.Forms.Button GetChildrenFromOtherDriveButton;
         private System.Windows.Forms.Button GetOtherDriveButton;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox UseProxyCheckBox;
+        private System.Windows.Forms.Button RefreshTokenButton;
+        private System.Windows.Forms.Button SilentSignInButton;
+        private System.Windows.Forms.Button ClearCacheButton;
+        private System.Windows.Forms.Button Step1Button;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.PictureBox LogoPictureBox;
     }
 }
 

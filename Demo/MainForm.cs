@@ -6,9 +6,12 @@ using KoenZomers.OneDrive.Api;
 using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Enums;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace KoenZomers.OneDrive.AuthenticatorApp
 {
+
     public partial class MainForm : Form
     {
         #region Properties
@@ -21,7 +24,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// OneDriveApi instance to work with
         /// </summary>
-        public OneDriveApi OneDriveApi;
+        public OneDriveGraphApi OneDriveApi;
 
         /// <summary>
         /// The refresh token stored in the App Config
@@ -38,7 +41,27 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             RefreshToken = _configuration.AppSettings.Settings["OneDriveApiRefreshToken"].Value;
 
             RefreshTokenTextBox.Text = RefreshToken;
-            OneDriveTypeCombo.SelectedIndex = 0;
+
+            LoadLogo();
+        }
+
+        /// <summary>
+        /// Loads the application logo from the KoenZomers.OneDrive.Api.png file next to the executable and shows it in
+        /// the top-right corner of the form. The form/taskbar icon itself comes from the embedded .ico resource (set
+        /// via ApplicationIcon in the project file), so it does not need to be derived at runtime here.
+        /// </summary>
+        private void LoadLogo()
+        {
+            var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KoenZomers.OneDrive.Api.png");
+            if (!File.Exists(logoPath))
+            {
+                return;
+            }
+
+            using (var logoImage = System.Drawing.Image.FromFile(logoPath))
+            {
+                LogoPictureBox.Image = new System.Drawing.Bitmap(logoImage);
+            }
         }
 
         /// <summary>
@@ -46,84 +69,221 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private void InitiateOneDriveApi()
         {
-            // Define the type of OneDrive API to instantiate based on the dropdown list selection    
-            switch (OneDriveTypeCombo.SelectedIndex)
-            {
-                case 0:
-                    OneDriveApi = new OneDriveConsumerApi(_configuration.AppSettings.Settings["OneDriveConsumerApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveConsumerApiClientSecret"].Value);
-                    if(!string.IsNullOrEmpty(_configuration.AppSettings.Settings["OneDriveConsumerApiRedirectUri"].Value))
-                    {
-                        OneDriveApi.AuthenticationRedirectUrl = _configuration.AppSettings.Settings["OneDriveConsumerApiRedirectUri"].Value;
-                    }
-                    break;
-
-                case 1:
-                    OneDriveApi = new OneDriveForBusinessO365Api(_configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientSecret"].Value);
-                    break;
-
-                case 2:
-                    OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
-                    break;
-            }
+            OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
 
             OneDriveApi.ProxyConfiguration = UseProxyCheckBox.Checked ? System.Net.WebRequest.DefaultWebProxy : null;
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Registers MSAL's encrypted, file-based persistent token cache (via Microsoft.Identity.Client.Extensions.Msal) on
+        /// the current OneDriveApi's PublicClientApplication. Without this, MSAL only keeps tokens (and the refresh token
+        /// it manages internally) in memory, meaning a "silent" sign-in would only work until the application is closed.
+        /// With a persistent cache, MSAL can silently re-authenticate the cached account across application restarts too.
+        /// </summary>
+        private async Task RegisterPersistentTokenCacheAsync()
         {
-            // Make the Graph API the default choice
-            OneDriveTypeCombo.SelectedIndex = OneDriveTypeCombo.Items.Count - 1;
+            var storageProperties = GetTokenCacheStorageProperties();
+
+            var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties);
+            cacheHelper.RegisterCache(OneDriveApi.PublicClientApplication.UserTokenCache);
         }
 
-        private async void AuthenticationBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        /// <summary>
+        /// Builds the storage properties describing where MSAL's persistent token cache file lives, shared between
+        /// registering the cache and clearing it.
+        /// </summary>
+        private static StorageCreationProperties GetTokenCacheStorageProperties()
         {
-            // Get the currently displayed URL and show it in the textbox
-            CurrentUrlTextBox.Text = e.Url.ToString();            
+            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KoenZomers.OneDrive.Api.Demo");
+            return new StorageCreationPropertiesBuilder("msal_token_cache.dat", cacheDirectory)
+                .WithLinuxUnprotectedFile() // Not used on Windows, but keeps this sample runnable cross-platform (e.g. under .NET 8 on Linux)
+                .Build();
+        }
 
-            // Check if the current URL contains the authorization token
-            AuthorizationCodeTextBox.Text = OneDriveApi.GetAuthorizationTokenFromUrl(e.Url.ToString());
+        /// <summary>
+        /// Clears the MSAL token cache: removes every cached account (which also removes their tokens from the
+        /// in-memory cache) and deletes the persistent cache file on disk, so a future sign-in requires full
+        /// interactive authentication again rather than silently reusing a cached account.
+        /// </summary>
+        private async void ClearCacheButton_Click(object sender, EventArgs e)
+        {
+            InitiateOneDriveApi();
+            await RegisterPersistentTokenCacheAsync();
 
-            // Verify if an authorization token was successfully extracted
-            if (!string.IsNullOrEmpty(AuthorizationCodeTextBox.Text))
+            var accounts = (await OneDriveApi.PublicClientApplication.GetAccountsAsync()).ToList();
+            foreach (var account in accounts)
             {
-                // Get an access token based on the authorization token that we now have
-                await OneDriveApi.GetAccessToken();
-                if (OneDriveApi.AccessToken != null)
-                {
-                    // Show the access token information in the textboxes
-                    AccessTokenTextBox.Text = OneDriveApi.AccessToken.AccessToken;
-                    RefreshTokenTextBox.Text = OneDriveApi.AccessToken.RefreshToken;
-                    AccessTokenValidTextBox.Text = OneDriveApi.AccessTokenValidUntil.HasValue ? OneDriveApi.AccessTokenValidUntil.Value.ToString("dd-MM-yyyy HH:mm:ss") : "Not valid";
-                    
-                    // Store the refresh token in the AppSettings so next time you don't have to log in anymore
-                    _configuration.AppSettings.Settings["OneDriveApiRefreshToken"].Value = RefreshTokenTextBox.Text;
-                    _configuration.Save(ConfigurationSaveMode.Modified);
-                    return;
-                }
+                await OneDriveApi.PublicClientApplication.RemoveAsync(account);
             }
 
-            // If we're on this page, but we didn't get an authorization token, it means that we just signed out, proceed with signing in again
-            if (CurrentUrlTextBox.Text.StartsWith(OneDriveApi.SignoutUri))
+            // Belt-and-braces: also remove the persistent cache file directly in case any residual data remains
+            var storageProperties = GetTokenCacheStorageProperties();
+            if (File.Exists(storageProperties.CacheFilePath))
             {
-                var authenticateUri = OneDriveApi.GetAuthenticationUri();
-                AuthenticationBrowser.Navigate(authenticateUri);
+                File.Delete(storageProperties.CacheFilePath);
+            }
+
+            // Reset the UI to reflect that we're signed out
+            AccessTokenTextBox.Text = string.Empty;
+            AccessTokenValidTextBox.Text = string.Empty;
+            RefreshTokenTextBox.Text = string.Empty;
+
+            MessageBox.Show($"Cleared {accounts.Count} cached account(s) and removed the persistent token cache file. A future sign-in will require interactive authentication.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Signs in silently using the account and refresh token that MSAL itself already has cached (either from an
+        /// earlier interactive sign-in in this session, or - thanks to the persistent cache - from a previous run of this
+        /// application). No browser is shown; if no cached account is available, the user is asked to Authorize first.
+        /// </summary>
+        private async void SilentSignInButton_Click(object sender, EventArgs e)
+        {
+            AccessTokenTextBox.Text = string.Empty;
+
+            InitiateOneDriveApi();
+            await RegisterPersistentTokenCacheAsync();
+
+            var accounts = await OneDriveApi.PublicClientApplication.GetAccountsAsync();
+            var account = accounts.FirstOrDefault();
+
+            if (account == null)
+            {
+                MessageBox.Show("No cached account was found to sign in with silently. Use \"Authorize\" first to sign in interactively; MSAL will then cache the account for future silent sign-ins.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                var result = await OneDriveApi.PublicClientApplication
+                    .AcquireTokenSilent(OneDriveApi.GetDefaultScopes(), account)
+                    .ExecuteAsync();
+
+                OneDriveApi.SetAuthenticationResult(result);
+
+                AccessTokenTextBox.Text = OneDriveApi.AccessToken.AccessToken;
+                AccessTokenValidTextBox.Text = OneDriveApi.AccessTokenValidUntil.HasValue ? OneDriveApi.AccessTokenValidUntil.Value.ToString("dd-MM-yyyy HH:mm:ss") : "Not valid";
+            }
+            catch (Microsoft.Identity.Client.MsalUiRequiredException)
+            {
+                MessageBox.Show("The cached account's session has expired and requires interactive sign-in again. Use \"Authorize\" to sign in.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Microsoft.Identity.Client.MsalException ex)
+            {
+                MessageBox.Show($"Failed to authenticate silently: {ex.Message}", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Starts the process to interactively authenticate a user and get an Access and Refresh token
+        /// Starts the process to interactively authenticate a user and get an Access token. Uses MSAL's system browser
+        /// interactive flow: it opens the default OS browser and listens for the redirect on http://localhost, just
+        /// like the sign-in experience of many modern desktop applications.
         /// </summary>
-        private void Step1Button_Click(object sender, EventArgs e)
+        private async void Step1Button_Click(object sender, EventArgs e)
         {
             // Reset any possible access tokens we may already have
             AccessTokenTextBox.Text = string.Empty;
 
             // Create a new instance of the OneDriveApi framework
             InitiateOneDriveApi();
+            await RegisterPersistentTokenCacheAsync();
 
-            // First sign the current user out to make sure he/she needs to authenticate again
-            var signoutUri = OneDriveApi.GetSignOutUri();
-            AuthenticationBrowser.Navigate(signoutUri);
+            try
+            {
+                var result = await OneDriveApi.PublicClientApplication
+                    .AcquireTokenInteractive(OneDriveApi.GetDefaultScopes())
+                    .WithUseEmbeddedWebView(false)
+                    .WithSystemWebViewOptions(new Microsoft.Identity.Client.SystemWebViewOptions
+                    {
+                        HtmlMessageSuccess = BuildAuthResultHtmlPage(success: true),
+                        HtmlMessageError = BuildAuthResultHtmlPage(success: false)
+                    })
+                    .ExecuteAsync();
+
+                OneDriveApi.SetAuthenticationResult(result);
+
+                AccessTokenTextBox.Text = OneDriveApi.AccessToken.AccessToken;
+                AccessTokenValidTextBox.Text = OneDriveApi.AccessTokenValidUntil.HasValue ? OneDriveApi.AccessTokenValidUntil.Value.ToString("dd-MM-yyyy HH:mm:ss") : "Not valid";
+            }
+            catch (Microsoft.Identity.Client.MsalException ex)
+            {
+                MessageBox.Show($"Failed to authenticate: {ex.Message}", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Builds the HTML page shown in the system browser tab after MSAL's interactive sign-in flow completes on the
+        /// http://localhost loopback listener, replacing MSAL's plain default page with branded, styled markup.
+        /// Includes the application logo (embedded as a base64 data URI) when available.
+        /// </summary>
+        /// <param name="success">True to render the success variant, false to render the error/failure variant</param>
+        /// <returns>Self-contained HTML document (inline styles, no external resources) for the given result</returns>
+        private string BuildAuthResultHtmlPage(bool success)
+        {
+            var icon = success ? "&#10003;" : "&#10007;";
+            var accentColor = success ? "#107C10" : "#D13438";
+            var title = success ? "You're signed in" : "Sign-in failed";
+            var message = success
+                ? "Authentication completed successfully. You can close this tab and return to the OneDrive API Demo application."
+                : "Something went wrong during sign-in. You can close this tab and return to the OneDrive API Demo application to try again.";
+
+            return $@"<!DOCTYPE html>
+<html lang=""en"">
+<head>
+<meta charset=""utf-8"" />
+<title>{title}</title>
+<style>
+  body {{
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #f3f2f1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #201f1e;
+  }}
+  .card {{
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 48px 56px;
+    max-width: 480px;
+    text-align: center;
+  }}
+  .icon {{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: {accentColor};
+    color: #ffffff;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 24px;
+  }}
+  h1 {{
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }}
+  p {{
+    font-size: 14px;
+    line-height: 1.5;
+    color: #605e5c;
+    margin: 0 0 8px;
+  }}
+</style>
+</head>
+<body>
+  <div class=""card"">
+    <div class=""icon"">{icon}</div>
+    <h1>{title}</h1>
+    <p>{message}</p>
+  </div>
+</body>
+</html>";
         }
 
         /// <summary>
@@ -156,7 +316,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         {
             var accessTokenAvailable = !string.IsNullOrEmpty(((TextBox) sender).Text);
             OneDriveCommandsPanel.Enabled = accessTokenAvailable;
-            AuthenticationBrowser.Visible = !accessTokenAvailable;
             JsonResultTextBox.Visible = accessTokenAvailable;
             JsonResultTextBox.Text = "Connected";
         }
@@ -230,6 +389,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         private async void UploadButton_Click(object sender, EventArgs e)
         {
             var fileToUpload = SelectLocalFile();
+            if (fileToUpload is null) return;
 
             // Reset the output field
             JsonResultTextBox.Text = $"Starting upload{Environment.NewLine}";
@@ -369,7 +529,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private async void ShareButton_Click(object sender, EventArgs e)
         {
-            var data = await ((OneDriveGraphApi) OneDriveApi).ShareItem("Test", OneDriveLinkType.Edit, OneDriveSharingScope.Anonymous);
+            var data = await OneDriveApi.ShareItem("Test", OneDriveLinkType.Edit, OneDriveSharingScope.Anonymous);
             JsonResultTextBox.Text = data != null ? data.OriginalJson : "Not available";
         }
 
@@ -403,6 +563,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// Gets all items in OneDrive that have been shared with the current user
         /// </summary>
+        /// <remarks>
+        /// Calls the now-deprecated GetSharedWithMe API (see OneDriveGraphApi.GetSharedWithMe for details).
+        /// This handler is marked Obsolete purely to suppress the resulting compiler warning at this call site.
+        /// </remarks>
+        [Obsolete]
         private async void SharedWithMeButton_Click(object sender, EventArgs e)
         {
             var data = await OneDriveApi.GetSharedWithMe();
@@ -420,7 +585,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
                 return;
             }
 
-            var data = await ((OneDriveGraphApi) OneDriveApi).GetSiteRoot();
+            var data = await OneDriveApi.GetSiteRoot();
 
             if(data == null)
             {
