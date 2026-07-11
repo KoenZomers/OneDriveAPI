@@ -50,18 +50,13 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             switch (OneDriveTypeCombo.SelectedIndex)
             {
                 case 0:
-                    OneDriveApi = new OneDriveConsumerApi(_configuration.AppSettings.Settings["OneDriveConsumerApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveConsumerApiClientSecret"].Value);
-                    if(!string.IsNullOrEmpty(_configuration.AppSettings.Settings["OneDriveConsumerApiRedirectUri"].Value))
-                    {
-                        OneDriveApi.AuthenticationRedirectUrl = _configuration.AppSettings.Settings["OneDriveConsumerApiRedirectUri"].Value;
-                    }
+                    OneDriveApi = new OneDriveForBusinessO365Api(
+                        _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientID"].Value,
+                        _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientSecret"].Value,
+                        _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiResourceUri"].Value);
                     break;
 
                 case 1:
-                    OneDriveApi = new OneDriveForBusinessO365Api(_configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientID"].Value, _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientSecret"].Value);
-                    break;
-
-                case 2:
                     OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
                     break;
             }
@@ -105,7 +100,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             // If we're on this page, but we didn't get an authorization token, it means that we just signed out, proceed with signing in again
             if (CurrentUrlTextBox.Text.StartsWith(OneDriveApi.SignoutUri))
             {
-                var authenticateUri = OneDriveApi.GetAuthenticationUri();
+                var authenticateUri = await OneDriveApi.GetAuthenticationUri();
                 AuthenticationBrowser.Navigate(authenticateUri);
             }
         }
@@ -113,7 +108,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// Starts the process to interactively authenticate a user and get an Access and Refresh token
         /// </summary>
-        private void Step1Button_Click(object sender, EventArgs e)
+        private async void Step1Button_Click(object sender, EventArgs e)
         {
             // Reset any possible access tokens we may already have
             AccessTokenTextBox.Text = string.Empty;
@@ -121,9 +116,34 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             // Create a new instance of the OneDriveApi framework
             InitiateOneDriveApi();
 
-            // First sign the current user out to make sure he/she needs to authenticate again
-            var signoutUri = OneDriveApi.GetSignOutUri();
-            AuthenticationBrowser.Navigate(signoutUri);
+            if (OneDriveApi.ConfidentialClientApplication != null)
+            {
+                // Confidential client (a client secret was configured): use the "bring your own browser" authorization
+                // code pattern, driven by the embedded WebBrowser control together with OneDriveApi.GetAuthenticationUri()
+                // and AuthenticateUsingAuthorizationCode (handled in AuthenticationBrowser_Navigated).
+                var signoutUri = OneDriveApi.GetSignOutUri();
+                AuthenticationBrowser.Navigate(signoutUri);
+                return;
+            }
+
+            // Public client (no client secret configured): demonstrates that any MSAL-supported authentication flow can be
+            // used directly against the exposed PublicClientApplication, not just the ones wrapped by OneDriveApi. Here we
+            // use MSAL's own interactive flow, which manages the sign-in browser/webview itself.
+            try
+            {
+                var result = await OneDriveApi.PublicClientApplication
+                    .AcquireTokenInteractive(OneDriveApi.GetDefaultScopes())
+                    .ExecuteAsync();
+
+                OneDriveApi.SetAuthenticationResult(result);
+
+                AccessTokenTextBox.Text = OneDriveApi.AccessToken.AccessToken;
+                AccessTokenValidTextBox.Text = OneDriveApi.AccessTokenValidUntil.HasValue ? OneDriveApi.AccessTokenValidUntil.Value.ToString("dd-MM-yyyy HH:mm:ss") : "Not valid";
+            }
+            catch (Microsoft.Identity.Client.MsalException ex)
+            {
+                MessageBox.Show($"Failed to authenticate: {ex.Message}", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>

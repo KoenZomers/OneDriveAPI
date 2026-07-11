@@ -14,7 +14,7 @@ namespace KoenZomers.OneDrive.Api
 {
     /// <summary>
     /// API for OneDrive for Business on Office 365
-    /// Create your own Client ID / Client Secret at https://azure.com
+    /// Create your own Client ID / Client Secret at https://entra.microsoft.com
     /// </summary>
     public class OneDriveForBusinessO365Api : OneDriveApi
     {
@@ -23,32 +23,37 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// The url to provide as the redirect URL after successful authentication
         /// </summary>
-        public override string AuthenticationRedirectUrl { get; set; } = "https://login.live.com/oauth20_desktop.srf";
+        public override string AuthenticationRedirectUrl { get; set; } = "https://login.microsoftonline.com/common/oauth2/nativeclient";
 
         /// <summary>
-        /// String formatted Uri that needs to be called to authenticate
+        /// The Microsoft Entra ID (Azure AD v2.0) authority to authenticate against
         /// </summary>
-        protected override string AuthenticateUri => "https://login.microsoftonline.com/common/oauth2/authorize?response_type=code&client_id={0}&redirect_uri={1}";
+        protected override string Authority => "https://login.microsoftonline.com/common/";
 
         /// <summary>
         /// String formatted Uri that can be called to sign out from the OneDrive API
         /// </summary>
-        public override string SignoutUri => "https://login.microsoftonline.com/logout.srf";
-
-        /// <summary>
-        /// The url where an access token can be obtained
-        /// </summary>
-        protected override string AccessTokenUri => "https://login.microsoftonline.com/common/oauth2/token";
-
-        /// <summary>
-        /// The url which can be called to discover available services for an user in Office 365
-        /// </summary>
-        protected const string ServiceDiscoveryUri = "https://api.office.com/discovery/v2.0/me/services/";
+        public override string SignoutUri => "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
 
         /// <summary>
         /// Defines the maximum allowed file size that can be used for basic uploads
         /// </summary>
         public new static long MaximumBasicFileUploadSizeInBytes = 5 * 1024;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// The root SharePoint/OneDrive for Business resource Uri for the tenant, e.g. https://contoso-my.sharepoint.com
+        /// Used both as the base Uri for API calls and to construct the MSAL v2 '.default' scope to request access to.
+        /// </summary>
+        public string OneDriveForBusinessResourceUri { get; }
+
+        /// <summary>
+        /// The default scopes to request access to for the OneDrive for Business resource
+        /// </summary>
+        protected override string[] DefaultScopes => new[] { $"{OneDriveForBusinessResourceUri}/.default" };
 
         #endregion
 
@@ -59,156 +64,18 @@ namespace KoenZomers.OneDrive.Api
         /// </summary>
         /// <param name="clientId">OneDrive Client ID to use to connect</param>
         /// <param name="clientSecret">OneDrive Client Secret to use to connect</param>
-        public OneDriveForBusinessO365Api(string clientId, string clientSecret) : base(clientId, clientSecret)
+        /// <param name="oneDriveForBusinessResourceUri">The root SharePoint/OneDrive for Business resource Uri for the tenant, e.g. https://contoso-my.sharepoint.com. Used to construct the MSAL v2 scope and the API base Uri, replacing the legacy Office 365 Discovery Service.</param>
+        public OneDriveForBusinessO365Api(string clientId, string clientSecret, string oneDriveForBusinessResourceUri) : base(clientId, clientSecret)
         {
-        }
-
-        #endregion
-
-        #region Public Methods - Authentication
-
-        /// <summary>
-        /// Returns the Uri that needs to be called to authenticate to the OneDrive for Business API
-        /// </summary>
-        /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive for Business API</returns>
-        public override Uri GetAuthenticationUri()
-        {
-            var uri = string.Format(AuthenticateUri, ClientId, AuthenticationRedirectUrl);
-            return new Uri(uri);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided authorization token
-        /// </summary>
-        /// <param name="authorizationToken">Authorization token</param>
-        /// <param name="resourceIdentifier">Resource to request an access token for</param>
-        /// <returns>Access token for OneDrive</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken, string resourceIdentifier)
-        {
-            var queryBuilder = new QueryStringBuilder();
-            queryBuilder.Add("client_id", ClientId);
-            queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
-            queryBuilder.Add("client_secret", ClientSecret);
-            queryBuilder.Add("code", authorizationToken);
-            queryBuilder.Add("resource", resourceIdentifier);
-            queryBuilder.Add("grant_type", "authorization_code");
-            return await PostToTokenEndPoint(queryBuilder);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided refresh token
-        /// </summary>
-        /// <param name="refreshToken">Refresh token</param>
-        /// <param name="resourceIdentifier">Resource to request an access token for</param>
-        /// <returns>Access token for OneDrive</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken, string resourceIdentifier)
-        {
-            var queryBuilder = new QueryStringBuilder();
-            queryBuilder.Add("client_id", ClientId);
-            queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
-            queryBuilder.Add("client_secret", ClientSecret);
-            queryBuilder.Add("refresh_token", refreshToken);
-            queryBuilder.Add("resource", resourceIdentifier);
-            queryBuilder.Add("grant_type", "refresh_token");
-            return await PostToTokenEndPoint(queryBuilder);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided refresh token
-        /// </summary>
-        /// <param name="refreshToken">Refresh token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        protected override async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
-        {
-            var discoveryAccessToken = await GetAccessTokenFromRefreshToken(refreshToken, "https://api.office.com/discovery/");
-            var oneDriveForBusinessService = await DiscoverOneDriveForBusinessService(discoveryAccessToken.AccessToken);
-
-            OneDriveApiBaseUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
-
-            var oneDriveForBusinessAccessToken = await GetAccessTokenFromRefreshToken(refreshToken, oneDriveForBusinessService.ServiceResourceId);
-            return oneDriveForBusinessAccessToken;
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided authorization token
-        /// </summary>
-        /// <param name="authorizationToken">Authorization token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        protected override async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken)
-        {
-            var discoveryAccessToken = await GetAccessTokenFromAuthorizationToken(authorizationToken, "https://api.office.com/discovery/");
-            var oneDriveForBusinessService = await DiscoverOneDriveForBusinessService(discoveryAccessToken.AccessToken);
-
-            OneDriveApiBaseUrl = string.Concat(oneDriveForBusinessService.ServiceEndPointUri, "/");
-
-            var oneDriveForBusinessAccessToken = await GetAccessTokenFromRefreshToken(discoveryAccessToken.RefreshToken, oneDriveForBusinessService.ServiceResourceId);
-            return oneDriveForBusinessAccessToken;
-        }
-
-        /// <summary>
-        /// Use the Office 365 Discovery Service to return all available services for the provided Access Token
-        /// </summary>
-        /// <param name="accessToken">Access Token to query available Office 365 Services for</param>
-        /// <returns>Set with discovered services available for the provided Access Token</returns>
-        private async Task<ServiceDiscoverySet> DiscoverOffice365Services(string accessToken)
-        {
-            // Create an HTTPClient instance to communicate with the REST API of OneDrive
-            var client = CreateHttpClient();
-
-            // Provide the access token through a bearer authorization header
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
-
-            // Send the request to the OneDrive API
-            var response = await client.GetAsync(ServiceDiscoveryUri);
-
-            // Verify if the response was successful
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (string.IsNullOrEmpty(oneDriveForBusinessResourceUri))
             {
-                return null;
+                throw new ArgumentException("A OneDrive for Business resource Uri (e.g. https://contoso-my.sharepoint.com) must be provided. This replaces the legacy Office 365 Discovery Service that is no longer used now that authentication is handled through MSAL.", nameof(oneDriveForBusinessResourceUri));
             }
 
-            // Retrieve the results from the Office 365 Discovery Service
-            var result = await response.Content.ReadAsStringAsync();
-            if (string.IsNullOrEmpty(result))
-            {
-                return null;
-            }
+            OneDriveForBusinessResourceUri = oneDriveForBusinessResourceUri.TrimEnd('/');
+            OneDriveApiBaseUrl = string.Concat(OneDriveForBusinessResourceUri, "/_api/v2.0/");
 
-            // Get the first Office 365 Service
-            try
-            {
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new JsonStringEnumConverter());
-
-                var discoveryResult = JsonSerializer.Deserialize<ServiceDiscoverySet>(result, options);
-
-                if (discoveryResult.Services.Count == 0)
-                {
-                    return null;
-                }
-
-                // Service discovery successful
-                return discoveryResult;
-            }
-            catch (JsonException e)
-            {
-                throw new Exceptions.InvalidResponseException(result, e);
-            }
-        }
-
-        /// <summary>
-        /// Use the Office 365 Discovery Service to try to locate the OneDrive for Business endpoint for the current user
-        /// </summary>
-        /// <param name="accessToken">An Access Token to use to query the Office 365 Discovery Service</param>
-        /// <returns>Discovered service details</returns>
-        private async Task<ServiceDiscoveryItem> DiscoverOneDriveForBusinessService(string accessToken)
-        {
-            var discoveredServices = await DiscoverOffice365Services(accessToken);
-
-            var oneDriveForBusinessService = discoveredServices.Services.FirstOrDefault(service => service.Capability == "MyFiles" && service.ServiceApiVersion == "v2.0");
-            return oneDriveForBusinessService;
+            InitializeMsalClientApplication();
         }
 
         #endregion

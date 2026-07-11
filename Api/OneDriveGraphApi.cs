@@ -25,19 +25,14 @@ namespace KoenZomers.OneDrive.Api
         public override string AuthenticationRedirectUrl { get; set; } = "https://login.microsoftonline.com/common/oauth2/nativeclient";
 
         /// <summary>
-        /// String formatted Uri that needs to be called to authenticate to the Graph API
+        /// The Microsoft Entra ID (Azure AD v2.0) authority to authenticate against
         /// </summary>
-        protected override string AuthenticateUri => "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id={0}&response_type=code&redirect_uri={1}&response_mode=query&scope=offline_access%20files.readwrite.all";
+        protected override string Authority => "https://login.microsoftonline.com/common/";
 
         /// <summary>
         /// String formatted Uri that can be called to sign out from the Graph API
         /// </summary>
         public override string SignoutUri => "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
-
-        /// <summary>
-        /// The url where an access token can be obtained
-        /// </summary>
-        protected override string AccessTokenUri => "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 
         /// <summary>
         /// Defines the maximum allowed file size that can be used for basic uploads. Should be set 4 MB as described in the API documentation at https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_uploadcontent
@@ -52,7 +47,7 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// The default scopes to request access to at the Graph API
         /// </summary>
-        public string[] DefaultScopes => new[] { "offline_access", "files.readwrite.all" };
+        protected override string[] DefaultScopes => new[] { "offline_access", "files.readwrite.all" };
 
         /// <summary>
         /// Base URL of the Graph API
@@ -71,82 +66,7 @@ namespace KoenZomers.OneDrive.Api
         public OneDriveGraphApi(string applicationId, string clientSecret = null) : base(applicationId, clientSecret)
         {
             OneDriveApiBaseUrl = GraphApiBaseUrl + "me/";
-        }
-
-        #endregion
-
-        #region Public Methods - Authentication
-
-        /// <summary>
-        /// Returns the Uri that needs to be called to authenticate to the OneDrive for Business API
-        /// </summary>
-        /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive for Business API</returns>
-        public override Uri GetAuthenticationUri()
-        {
-            var uri = string.Format(AuthenticateUri, ClientId, AuthenticationRedirectUrl);
-            return new Uri(uri);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided authorization token using the default scopes defined in DefaultScopes
-        /// </summary>
-        /// <param name="authorizationToken">Authorization token</param>
-        /// <returns>Access token for the Graph API</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected override async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken)
-        {
-            return await GetAccessTokenFromAuthorizationToken(authorizationToken, DefaultScopes);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided authorization token
-        /// </summary>
-        /// <param name="authorizationToken">Authorization token</param>
-        /// <param name="scopes">Scopes to request access for</param>
-        /// <returns>Access token for the Graph API</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected async Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken, string[] scopes)
-        {
-            var queryBuilder = new QueryStringBuilder();
-            queryBuilder.Add("client_id", ClientId);
-            queryBuilder.Add("scope", scopes.Aggregate((x, y) => $"{x} {y}"));
-            queryBuilder.Add("code", authorizationToken);
-            queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
-            queryBuilder.Add("grant_type", "authorization_code");
-            if (ClientSecret != null)
-                queryBuilder.Add("client_secret", ClientSecret);
-            return await PostToTokenEndPoint(queryBuilder);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided refresh token using the default scopes defined in DefaultScopes
-        /// </summary>
-        /// <param name="refreshToken">Refresh token</param>
-        /// <returns>Access token for the Graph API</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected override async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken)
-        {
-            return await GetAccessTokenFromRefreshToken(refreshToken, DefaultScopes);
-        }
-
-        /// <summary>
-        /// Gets an access token from the provided refresh token
-        /// </summary>
-        /// <param name="refreshToken">Refresh token</param>
-        /// <param name="scopes">Scopes to request access for</param>
-        /// <returns>Access token for the Graph API</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected async Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken, string[] scopes)
-        {
-            var queryBuilder = new QueryStringBuilder();
-            queryBuilder.Add("client_id", ClientId);
-            queryBuilder.Add("scope", scopes.Aggregate((x, y) => $"{x} {y}"));
-            queryBuilder.Add("refresh_token", refreshToken);
-            queryBuilder.Add("redirect_uri", AuthenticationRedirectUrl);
-            queryBuilder.Add("grant_type", "refresh_token");
-            if (ClientSecret != null)
-                queryBuilder.Add("client_secret", ClientSecret);
-            return await PostToTokenEndPoint(queryBuilder);
+            InitializeMsalClientApplication();
         }
 
         #endregion

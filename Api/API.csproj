@@ -5,23 +5,29 @@
 		<AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
-		<Version>2.4.0.0</Version>
+		<Version>3.0.0.0</Version>
 		<Authors>Koen Zomers</Authors>
 		<Company>Koen Zomers</Company>
-		<Description>API in .NET Framework 4.8.0, and .NET Core 3.1 and .NET 6.0 to communicate with OneDrive Personal and OneDrive for Business</Description>
+		<Description>API in .NET Standard 2.0 and .NET 8.0 to communicate with OneDrive for Business and Microsoft 365 via the Microsoft Graph API</Description>
 		<PackageProjectUrl>https://github.com/KoenZomers/OneDriveAPI</PackageProjectUrl>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageReleaseNotes>- Recompiled to support .NET Framework 4.8.0, .NET Core 3.1 and .NET 6.0
-- Removed Newtonsoft JSON dependency by switching to System.Text.Json</PackageReleaseNotes>
+		<PackageReleaseNotes>- BREAKING: Migrated authentication to Microsoft Authentication Library (MSAL) via Microsoft.Identity.Client
+- BREAKING: Removed OneDriveConsumerApi (legacy Live Connect protocol is not supported by MSAL/Microsoft Entra ID)
+- BREAKING: OneDriveForBusinessO365Api now uses Microsoft Entra ID v2.0 scope-based authentication instead of the legacy ADAL v1 resource/service-discovery model
+- See CHANGELOG.md for full details</PackageReleaseNotes>
 		<PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
 		<Copyright>Koen Zomers</Copyright>
 		<RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
-		<AssemblyVersion>2.4.0.0</AssemblyVersion>
-		<FileVersion>2.4.0.0</FileVersion>
+		<AssemblyVersion>3.0.0.0</AssemblyVersion>
+		<FileVersion>3.0.0.0</FileVersion>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.86.0" />
+	</ItemGroup>
+
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-		<PackageReference Include="System.Text.Json" Version="6.0.4" />
+		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

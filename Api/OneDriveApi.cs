@@ -13,6 +13,7 @@ using KoenZomers.OneDrive.Api.Enums;
 using KoenZomers.OneDrive.Api.Helpers;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Microsoft.Identity.Client;
 
 namespace KoenZomers.OneDrive.Api
 {
@@ -54,9 +55,30 @@ namespace KoenZomers.OneDrive.Api
         public OneDriveAccessToken AccessToken { get; protected set; }
 
         /// <summary>
-        /// Date and time until which the access token should be valid based on the information provided by the oAuth provider
+        /// Date and time until which the access token should be valid based on the information provided by MSAL
         /// </summary>
         public DateTime? AccessTokenValidUntil { get; protected set; }
+
+        /// <summary>
+        /// The MSAL public client application used for authentication flows that do not require a client secret
+        /// (e.g. AcquireTokenInteractive, AcquireTokenByDeviceCode, AcquireTokenByAuthorizationCode, AcquireTokenSilent).
+        /// Will be NULL when a client secret was provided, in which case <see cref="ConfidentialClientApplication"/> is used instead.
+        /// Exposed directly so consumers can use any authentication flow supported by MSAL, not just the ones wrapped by this library.
+        /// </summary>
+        public IPublicClientApplication PublicClientApplication { get; private set; }
+
+        /// <summary>
+        /// The MSAL confidential client application used for authentication flows that require a client secret
+        /// (e.g. AcquireTokenByAuthorizationCode, AcquireTokenForClient for app-only scenarios, AcquireTokenSilent).
+        /// Will be NULL when no client secret was provided, in which case <see cref="PublicClientApplication"/> is used instead.
+        /// Exposed directly so consumers can use any authentication flow supported by MSAL, not just the ones wrapped by this library.
+        /// </summary>
+        public IConfidentialClientApplication ConfidentialClientApplication { get; private set; }
+
+        /// <summary>
+        /// The MSAL account that was used for the last successful authentication. Used to acquire tokens silently from the MSAL token cache.
+        /// </summary>
+        protected IAccount Account { get; set; }
 
         /// <summary>
         /// Base URL of the OneDrive API
@@ -83,14 +105,20 @@ namespace KoenZomers.OneDrive.Api
         public abstract string AuthenticationRedirectUrl { get; set; }
 
         /// <summary>
-        /// String formatted Uri that needs to be called to authenticate
+        /// The Microsoft Entra ID (Azure AD) authority to authenticate against, e.g. https://login.microsoftonline.com/common/
         /// </summary>
-        protected abstract string AuthenticateUri { get; }
+        protected abstract string Authority { get; }
 
         /// <summary>
-        /// The url where an access token can be obtained
+        /// The default MSAL scopes to request access to when none are explicitly provided
         /// </summary>
-        protected abstract string AccessTokenUri { get; }
+        protected abstract string[] DefaultScopes { get; }
+
+        /// <summary>
+        /// Returns the default MSAL scopes used by this API instance. Useful when calling MSAL authentication flows
+        /// directly on <see cref="PublicClientApplication"/> or <see cref="ConfidentialClientApplication"/>.
+        /// </summary>
+        public string[] GetDefaultScopes() => DefaultScopes;
 
         /// <summary>
         /// String formatted Uri that can be called to sign out from the OneDrive API
@@ -126,10 +154,48 @@ namespace KoenZomers.OneDrive.Api
         #region Public Methods - Authentication
 
         /// <summary>
-        /// Returns the Uri that needs to be called to authenticate to the OneDrive API
+        /// Initializes the MSAL client application(s) used for authentication. Must be called by derived class constructors
+        /// once all properties required to build the authority and redirect URL (e.g. <see cref="AuthenticationRedirectUrl"/>) have been set.
+        /// Builds a <see cref="ConfidentialClientApplication"/> when a client secret was provided, otherwise a <see cref="PublicClientApplication"/>.
         /// </summary>
+        protected void InitializeMsalClientApplication()
+        {
+            if (!string.IsNullOrEmpty(ClientSecret))
+            {
+                ConfidentialClientApplication = ConfidentialClientApplicationBuilder.Create(ClientId)
+                    .WithClientSecret(ClientSecret)
+                    .WithAuthority(new Uri(Authority))
+                    .WithRedirectUri(AuthenticationRedirectUrl)
+                    .Build();
+            }
+            else
+            {
+                PublicClientApplication = PublicClientApplicationBuilder.Create(ClientId)
+                    .WithAuthority(new Uri(Authority))
+                    .WithRedirectUri(AuthenticationRedirectUrl)
+                    .Build();
+            }
+        }
+
+        /// <summary>
+        /// Returns the Uri that needs to be called to authenticate to the OneDrive API using the "bring your own browser" authorization code pattern.
+        /// Only available when using a confidential client (a client secret was configured). For public clients, use
+        /// <see cref="PublicClientApplication"/> directly with e.g. AcquireTokenInteractive or AcquireTokenByDeviceCode, which
+        /// manage the browser/device-code interaction themselves rather than exposing a raw authorization URL.
+        /// </summary>
+        /// <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
         /// <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
-        public abstract Uri GetAuthenticationUri();
+        public virtual async Task<Uri> GetAuthenticationUri(string[] scopes = null)
+        {
+            if (ConfidentialClientApplication == null)
+            {
+                throw new InvalidOperationException("GetAuthenticationUri requires a confidential client application (a client secret must be configured). For public clients, use PublicClientApplication directly with AcquireTokenInteractive, AcquireTokenByDeviceCode or another MSAL flow.");
+            }
+
+            return await ConfidentialClientApplication.GetAuthorizationRequestUrl(scopes ?? DefaultScopes)
+                .WithRedirectUri(AuthenticationRedirectUrl)
+                .ExecuteAsync();
+        }
 
         /// <summary>
         /// Returns the authorization token from the provided URL to which the OneDrive API authentication request was sent after succesful authentication
@@ -159,40 +225,49 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Tries to retrieve an access token based on the tokens already available in this OneDrive instance
+        /// Tries to retrieve an access token based on the tokens already available in this OneDrive instance, using MSAL's
+        /// silent token acquisition (cached token or refreshed automatically). If no cached account is available yet and an
+        /// authorization code was captured through <see cref="GetAuthorizationTokenFromUrl"/>, it will be exchanged for a token.
         /// </summary>
-        /// <returns>OneDrive access token or NULL if unable to get an access token</returns>
+        /// <returns>OneDrive access token or NULL if unable to get an access token without user interaction</returns>
         public async Task<OneDriveAccessToken> GetAccessToken()
         {
-            // Check if we have an access token
-            if (AccessToken != null)
+            // Check if we have an access token that is still valid
+            if (AccessToken != null && AccessTokenValidUntil.HasValue && AccessTokenValidUntil.Value > DateTime.Now)
             {
-                // We have an access token, check if its still valid
-                if (AccessTokenValidUntil.HasValue && AccessTokenValidUntil.Value > DateTime.Now)
-                {
-                    // Access token is still valid, use it
-                    return AccessToken;
-                }
+                return AccessToken;
+            }
 
-                // Access token is no longer valid, check if we have a refresh token to request a new access token
-                if (!string.IsNullOrEmpty(AccessToken.RefreshToken))
+            // Try to silently acquire (or renew) a token from MSAL's token cache
+            if (Account != null)
+            {
+                try
                 {
-                    // We have a refresh token, request a new access token using it
-                    AccessToken = await GetAccessTokenFromRefreshToken(AccessToken.RefreshToken);
-                    return AccessToken;
+                    var silentResult = PublicClientApplication != null
+                        ? await PublicClientApplication.AcquireTokenSilent(DefaultScopes, Account).ExecuteAsync()
+                        : await ConfidentialClientApplication.AcquireTokenSilent(DefaultScopes, Account).ExecuteAsync();
+
+                    return SetAuthenticationResult(silentResult);
+                }
+                catch (MsalUiRequiredException)
+                {
+                    // Silent renewal is not possible, interactive authentication is required
+                    return null;
+                }
+                catch (MsalException ex)
+                {
+                    throw new Exceptions.TokenRetrievalFailedException(message: ex.Message, innerException: ex);
                 }
             }
 
-            // No access token is available, check if we have an authorization token
+            // No cached account is available, check if we have an authorization code to exchange for a token
             if (string.IsNullOrEmpty(AuthorizationToken))
             {
-                // No access token, no authorization token, we need to authorize first which can't be done without an UI
+                // No access token, no authorization code, interactive authentication is required first
                 return null;
             }
 
-            // No access token but we have an authorization token, request the access token
-            AccessToken = await GetAccessTokenFromAuthorizationToken(AuthorizationToken);
-            AccessTokenValidUntil = DateTime.Now.AddSeconds(AccessToken.AccessTokenExpirationDuration);
+            await AuthenticateUsingAuthorizationCode(AuthorizationToken);
             return AccessToken;
         }
 
@@ -206,86 +281,82 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
-        /// Sends a HTTP POST to the OneDrive Token EndPoint
+        /// Stores the result of a MSAL authentication flow (e.g. AcquireTokenInteractive, AcquireTokenByDeviceCode,
+        /// AcquireTokenByAuthorizationCode) so it can be used for subsequent calls to the OneDrive API and for silent renewal.
+        /// Use this after calling any authentication flow directly on <see cref="PublicClientApplication"/> or
+        /// <see cref="ConfidentialClientApplication"/> to give full flexibility in which MSAL flow to use.
         /// </summary>
-        /// <param name="queryBuilder">The querystring parameters to send in the POST body</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        protected async Task<OneDriveAccessToken> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
+        /// <param name="authenticationResult">The result returned by a MSAL AcquireToken* flow</param>
+        /// <returns>OneDrive access token derived from the provided authentication result</returns>
+        public OneDriveAccessToken SetAuthenticationResult(AuthenticationResult authenticationResult)
         {
-            if (string.IsNullOrEmpty(AccessTokenUri))
+            if (authenticationResult == null)
             {
-                throw new InvalidOperationException("AccessTokenUri has not been set");
+                throw new ArgumentNullException(nameof(authenticationResult));
             }
 
-            // Create an HTTPClient instance to communicate with the REST API of OneDrive
-            using (var client = CreateHttpClient())
+            Account = authenticationResult.Account;
+            AccessToken = new OneDriveAccessToken
             {
-                // Load the content to upload
-                using (var content = new StringContent(queryBuilder.ToString(), Encoding.UTF8, "application/x-www-form-urlencoded"))
-                {
-                    // Construct the message towards the webservice
-                    using (var request = new HttpRequestMessage(HttpMethod.Post, AccessTokenUri))
-                    {
-                        // Set the content to send along in the message body with the request
-                        request.Content = content;
+                TokenType = authenticationResult.TokenType,
+                AccessToken = authenticationResult.AccessToken,
+                Scopes = authenticationResult.Scopes != null ? string.Join(" ", authenticationResult.Scopes) : null,
+                AccessTokenExpirationDuration = (int)Math.Max(0, (authenticationResult.ExpiresOn - DateTimeOffset.UtcNow).TotalSeconds)
+            };
+            AccessTokenValidUntil = authenticationResult.ExpiresOn.LocalDateTime;
 
-                        // Request the response from the webservice
-                        var response = await client.SendAsync(request);
-                        var responseBody = await response.Content.ReadAsStringAsync();
-
-                        var options = new JsonSerializerOptions();
-                        options.Converters.Add(new JsonStringEnumConverter());
-
-                        // Verify if the request was successful (response status 200-299)
-                        if (response.IsSuccessStatusCode)
-                        {
-                            // Successfully retrieved token, parse it from the response
-                            var appTokenResult = JsonSerializer.Deserialize<OneDriveAccessToken>(responseBody, options);
-                            return appTokenResult;
-                        }
-
-                        // Not able to retrieve a token, parse the error and throw it as an exception
-                        OneDriveError errorResult;
-                        try
-                        {
-                            // Try to parse the response as a OneDrive API error message
-                            errorResult = JsonSerializer.Deserialize<OneDriveError>(responseBody, options);
-                        }
-                        catch(Exception ex)
-                        {
-                            throw new Exceptions.TokenRetrievalFailedException(innerException: ex);
-                        }
-
-                        throw new Exceptions.TokenRetrievalFailedException(message: errorResult.ErrorDescription, errorDetails: errorResult);
-                    }
-                }
-            }       
+            return AccessToken;
         }
 
         /// <summary>
-        /// Authenticates to OneDrive using the provided Refresh Token
+        /// Authenticates to OneDrive using the provided authorization code (e.g. captured through <see cref="GetAuthorizationTokenFromUrl"/>)
+        /// using MSAL's AcquireTokenByAuthorizationCode flow. Requires a confidential client (a client secret must be configured);
+        /// for public clients use <see cref="PublicClientApplication"/> directly with AcquireTokenInteractive or another MSAL flow.
+        /// </summary>
+        /// <param name="authorizationCode">Authorization code to exchange for an access token</param>
+        /// <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
+        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
+        public async Task AuthenticateUsingAuthorizationCode(string authorizationCode, string[] scopes = null)
+        {
+            if (ConfidentialClientApplication == null)
+            {
+                throw new InvalidOperationException("AuthenticateUsingAuthorizationCode requires a confidential client application (a client secret must be configured). For public clients, use PublicClientApplication directly with AcquireTokenInteractive, AcquireTokenByDeviceCode or another MSAL flow, then call SetAuthenticationResult with the result.");
+            }
+
+            try
+            {
+                var result = await ConfidentialClientApplication.AcquireTokenByAuthorizationCode(scopes ?? DefaultScopes, authorizationCode).ExecuteAsync();
+                SetAuthenticationResult(result);
+            }
+            catch (MsalException ex)
+            {
+                throw new Exceptions.TokenRetrievalFailedException(message: ex.Message, innerException: ex);
+            }
+        }
+
+        /// <summary>
+        /// Authenticates to OneDrive using the provided Refresh Token through MSAL's refresh token migration API.
+        /// Intended primarily for migrating refresh tokens obtained outside of MSAL (e.g. from a previous version of this library).
+        /// For new authentication flows, prefer using <see cref="PublicClientApplication"/>/<see cref="ConfidentialClientApplication"/> directly.
         /// </summary>
         /// <param name="refreshToken">Refreshtoken to use to authenticate to OneDrive</param>
-        public async Task AuthenticateUsingRefreshToken(string refreshToken)
+        /// <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
+        /// <exception cref="Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
+        public async Task AuthenticateUsingRefreshToken(string refreshToken, string[] scopes = null)
         {
-            AccessToken = await GetAccessTokenFromRefreshToken(refreshToken);
-            AccessTokenValidUntil = DateTime.Now.AddSeconds(AccessToken.AccessTokenExpirationDuration);
+            try
+            {
+                var result = PublicClientApplication != null
+                    ? await ((IByRefreshToken)PublicClientApplication).AcquireTokenByRefreshToken(scopes ?? DefaultScopes, refreshToken).ExecuteAsync()
+                    : await ((IByRefreshToken)ConfidentialClientApplication).AcquireTokenByRefreshToken(scopes ?? DefaultScopes, refreshToken).ExecuteAsync();
+
+                SetAuthenticationResult(result);
+            }
+            catch (MsalException ex)
+            {
+                throw new Exceptions.TokenRetrievalFailedException(message: ex.Message, innerException: ex);
+            }
         }
-
-        /// <summary>
-        /// Gets an access token from the provided authorization token
-        /// </summary>
-        /// <param name="authorizationToken">Authorization token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        protected abstract Task<OneDriveAccessToken> GetAccessTokenFromAuthorizationToken(string authorizationToken);
-
-        /// <summary>
-        /// Gets an access token from the provided refresh token
-        /// </summary>
-        /// <param name="refreshToken">Refresh token</param>
-        /// <returns>Access token for OneDrive or NULL if unable to retrieve an access token</returns>
-        protected abstract Task<OneDriveAccessToken> GetAccessTokenFromRefreshToken(string refreshToken);
 
         #endregion
 
