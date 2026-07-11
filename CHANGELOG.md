@@ -29,6 +29,11 @@ This is a **major version release** with breaking changes to the authentication 
 - **`TokenRetrievalFailedException` now wraps `Microsoft.Identity.Client.MsalException`**
   - Previously wrapped a custom `OneDriveError` parsed from the token endpoint's JSON error response.
 
+- **Merged the abstract `OneDriveApi` base class into `OneDriveGraphApi`**
+  - Now that `OneDriveGraphApi` is the only remaining API class, the separate abstract base class no longer served a purpose and has been folded into a single, concrete `OneDriveGraphApi` class.
+  - Code that referenced the `OneDriveApi` type directly (e.g. `OneDriveApi oneDrive = new OneDriveGraphApi(...)`) should reference `OneDriveGraphApi` instead.
+  - All public methods and properties remain available on `OneDriveGraphApi` with the same names and signatures - only the type name used for variables/fields declared as `OneDriveApi` needs to change.
+
 ### Migration Guidance
 
 | Before (2.x) | After (3.x) |
@@ -37,6 +42,7 @@ This is a **major version release** with breaking changes to the authentication 
 | `new OneDriveForBusinessO365Api(clientId, clientSecret)` + resource/service discovery | Not supported — use `new OneDriveGraphApi(clientId, clientSecret)`, which covers the same OneDrive for Business / SharePoint functionality through the Microsoft Graph API |
 | `oneDriveApi.GetAuthenticationUri()` + manual browser + `GetAuthorizationTokenFromUrl` | Still supported for the authorization-code pattern, now backed by MSAL under the hood — or use the newly exposed MSAL client application instance directly for `AcquireTokenInteractive`, `AcquireTokenByDeviceCode`, etc. |
 | `oneDriveApi.AuthenticateUsingRefreshToken(refreshToken)` | Still supported, now performs the refresh through MSAL |
+| `OneDriveApi oneDrive = new OneDriveGraphApi(...)` | `OneDriveGraphApi oneDrive = new OneDriveGraphApi(...)` - the `OneDriveApi` base class has been merged into `OneDriveGraphApi` |
 
 See `README.md` for updated authentication examples.
 

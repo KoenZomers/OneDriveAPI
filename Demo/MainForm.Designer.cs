@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.LogoPictureBox = new System.Windows.Forms.PictureBox();
             this.AuthenticationBrowser = new System.Windows.Forms.WebBrowser();
             this.CurrentUrlTextBox = new System.Windows.Forms.TextBox();
             this.CurrentUrlLabel = new System.Windows.Forms.Label();
@@ -84,7 +83,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LogoPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // AuthenticationBrowser
@@ -706,21 +704,11 @@
             this.label2.TabIndex = 22;
             this.label2.Text = "Step 2: Call methods";
             // 
-            // LogoPictureBox
-            // 
-            this.LogoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LogoPictureBox.Location = new System.Drawing.Point(1916, 6);
-            this.LogoPictureBox.Name = "LogoPictureBox";
-            this.LogoPictureBox.Size = new System.Drawing.Size(80, 80);
-            this.LogoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.LogoPictureBox.TabStop = false;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2010, 1133);
-            this.Controls.Add(this.LogoPictureBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.AccessTokenValidLabel);
@@ -745,7 +733,6 @@
             this.OneDriveCommandsPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LogoPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -803,7 +790,6 @@
         private System.Windows.Forms.CheckBox UseProxyCheckBox;
         private System.Windows.Forms.Button RefreshTokenButton;
         private System.Windows.Forms.Button SilentSignInButton;
-        private System.Windows.Forms.PictureBox LogoPictureBox;
         private System.Windows.Forms.Button Step1Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

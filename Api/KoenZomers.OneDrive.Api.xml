@@ -847,902 +847,81 @@
             </summary>
             <returns>Querystring</returns>
         </member>
-        <member name="T:KoenZomers.OneDrive.Api.OneDriveApi">
+        <member name="T:KoenZomers.OneDrive.Api.OneDriveGraphApi">
             <summary>
-            Base OneDrive API functionality that is valid for either the Consumer OneDrive or the OneDrive for Business platform
+            API for both OneDrive Personal and OneDrive for Business on Office 365 through the Microsoft Graph API.
+            Create your own Client ID / Client Secret at https://entra.microsoft.com
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.ClientId">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ClientId">
             <summary>
             The oAuth 2.0 Application Client ID
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.ClientSecret">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ClientSecret">
             <summary>
             The oAuth 2.0 Application Client Secret
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.ProxyConfiguration">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ProxyConfiguration">
             <summary>
             If provided, this proxy will be used for communication with the OneDrive API. If not provided, no proxy will be used.
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.ProxyCredential">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ProxyCredential">
             <summary>
             If provided along with a proxy configuration, these credentials will be used to authenticate to the proxy. If omitted, the default system credentials will be used.
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.AuthorizationToken">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.AuthorizationToken">
             <summary>
             Authorization token used for requesting tokens
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.AccessToken">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.AccessToken">
             <summary>
             Access Token for communicating with OneDrive
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.AccessTokenValidUntil">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.AccessTokenValidUntil">
             <summary>
             Date and time until which the access token should be valid based on the information provided by MSAL
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication">
             <summary>
             The MSAL public client application used for authentication flows that do not require a client secret
             (e.g. AcquireTokenInteractive, AcquireTokenByDeviceCode, AcquireTokenByAuthorizationCode, AcquireTokenSilent).
-            Will be NULL when a client secret was provided, in which case <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.ConfidentialClientApplication"/> is used instead.
+            Will be NULL when a client secret was provided, in which case <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConfidentialClientApplication"/> is used instead.
             Exposed directly so consumers can use any authentication flow supported by MSAL, not just the ones wrapped by this library.
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.ConfidentialClientApplication">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConfidentialClientApplication">
             <summary>
             The MSAL confidential client application used for authentication flows that require a client secret
             (e.g. AcquireTokenByAuthorizationCode, AcquireTokenForClient for app-only scenarios, AcquireTokenSilent).
-            Will be NULL when no client secret was provided, in which case <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/> is used instead.
+            Will be NULL when no client secret was provided, in which case <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/> is used instead.
             Exposed directly so consumers can use any authentication flow supported by MSAL, not just the ones wrapped by this library.
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.Account">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.Account">
             <summary>
             The MSAL account that was used for the last successful authentication. Used to acquire tokens silently from the MSAL token cache.
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.OneDriveApiBaseUrl">
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.OneDriveApiBaseUrl">
             <summary>
             Base URL of the OneDrive API
             </summary>
         </member>
-        <member name="F:KoenZomers.OneDrive.Api.OneDriveApi.MaximumBasicFileUploadSizeInBytes">
+        <member name="F:KoenZomers.OneDrive.Api.OneDriveGraphApi.MaximumBasicFileUploadSizeInBytes">
             <summary>
-            Defines the maximum allowed file size that can be used for basic uploads
+            Defines the maximum allowed file size that can be used for basic uploads. Should be set 4 MB as described in the API documentation at https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_uploadcontent
             </summary>
         </member>
-        <member name="F:KoenZomers.OneDrive.Api.OneDriveApi.ResumableUploadChunkSizeInBytes">
+        <member name="F:KoenZomers.OneDrive.Api.OneDriveGraphApi.ResumableUploadChunkSizeInBytes">
             <summary>
-            Size of the chunks to upload when using the resumable upload method
-            </summary>
-        </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.AuthenticationRedirectUrl">
-            <summary>
-            The url to provide as the redirect URL after successful authentication
-            </summary>
-        </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.Authority">
-            <summary>
-            The Microsoft Entra ID (Azure AD) authority to authenticate against, e.g. https://login.microsoftonline.com/common/
-            </summary>
-        </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.DefaultScopes">
-            <summary>
-            The default MSAL scopes to request access to when none are explicitly provided
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDefaultScopes">
-            <summary>
-            Returns the default MSAL scopes used by this API instance. Useful when calling MSAL authentication flows
-            directly on <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/> or <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.ConfidentialClientApplication"/>.
-            </summary>
-        </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveApi.SignoutUri">
-            <summary>
-            String formatted Uri that can be called to sign out from the OneDrive API
-            </summary>
-        </member>
-        <member name="E:KoenZomers.OneDrive.Api.OneDriveApi.UploadProgressChanged">
-            <summary>
-            Event triggered when uploading a file using UploadFileViaResumableUpload to indicate the progress of the upload process
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.#ctor(System.String,System.String)">
-            <summary>
-            Instantiates a new instance of a OneDrive API
-            </summary>
-            <param name="clientId">OneDrive Client ID to use to connect. Must be provided by the consumer of this library - register your own app registration in the Microsoft Entra admin center (https://entra.microsoft.com).</param>
-            <param name="clientSecret">OneDrive Client Secret to use to connect</param>
-            <exception cref="T:System.ArgumentException">Thrown when no clientId is provided</exception>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.InitializeMsalClientApplication">
-            <summary>
-            Initializes the MSAL client application(s) used for authentication. Must be called by derived class constructors
-            once all properties required to build the authority and redirect URL (e.g. <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.AuthenticationRedirectUrl"/>) have been set.
-            Builds a <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.ConfidentialClientApplication"/> when a client secret was provided, otherwise a <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/>.
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAuthenticationUri(System.String[])">
-            <summary>
-            Returns the Uri that needs to be called to authenticate to the OneDrive API using the "bring your own browser" authorization code pattern.
-            Only available when using a confidential client (a client secret was configured). For public clients, use
-            <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/> directly with e.g. AcquireTokenInteractive or AcquireTokenByDeviceCode, which
-            manage the browser/device-code interaction themselves rather than exposing a raw authorization URL.
-            </summary>
-            <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
-            <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAuthorizationTokenFromUrl(System.String)">
-            <summary>
-            Returns the authorization token from the provided URL to which the OneDrive API authentication request was sent after succesful authentication
-            </summary>
-            <param name="url">Url received from the OneDrive API after succesful authentication</param>
-            <returns>Authorization token or NULL if unable to identify from provided URL</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAccessToken">
-            <summary>
-            Tries to retrieve an access token based on the tokens already available in this OneDrive instance, using MSAL's
-            silent token acquisition (cached token or refreshed automatically). If no cached account is available yet and an
-            authorization code was captured through <see cref="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAuthorizationTokenFromUrl(System.String)"/>, it will be exchanged for a token.
-            </summary>
-            <returns>OneDrive access token or NULL if unable to get an access token without user interaction</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetSignOutUri">
-            <summary>
-            Returns the Uri that needs to be called to sign the current user out of the OneDrive API
-            </summary>
-            <returns>Uri that needs to be called to sign the current user out of the OneDrive API</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SetAuthenticationResult(Microsoft.Identity.Client.AuthenticationResult)">
-            <summary>
-            Stores the result of a MSAL authentication flow (e.g. AcquireTokenInteractive, AcquireTokenByDeviceCode,
-            AcquireTokenByAuthorizationCode) so it can be used for subsequent calls to the OneDrive API and for silent renewal.
-            Use this after calling any authentication flow directly on <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/> or
-            <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.ConfidentialClientApplication"/> to give full flexibility in which MSAL flow to use.
-            </summary>
-            <param name="authenticationResult">The result returned by a MSAL AcquireToken* flow</param>
-            <returns>OneDrive access token derived from the provided authentication result</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.AuthenticateUsingAuthorizationCode(System.String,System.String[])">
-            <summary>
-            Authenticates to OneDrive using the provided authorization code (e.g. captured through <see cref="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAuthorizationTokenFromUrl(System.String)"/>)
-            using MSAL's AcquireTokenByAuthorizationCode flow. Requires a confidential client (a client secret must be configured);
-            for public clients use <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/> directly with AcquireTokenInteractive or another MSAL flow.
-            </summary>
-            <param name="authorizationCode">Authorization code to exchange for an access token</param>
-            <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
-            <exception cref="T:KoenZomers.OneDrive.Api.Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.AuthenticateUsingRefreshToken(System.String,System.String[])">
-            <summary>
-            Authenticates to OneDrive using the provided Refresh Token through MSAL's refresh token migration API.
-            Intended primarily for migrating refresh tokens obtained outside of MSAL (e.g. from a previous version of this library).
-            For new authentication flows, prefer using <see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.PublicClientApplication"/>/<see cref="P:KoenZomers.OneDrive.Api.OneDriveApi.ConfidentialClientApplication"/> directly.
-            </summary>
-            <param name="refreshToken">Refreshtoken to use to authenticate to OneDrive</param>
-            <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
-            <exception cref="T:KoenZomers.OneDrive.Api.Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.ValidFilename(System.String)">
-            <summary>
-            Validates if the provided filename is valid to be used on OneDrive
-            </summary>
-            <param name="filename">Filename to validate</param>
-            <returns>True if filename is valid to be used, false if it isn't</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDrive">
-            <summary>
-            Retrieves the current OneDrive drive information
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDrive(System.String)">
-            <summary>
-            Retrieves the OneDrive drive information from the provided drive
-            </summary>
-            <param name="driveId">Id of the drive to retrieve</param>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDrive(KoenZomers.OneDrive.Api.Entities.OneDriveDrive)">
-            <summary>
-            Retrieves the current OneDrive drive information from the provided drive
-            </summary>
-            <param name="drive">Drive to retrieve</param>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDriveRoot">
-            <summary>
-            Retrieves the OneDrive root folder
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDriveRootChildren">
-            <summary>
-            Retrieves the first batch of children under the OneDrive root folder
-            </summary>
-            <returns>OneDriveItemCollection containing the first batch of items in the root folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllDriveRootChildren">
-            <summary>
-            Retrieves all the children under the OneDrive root folder
-            </summary>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetChildrenByPath(System.String)">
-            <summary>
-            Retrieves the first batch of children under the provided OneDrive path. Use GetNextChildrenByPath and provide the NextLink from the results to fetch the next batch.
-            </summary>
-            <param name="path">Path within OneDrive to retrieve the child items of</param>
-            <returns>OneDriveItemCollection containing the first batch of items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetNextChildrenByPath(System.String)">
-            <summary>
-            Retrieves a next batch of children using the provided full SkipToken path
-            </summary>
-            <param name="skipTokenUrl">Full URL from a NextLink in the response of a GetChildrenByPath request</param>
-            <returns>OneDriveItemCollection containing the next batch of items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllChildrenByPath(System.String)">
-            <summary>
-            Retrieves all children under the provided OneDrive path
-            </summary>
-            <param name="path">Path within OneDrive to retrieve the child items of</param>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetChildrenByFolderId(System.String)">
-            <summary>
-            Retrieves the first batch of children under the OneDrive folder with the provided id
-            </summary>
-            <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
-            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllChildrenByFolderId(System.String)">
-            <summary>
-            Retrieves all the children under the OneDrive folder with the provided id
-            </summary>
-            <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetChildrenByParentItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Retrieves the firsth batch of children under the provided OneDrive Item
-            </summary>
-            <param name="item">OneDrive item to retrieve the child items of</param>
-            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllChildrenByParentItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Retrieves all the children under the OneDrive folder with the provided id
-            </summary>
-            <param name="item">OneDrive item to retrieve the child items of</param>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllChildrenInternal(System.String)">
-            <summary>
-            Retrieves all the children under the OneDrive folder with the provided id
-            </summary>
-            <param name="fetchUrl">Url to use to fetch the first set of child items</param>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetItem(System.String)">
-            <summary>
-            Retrieves the OneDrive Item by its complete path to the file
-            </summary>
-            <param name="path">Path of the OneDrive item to retrieve</param>
-            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetItemInFolder(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Retrieves the OneDrive Item by it's filename in a specific folder
-            </summary>
-            <param name="folder">OneDriveItem representing the folder in which the file should reside</param>
-            <param name="fileName">File name of the file to retrieve</param>
-            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetItemInFolder(System.String,System.String)">
-            <summary>
-            Retrieves the OneDrive Item by it's filename in a specific folder
-            </summary>
-            <param name="folderId">Unique identifier of the folder in which the file should reside</param>
-            <param name="fileName">File name of the file to retrieve</param>
-            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetItemById(System.String)">
-            <summary>
-            Retrieves the OneDrive Item from the current drive by it's unique identifier
-            </summary>
-            <param name="id">Unique identifier of the OneDrive item to retrieve</param>
-            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetItemFromDriveById(System.String,System.String)">
-            <summary>
-            Retrieves the OneDrive Item from the provided drive by it's unique identifier
-            </summary>
-            <param name="id">Unique identifier of the OneDrive item to retrieve</param>
-            <param name="driveId">Id of the drive on which the item resides</param>
-            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetItemFromDriveById(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveDrive)">
-            <summary>
-            Retrieves the OneDrive Item from the provided drive by it's unique identifier
-            </summary>
-            <param name="id">Unique identifier of the OneDrive item to retrieve</param>
-            <param name="drive">Drive on which the item resides</param>
-            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetFolderOrCreate(System.String)">
-            <summary>
-            Retrieves the OneDrive folder item or creates it if it doesn't exist yet
-            </summary>
-            <param name="path">Path of the OneDrive folder to retrieve or create. It will ensure that the whole provided path exists and create (sub)folders if they don't exist yet</param>
-            <example>Files\Work\Contracts</example>
-            <returns>OneDriveItem representing the folder designated in the path</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDriveCameraRollFolder">
-            <summary>
-            Retrieves the items in the CameraRoll folder
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDriveDocumentsFolder">
-            <summary>
-            Retrieves the items in the Documents folder
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDrivePhotosFolder">
-            <summary>
-            Retrieves the items in the Photos folder
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetDrivePublicFolder">
-            <summary>
-            Retrieves the items in the Public folder
-            </summary>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Search(System.String)">
-            <summary>
-            Searches for items on OneDrive with the provided query
-            </summary>
-            <param name="query">Search query to use</param>
-            <returns>All OneDrive items resulting from the search</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Search(System.String,System.String)">
-            <summary>
-            Searches for items on OneDrive in the provided path with the provided query
-            </summary>
-            <param name="query">Search query to use</param>
-            <param name="path">OneDrive path where to search in</param>
-            <returns>All OneDrive items resulting from the search</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Search(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Searches for items on OneDrive in the provided path with the provided query
-            </summary>
-            <param name="query">Search query to use</param>
-            <param name="oneDriveItem">OneDrive item representing a folder to search in</param>
-            <returns>All OneDrive items resulting from the search</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Delete(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Deletes the provided OneDriveItem from OneDrive
-            </summary>
-            <param name="oneDriveItem">The OneDriveItem reference to delete from OneDrive</param>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Delete(System.String)">
-            <summary>
-            Deletes the provided OneDriveItem from OneDrive
-            </summary>
-            <param name="oneDriveItemPath">The path to the OneDrive item to delete from OneDrive</param>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Copy(System.String,System.String,System.String)">
-            <summary>
-            Copies the provided OneDriveItem to the provided destination on OneDrive
-            </summary>
-            <param name="oneDriveSourceItemPath">The path to the OneDrive Item to be copied</param>
-            <param name="oneDriveDestinationItemPath">The path to the OneDrive parent item to copy the item into</param>
-            <param name="destinationName">The name of the item at the destination where it will be copied to. Omit to use the source name.</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Copy(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Copies the provided OneDriveItem to the provided destination on OneDrive
-            </summary>
-            <param name="oneDriveSourceItem">The path to the OneDrive Item to be copied</param>
-            <param name="oneDriveDestinationItem">The path tothe OneDrive parent item to copy the item into</param>
-            <param name="destinationName">The name of the item at the destination where it will be copied to. Omit to use the source name.</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Move(System.String,System.String)">
-            <summary>
-            Moves the provided OneDriveItem to the provided destination on OneDrive
-            </summary>
-            <param name="oneDriveSourceItemPath">The path to the OneDrive Item to be moved</param>
-            <param name="oneDriveDestinationItemPath">The path to the OneDrive parent item to move the item into</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Move(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Moves the provided OneDriveItem to the provided destination on OneDrive
-            </summary>
-            <param name="oneDriveSourceItem">The OneDrive Item to be moved</param>
-            <param name="oneDriveDestinationItem">The OneDrive parent item to move the item into</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Rename(System.String,System.String)">
-            <summary>
-            Renames the provided OneDriveItem to the provided name
-            </summary>
-            <param name="oneDriveItemPath">The path to the OneDrive Item to be renamed</param>
-            <param name="name">The new name to assign to the OneDrive item</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.Rename(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Renames the provided OneDriveItem to the provided name
-            </summary>
-            <param name="oneDriveItemPath">The OneDrive Item to be renamed</param>
-            <param name="name">The new name to assign to the OneDrive item</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItem(System.String,System.String)">
-            <summary>
-            Downloads the contents of the item on OneDrive at the provided path to the folder provided keeping the original filename
-            </summary>
-            <param name="path">Path to an item on OneDrive to download its contents of</param>
-            <param name="saveTo">Path where to save the file to. The same filename as used on OneDrive will be used to save the file under.</param>
-            <returns>True if download was successful, false if it failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Downloads the contents of the provided OneDriveItem to the folder provided keeping the original filename
-            </summary>
-            <param name="oneDriveItem">OneDriveItem to download its contents of</param>
-            <param name="saveTo">Path where to save the file to. The same filename as used on OneDrive will be used to save the file under.</param>
-            <returns>True if download was successful, false if it failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItemAndSaveAs(System.String,System.String)">
-            <summary>
-            Downloads the contents of the item on OneDrive at the provided path to the full path provided
-            </summary>
-            <param name="path">Path to an item on OneDrive to download its contents of</param>
-            <param name="saveAs">Full path including filename where to store the downloaded file</param>
-            <returns>True if download was successful, false if it failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItemAndSaveAs(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Downloads the contents of the provided OneDriveItem to the full path provided
-            </summary>
-            <param name="oneDriveItem">OneDriveItem to download its contents of</param>
-            <param name="saveAs">Full path including filename where to store the downloaded file</param>
-            <returns>True if download was successful, false if it failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItem(System.String)">
-            <summary>
-            Downloads the contents of the item on OneDrive at the provided path and returns the contents as a stream
-            </summary>
-            <param name="path">Path to an item on OneDrive to download its contents of</param>
-            <returns>Stream with the contents of the item on OneDrive</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Downloads the contents of the provided OneDriveItem and returns the contents as a stream
-            </summary>
-            <param name="oneDriveItem">OneDriveItem to download its contents of</param>
-            <returns>Stream with the contents of the item on OneDrive</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads the provided file to OneDrive updating the original file
-            </summary>
-            <param name="filePath">Full path to the file to upload</param>
-            <param name="oneDriveItem">OneDriveItem the item of which its contents should be updated</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads the provided file to OneDrive keeping the original filename
-            </summary>
-            <param name="filePath">Full path to the file to upload</param>
-            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFile(System.String,System.String)">
-            <summary>
-            Uploads the provided file to OneDrive
-            </summary>
-            <param name="filePath">Full path to the file to upload</param>
-            <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileAs(System.String,System.String,System.String)">
-            <summary>
-            Uploads the provided file to OneDrive using the provided filename
-            </summary>
-            <param name="filePath">Full path to the file to upload</param>
-            <param name="fileName">Filename to assign to the file on OneDrive</param>
-            <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileAs(System.IO.Stream,System.String,System.String)">
-            <summary>
-            Uploads the provided file to OneDrive using the provided filename
-            </summary>
-            <param name="fileStream">Stream to the file to upload</param>
-            <param name="fileName">Filename to assign to the file on OneDrive</param>
-            <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileAs(System.String,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads the provided file to OneDrive using the provided filename
-            </summary>
-            <param name="filePath">Full path to the file to upload</param>
-            <param name="fileName">Filename to assign to the file on OneDrive</param>
-            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileAs(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads the provided file to OneDrive using the provided filename
-            </summary>
-            <param name="fileStream">Stream to the file to upload</param>
-            <param name="fileName">Filename to assign to the file on OneDrive</param>
-            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateFolder(System.String,System.String)">
-            <summary>
-            Creates a new folder under the provided parent OneDrive item with the provided name
-            </summary>
-            <param name="parentPath">The path to the OneDrive folder under which the folder should be created</param>
-            <param name="folderName">Name to assign to the new folder</param>
-            <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateFolder(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Creates a new folder under the provided parent OneDrive item with the provided name
-            </summary>
-            <param name="parentItem">The OneDrive item under which the folder should be created</param>
-            <param name="folderName">Name to assign to the new folder</param>
-            <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.ShareItem(System.String,KoenZomers.OneDrive.Api.Enums.OneDriveLinkType)">
-            <summary>
-            Shares a OneDrive item
-            </summary>
-            <param name="itemPath">The path to the OneDrive item to share</param>
-            <param name="linkType">Type of sharing to request</param>
-            <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.ShareItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Enums.OneDriveLinkType)">
-            <summary>
-            Shares a OneDrive item
-            </summary>
-            <param name="item">The OneDrive item to share</param>
-            <param name="linkType">Type of sharing to request</param>
-            <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetSharedWithMe">
-            <summary>
-            Returns all the items that have been shared by others with the current user
-            </summary>
-            <returns>Collection with items that have been shared by others with the current user</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetChildrenFromDriveByFolderId(System.String,System.String)">
-            <summary>
-            Retrieves the first batch of children under the OneDrive folder with the provided id from the OneDrive with the provided id
-            </summary>
-            <param name="folderId">Id of the folder to retrieve the items of</param>
-            <param name="driveId">Id of the drive on which the folder resides</param>
-            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetChildrenFromDriveByFolderId(KoenZomers.OneDrive.Api.Entities.OneDriveDrive,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Retrieves the first batch of children under the OneDrive folder with the provided id from the OneDrive with the provided id
-            </summary>
-            <param name="folder">Folder to retrieve the items of</param>
-            <param name="drive">Drive on which the folder resides</param>
-            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllChildrenFromDriveByFolderId(System.String,System.String)">
-            <summary>
-            Retrieves all the of children under the OneDrive folder with the provided id from the OneDrive with the provided id
-            </summary>
-            <param name="folderId">Id of the folder to retrieve the items of</param>
-            <param name="driveId">Id of the drive on which the folder resides</param>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetAllChildrenFromDriveByFolderId(KoenZomers.OneDrive.Api.Entities.OneDriveDrive,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Retrieves all the of children under the OneDrive folder with the provided id from the OneDrive with the provided id
-            </summary>
-            <param name="folder">Folder to retrieve the items of</param>
-            <param name="drive">Drive on which the folder resides</param>
-            <returns>OneDriveItem array containing all items in the requested folder</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.ShareItemInternal(System.String,KoenZomers.OneDrive.Api.Enums.OneDriveLinkType,System.Nullable{KoenZomers.OneDrive.Api.Enums.OneDriveSharingScope})">
-            <summary>
-            Shares a OneDrive item
-            </summary>
-            <param name="oneDriveRequestUrl">The OneDrive request url which creates the share</param>
-            <param name="linkType">Type of sharing to request</param>
-            <param name="scope">Scope defining who has access to the shared item (not supported with OneDrive Personal)</param>
-            <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateFolderInternal(System.String,System.String)">
-            <summary>
-            Creates a new folder under the provided parent OneDrive item with the provided name
-            </summary>
-            <param name="oneDriveRequestUrl">The OneDrive request url which creates a new folder</param>
-            <param name="folderName">Name to assign to the new folder</param>
-            <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SearchInternal(System.String)">
-            <summary>
-            Searches OneDrive by calling the OneDrive API url as provided
-            </summary>
-            <param name="searchUrl">OneDrive API url representing the search to execute</param>
-            <returns>List with OneDriveItem objects resulting from the search query</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DownloadItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Downloads the contents of the provided OneDriveItem to the location provided
-            </summary>
-            <param name="item">OneDriveItem to download its contents of</param>
-            <param name="completeUrl">Complete URL from where to download the file</param>
-            <returns>Stream with the downloaded content</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUpload(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="filePath">File reference to the file to upload</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaSimpleUpload(System.IO.FileInfo,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="file">FileInfo reference to the file to upload</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaSimpleUpload(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="fileStream">Stream to the file to upload</param>
-            <param name="oneDriveItem">OneDriveItem of the existing item that should be updated on OneDrive</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUpload(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="fileStream">Stream to the file to upload</param>
-            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUploadInternal(System.IO.Stream,System.String)">
-            <summary>
-            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="fileStream">Stream to the file to upload</param>
-            <param name="oneDriveUrl">The URL to POST the file contents to</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUpload(System.IO.FileInfo,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="file">File reference to the file to upload</param>
-            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaSimpleUpload(System.String,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
-            </summary>
-            <param name="filePath">Path to the file to upload</param>
-            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
-            <returns>The resulting OneDrive item representing the uploaded file</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaResumableUpload(System.String,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads a file to OneDrive using the resumable method. Better for large files or unstable network connections.
-            </summary>
-            <param name="filePath">Path to the file to upload</param>
-            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaResumableUpload(System.IO.FileInfo,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
-            <summary>
-            Uploads a file to OneDrive using the resumable file upload method
-            </summary>
-            <param name="file">FileInfo instance pointing to the file to upload</param>
-            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
-            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaResumableUpload(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
-            <summary>
-            Uploads a file to OneDrive using the resumable file upload method
-            </summary>
-            <param name="fileStream">Stream pointing to the file to upload</param>
-            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
-            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
-            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaResumableUpload(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Uploads a file to OneDrive updating the contents of an existing file using the resumable method. Better for large files or unstable network connections.
-            </summary>
-            <param name="filePath">Path to the file to upload</param>
-            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaResumableUpload(System.IO.FileInfo,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
-            <summary>
-            Uploads a file to OneDrive updating the contents of an existing file using the resumable file upload method
-            </summary>
-            <param name="file">FileInfo instance pointing to the file to upload</param>
-            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UpdateFileViaResumableUpload(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
-            <summary>
-            Uploads a file to OneDrive updating the contents of an existing file using the resumable file upload method
-            </summary>
-            <param name="fileStream">Stream pointing to the file to upload</param>
-            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
-            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.UploadFileViaResumableUploadInternal(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveUploadSession,System.Nullable{System.Int64})">
-            <summary>
-            Uploads a file to OneDrive using the resumable file upload method
-            </summary>
-            <param name="fileStream">Stream pointing to the file to upload</param>
-            <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
-            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateResumableUploadSession(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Initiates a resumable upload session to OneDrive to overwrite an existing file. It doesn't perform the actual upload yet.
-            </summary>
-            <param name="oneDriveItem">OneDriveItem item for which updated content will be uploaded</param>
-            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
-            </summary>
-            <param name="fileName">Filename to store the uploaded content under</param>
-            <param name="oneDriveFolder">OneDriveItem container in which the file should be uploaded</param>
-            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.GetData``1(System.String)">
-            <summary>
-            Retrieves data from the OneDrive API
-            </summary>
-            <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
-            <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
-            <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.DeleteItemInternal(System.String)">
-            <summary>
-            Sends a HTTP DELETE to OneDrive to delete a file
-            </summary>
-            <param name="oneDriveUrl">The OneDrive API url to call to delete an item</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CopyItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Sends a HTTP POST to OneDrive to copy an item on OneDrive
-            </summary>
-            <param name="oneDriveSource">The OneDrive Item to be copied</param>
-            <param name="oneDriveDestinationParent">The OneDrive parent item to copy the item into</param>
-            <param name="destinationName">The name of the item at the destination where it will be copied to</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.MoveItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Sends a HTTP PATCH to OneDrive to move an item on OneDrive
-            </summary>
-            <param name="oneDriveSource">The OneDrive Item to be moved</param>
-            <param name="oneDriveDestinationParent">The OneDrive parent item to move the item to</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.RenameItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Sends a HTTP PATCH to OneDrive to rename an item on OneDrive
-            </summary>
-            <param name="oneDriveSource">The OneDrive Item to be renamed</param>
-            <param name="name">The new name to give to the OneDrive item</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SendMessageReturnOneDriveItem``1(KoenZomers.OneDrive.Api.Entities.OneDriveItemBase,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
-            <summary>
-            Sends a message to the OneDrive webservice and returns a OneDriveBaseItem with the response
-            </summary>
-            <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
-            <param name="oneDriveItem">OneDriveBaseItem of the message to send to the webservice</param>
-            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
-            <param name="url">Url of the OneDrive webservice to send the message to</param>
-            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
-            <returns>Typed OneDrive entity with the result from the webservice</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SendMessageReturnOneDriveItem``1(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
-            <summary>
-            Sends a message to the OneDrive webservice and returns a OneDriveBaseItem with the response
-            </summary>
-            <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
-            <param name="bodyText">String with the message to send to the webservice</param>
-            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
-            <param name="url">Url of the OneDrive webservice to send the message to</param>
-            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
-            <returns>Typed OneDrive entity with the result from the webservice</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SendMessageReturnString(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
-            <summary>
-            Sends a message to the OneDrive webservice and returns a string with the response
-            </summary>
-            <param name="bodyText">String with the message to send to the webservice</param>
-            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
-            <param name="url">Url of the OneDrive webservice to send the message to</param>
-            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
-            <returns>String containing the response of the webservice</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SendMessageReturnBool(KoenZomers.OneDrive.Api.Entities.OneDriveItemBase,System.Net.Http.HttpMethod,System.String,System.Net.HttpStatusCode,System.Boolean)">
-            <summary>
-            Sends a message to the OneDrive webservice and returns a bool indicating if the response matched the expected HTTP status code result
-            </summary>
-            <param name="oneDriveItem">OneDriveBaseItem of the message to send to the webservice</param>
-            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
-            <param name="url">Url of the OneDrive webservice to send the message to</param>
-            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
-            <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
-            <returns>Bool indicating if the HTTP response status from the webservice matched the provided expectedHttpStatusCode</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.SendMessageReturnHttpResponse(System.String,System.Net.Http.HttpMethod,System.String,System.Boolean)">
-            <summary>
-            Sends a message to the OneDrive webservice and returns the HttpResponse instance
-            </summary>
-            <param name="bodyText">String with the message to send to the webservice</param>
-            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
-            <param name="url">Url of the OneDrive webservice to send the message to</param>
-            <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
-            <returns>HttpResponse of the webservice call. Note that the caller needs to dispose the returned instance.</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.CreateHttpClient(System.String)">
-            <summary>
-            Instantiates a new HttpClient preconfigured for use. Note that the caller is responsible for disposing this object.
-            </summary>
-            <param name="bearerToken">Bearer token to add to the HTTP Client for authorization (optional)</param>
-            <returns>HttpClient instance</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveApi.ConstructCompleteUrl(System.String)">
-            <summary>
-            Constructs the complete Url to be called based on the part of the url provided that contains the command
-            </summary>
-            <param name="commandUrl">Part of the URL to call that contains the command to execute for the API that is being called</param>
-            <returns>Full URL to call the API</returns>
-        </member>
-        <member name="T:KoenZomers.OneDrive.Api.OneDriveGraphApi">
-            <summary>
-            API for both OneDrive Personal and OneDrive for Business on Office 365 through the Microsoft Graph API
-            Create your own Client ID / Client Secret at https://apps.dev.microsoft.com
+            Size of the chunks to upload when using the resumable upload method. Must be a multiple of 327680 bytes. See https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/driveitem_createuploadsession#best-practices
             </summary>
         </member>
         <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.AuthenticationRedirectUrl">
@@ -1758,24 +937,20 @@
             The Microsoft Entra ID (Azure AD v2.0) authority to authenticate against
             </summary>
         </member>
-        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.SignoutUri">
-            <summary>
-            String formatted Uri that can be called to sign out from the Graph API
-            </summary>
-        </member>
-        <member name="F:KoenZomers.OneDrive.Api.OneDriveGraphApi.MaximumBasicFileUploadSizeInBytes">
-            <summary>
-            Defines the maximum allowed file size that can be used for basic uploads. Should be set 4 MB as described in the API documentation at https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_uploadcontent
-            </summary>
-        </member>
-        <member name="F:KoenZomers.OneDrive.Api.OneDriveGraphApi.ResumableUploadChunkSizeInBytes">
-            <summary>
-            Size of the chunks to upload when using the resumable upload method. Must be a multiple of 327680 bytes. See https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/driveitem_createuploadsession#best-practices
-            </summary>
-        </member>
         <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.DefaultScopes">
             <summary>
             The default scopes to request access to at the Graph API
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDefaultScopes">
+            <summary>
+            Returns the default MSAL scopes used by this API instance. Useful when calling MSAL authentication flows
+            directly on <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/> or <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConfidentialClientApplication"/>.
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.SignoutUri">
+            <summary>
+            String formatted Uri that can be called to sign out from the Graph API
             </summary>
         </member>
         <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.GraphApiBaseUrl">
@@ -1783,12 +958,85 @@
             Base URL of the Graph API
             </summary>
         </member>
+        <member name="E:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadProgressChanged">
+            <summary>
+            Event triggered when uploading a file using UploadFileViaResumableUpload to indicate the progress of the upload process
+            </summary>
+        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.#ctor(System.String,System.String)">
             <summary>
             Instantiates a new instance of the Graph API
             </summary>
-            <param name="applicationId">Microsoft Application ID to use to connect</param>
-            <param name="clientSecret">Microsoft Application secret to use to connect</param>
+            <param name="clientId">OneDrive Client ID to use to connect. Must be provided by the consumer of this library - register your own app registration in the Microsoft Entra admin center (https://entra.microsoft.com).</param>
+            <param name="clientSecret">OneDrive Client Secret to use to connect</param>
+            <exception cref="T:System.ArgumentException">Thrown when no clientId is provided</exception>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.InitializeMsalClientApplication">
+            <summary>
+            Initializes the MSAL client application(s) used for authentication.
+            Builds a <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConfidentialClientApplication"/> when a client secret was provided, otherwise a <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/>.
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAuthenticationUri(System.String[])">
+            <summary>
+            Returns the Uri that needs to be called to authenticate to the OneDrive API using the "bring your own browser" authorization code pattern.
+            Only available when using a confidential client (a client secret was configured). For public clients, use
+            <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/> directly with e.g. AcquireTokenInteractive or AcquireTokenByDeviceCode, which
+            manage the browser/device-code interaction themselves rather than exposing a raw authorization URL.
+            </summary>
+            <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
+            <returns>Uri that needs to be called in a browser to authenticate to the OneDrive API</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAuthorizationTokenFromUrl(System.String)">
+            <summary>
+            Returns the authorization token from the provided URL to which the OneDrive API authentication request was sent after succesful authentication
+            </summary>
+            <param name="url">Url received from the OneDrive API after succesful authentication</param>
+            <returns>Authorization token or NULL if unable to identify from provided URL</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAccessToken">
+            <summary>
+            Tries to retrieve an access token based on the tokens already available in this OneDrive instance, using MSAL's
+            silent token acquisition (cached token or refreshed automatically). If no cached account is available yet and an
+            authorization code was captured through <see cref="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAuthorizationTokenFromUrl(System.String)"/>, it will be exchanged for a token.
+            </summary>
+            <returns>OneDrive access token or NULL if unable to get an access token without user interaction</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetSignOutUri">
+            <summary>
+            Returns the Uri that needs to be called to sign the current user out of the OneDrive API
+            </summary>
+            <returns>Uri that needs to be called to sign the current user out of the OneDrive API</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SetAuthenticationResult(Microsoft.Identity.Client.AuthenticationResult)">
+            <summary>
+            Stores the result of a MSAL authentication flow (e.g. AcquireTokenInteractive, AcquireTokenByDeviceCode,
+            AcquireTokenByAuthorizationCode) so it can be used for subsequent calls to the OneDrive API and for silent renewal.
+            Use this after calling any authentication flow directly on <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/> or
+            <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConfidentialClientApplication"/> to give full flexibility in which MSAL flow to use.
+            </summary>
+            <param name="authenticationResult">The result returned by a MSAL AcquireToken* flow</param>
+            <returns>OneDrive access token derived from the provided authentication result</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.AuthenticateUsingAuthorizationCode(System.String,System.String[])">
+            <summary>
+            Authenticates to OneDrive using the provided authorization code (e.g. captured through <see cref="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAuthorizationTokenFromUrl(System.String)"/>)
+            using MSAL's AcquireTokenByAuthorizationCode flow. Requires a confidential client (a client secret must be configured);
+            for public clients use <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/> directly with AcquireTokenInteractive or another MSAL flow.
+            </summary>
+            <param name="authorizationCode">Authorization code to exchange for an access token</param>
+            <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
+            <exception cref="T:KoenZomers.OneDrive.Api.Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.AuthenticateUsingRefreshToken(System.String,System.String[])">
+            <summary>
+            Authenticates to OneDrive using the provided Refresh Token through MSAL's refresh token migration API.
+            Intended primarily for migrating refresh tokens obtained outside of MSAL (e.g. from a previous version of this library).
+            For new authentication flows, prefer using <see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.PublicClientApplication"/>/<see cref="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConfidentialClientApplication"/> directly.
+            </summary>
+            <param name="refreshToken">Refreshtoken to use to authenticate to OneDrive</param>
+            <param name="scopes">Scopes to request access for. Omit to use the API's default scopes.</param>
+            <exception cref="T:KoenZomers.OneDrive.Api.Exceptions.TokenRetrievalFailedException">Thrown when unable to retrieve a valid access token</exception>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.ValidFilename(System.String)">
             <summary>
@@ -1796,6 +1044,415 @@
             </summary>
             <param name="filename">Filename to validate</param>
             <returns>True if filename is valid to be used, false if it isn't</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDrive">
+            <summary>
+            Retrieves the current OneDrive drive information
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDrive(System.String)">
+            <summary>
+            Retrieves the OneDrive drive information from the provided drive
+            </summary>
+            <param name="driveId">Id of the drive to retrieve</param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDrive(KoenZomers.OneDrive.Api.Entities.OneDriveDrive)">
+            <summary>
+            Retrieves the current OneDrive drive information from the provided drive
+            </summary>
+            <param name="drive">Drive to retrieve</param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDriveRoot">
+            <summary>
+            Retrieves the OneDrive root folder
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDriveRootChildren">
+            <summary>
+            Retrieves the first batch of children under the OneDrive root folder
+            </summary>
+            <returns>OneDriveItemCollection containing the first batch of items in the root folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllDriveRootChildren">
+            <summary>
+            Retrieves all the children under the OneDrive root folder
+            </summary>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetChildrenByPath(System.String)">
+            <summary>
+            Retrieves the first batch of children under the provided OneDrive path. Use GetNextChildrenByPath and provide the NextLink from the results to fetch the next batch.
+            </summary>
+            <param name="path">Path within OneDrive to retrieve the child items of</param>
+            <returns>OneDriveItemCollection containing the first batch of items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetNextChildrenByPath(System.String)">
+            <summary>
+            Retrieves a next batch of children using the provided full SkipToken path
+            </summary>
+            <param name="skipTokenUrl">Full URL from a NextLink in the response of a GetChildrenByPath request</param>
+            <returns>OneDriveItemCollection containing the next batch of items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllChildrenByPath(System.String)">
+            <summary>
+            Retrieves all children under the provided OneDrive path
+            </summary>
+            <param name="path">Path within OneDrive to retrieve the child items of</param>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetChildrenByFolderId(System.String)">
+            <summary>
+            Retrieves the first batch of children under the OneDrive folder with the provided id
+            </summary>
+            <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
+            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllChildrenByFolderId(System.String)">
+            <summary>
+            Retrieves all the children under the OneDrive folder with the provided id
+            </summary>
+            <param name="id">Unique identifier of the folder under which to retrieve the child items</param>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetChildrenByParentItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Retrieves the firsth batch of children under the provided OneDrive Item
+            </summary>
+            <param name="item">OneDrive item to retrieve the child items of</param>
+            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllChildrenByParentItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Retrieves all the children under the OneDrive folder with the provided id
+            </summary>
+            <param name="item">OneDrive item to retrieve the child items of</param>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllChildrenInternal(System.String)">
+            <summary>
+            Retrieves all the children under the OneDrive folder with the provided id
+            </summary>
+            <param name="fetchUrl">Url to use to fetch the first set of child items</param>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItem(System.String)">
+            <summary>
+            Retrieves the OneDrive Item by its complete path to the file
+            </summary>
+            <param name="path">Path of the OneDrive item to retrieve</param>
+            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemInFolder(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Retrieves the OneDrive Item by it's filename in a specific folder
+            </summary>
+            <param name="folder">OneDriveItem representing the folder in which the file should reside</param>
+            <param name="fileName">File name of the file to retrieve</param>
+            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemInFolder(System.String,System.String)">
+            <summary>
+            Retrieves the OneDrive Item by it's filename in a specific folder
+            </summary>
+            <param name="folderId">Unique identifier of the folder in which the file should reside</param>
+            <param name="fileName">File name of the file to retrieve</param>
+            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemById(System.String)">
+            <summary>
+            Retrieves the OneDrive Item from the current drive by it's unique identifier
+            </summary>
+            <param name="id">Unique identifier of the OneDrive item to retrieve</param>
+            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemFromDriveById(System.String,System.String)">
+            <summary>
+            Retrieves the OneDrive Item from the provided drive by it's unique identifier
+            </summary>
+            <param name="id">Unique identifier of the OneDrive item to retrieve</param>
+            <param name="driveId">Id of the drive on which the item resides</param>
+            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemFromDriveById(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveDrive)">
+            <summary>
+            Retrieves the OneDrive Item from the provided drive by it's unique identifier
+            </summary>
+            <param name="id">Unique identifier of the OneDrive item to retrieve</param>
+            <param name="drive">Drive on which the item resides</param>
+            <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetFolderOrCreate(System.String)">
+            <summary>
+            Retrieves the OneDrive folder item or creates it if it doesn't exist yet
+            </summary>
+            <param name="path">Path of the OneDrive folder to retrieve or create. It will ensure that the whole provided path exists and create (sub)folders if they don't exist yet</param>
+            <example>Files\Work\Contracts</example>
+            <returns>OneDriveItem representing the folder designated in the path</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDriveCameraRollFolder">
+            <summary>
+            Retrieves the items in the CameraRoll folder
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDriveDocumentsFolder">
+            <summary>
+            Retrieves the items in the Documents folder
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDrivePhotosFolder">
+            <summary>
+            Retrieves the items in the Photos folder
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetDrivePublicFolder">
+            <summary>
+            Retrieves the items in the Public folder
+            </summary>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Search(System.String)">
+            <summary>
+            Searches for items on OneDrive with the provided query
+            </summary>
+            <param name="query">Search query to use</param>
+            <returns>All OneDrive items resulting from the search</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Search(System.String,System.String)">
+            <summary>
+            Searches for items on OneDrive in the provided path with the provided query
+            </summary>
+            <param name="query">Search query to use</param>
+            <param name="path">OneDrive path where to search in</param>
+            <returns>All OneDrive items resulting from the search</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Search(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Searches for items on OneDrive in the provided path with the provided query
+            </summary>
+            <param name="query">Search query to use</param>
+            <param name="oneDriveItem">OneDrive item representing a folder to search in</param>
+            <returns>All OneDrive items resulting from the search</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Delete(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Deletes the provided OneDriveItem from OneDrive
+            </summary>
+            <param name="oneDriveItem">The OneDriveItem reference to delete from OneDrive</param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Delete(System.String)">
+            <summary>
+            Deletes the provided OneDriveItem from OneDrive
+            </summary>
+            <param name="oneDriveItemPath">The path to the OneDrive item to delete from OneDrive</param>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Copy(System.String,System.String,System.String)">
+            <summary>
+            Copies the provided OneDriveItem to the provided destination on OneDrive
+            </summary>
+            <param name="oneDriveSourceItemPath">The path to the OneDrive Item to be copied</param>
+            <param name="oneDriveDestinationItemPath">The path to the OneDrive parent item to copy the item into</param>
+            <param name="destinationName">The name of the item at the destination where it will be copied to. Omit to use the source name.</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Copy(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Copies the provided OneDriveItem to the provided destination on OneDrive
+            </summary>
+            <param name="oneDriveSourceItem">The path to the OneDrive Item to be copied</param>
+            <param name="oneDriveDestinationItem">The path tothe OneDrive parent item to copy the item into</param>
+            <param name="destinationName">The name of the item at the destination where it will be copied to. Omit to use the source name.</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Move(System.String,System.String)">
+            <summary>
+            Moves the provided OneDriveItem to the provided destination on OneDrive
+            </summary>
+            <param name="oneDriveSourceItemPath">The path to the OneDrive Item to be moved</param>
+            <param name="oneDriveDestinationItemPath">The path to the OneDrive parent item to move the item into</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Move(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Moves the provided OneDriveItem to the provided destination on OneDrive
+            </summary>
+            <param name="oneDriveSourceItem">The OneDrive Item to be moved</param>
+            <param name="oneDriveDestinationItem">The OneDrive parent item to move the item into</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Rename(System.String,System.String)">
+            <summary>
+            Renames the provided OneDriveItem to the provided name
+            </summary>
+            <param name="oneDriveItemPath">The path to the OneDrive Item to be renamed</param>
+            <param name="name">The new name to assign to the OneDrive item</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Rename(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Renames the provided OneDriveItem to the provided name
+            </summary>
+            <param name="oneDriveItemPath">The OneDrive Item to be renamed</param>
+            <param name="name">The new name to assign to the OneDrive item</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItem(System.String,System.String)">
+            <summary>
+            Downloads the contents of the item on OneDrive at the provided path to the folder provided keeping the original filename
+            </summary>
+            <param name="path">Path to an item on OneDrive to download its contents of</param>
+            <param name="saveTo">Path where to save the file to. The same filename as used on OneDrive will be used to save the file under.</param>
+            <returns>True if download was successful, false if it failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Downloads the contents of the provided OneDriveItem to the folder provided keeping the original filename
+            </summary>
+            <param name="oneDriveItem">OneDriveItem to download its contents of</param>
+            <param name="saveTo">Path where to save the file to. The same filename as used on OneDrive will be used to save the file under.</param>
+            <returns>True if download was successful, false if it failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItemAndSaveAs(System.String,System.String)">
+            <summary>
+            Downloads the contents of the item on OneDrive at the provided path to the full path provided
+            </summary>
+            <param name="path">Path to an item on OneDrive to download its contents of</param>
+            <param name="saveAs">Full path including filename where to store the downloaded file</param>
+            <returns>True if download was successful, false if it failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItemAndSaveAs(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Downloads the contents of the provided OneDriveItem to the full path provided
+            </summary>
+            <param name="oneDriveItem">OneDriveItem to download its contents of</param>
+            <param name="saveAs">Full path including filename where to store the downloaded file</param>
+            <returns>True if download was successful, false if it failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItem(System.String)">
+            <summary>
+            Downloads the contents of the item on OneDrive at the provided path and returns the contents as a stream
+            </summary>
+            <param name="path">Path to an item on OneDrive to download its contents of</param>
+            <returns>Stream with the contents of the item on OneDrive</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItem(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Downloads the contents of the provided OneDriveItem and returns the contents as a stream
+            </summary>
+            <param name="oneDriveItem">OneDriveItem to download its contents of</param>
+            <returns>Stream with the contents of the item on OneDrive</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UpdateFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads the provided file to OneDrive updating the original file
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem the item of which its contents should be updated</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads the provided file to OneDrive keeping the original filename
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFile(System.String,System.String)">
+            <summary>
+            Uploads the provided file to OneDrive
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileAs(System.String,System.String,System.String)">
+            <summary>
+            Uploads the provided file to OneDrive using the provided filename
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="fileName">Filename to assign to the file on OneDrive</param>
+            <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileAs(System.IO.Stream,System.String,System.String)">
+            <summary>
+            Uploads the provided file to OneDrive using the provided filename
+            </summary>
+            <param name="fileStream">Stream to the file to upload</param>
+            <param name="fileName">Filename to assign to the file on OneDrive</param>
+            <param name="oneDriveFolder">Path to a OneDrive folder where to upload the file to</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileAs(System.String,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads the provided file to OneDrive using the provided filename
+            </summary>
+            <param name="filePath">Full path to the file to upload</param>
+            <param name="fileName">Filename to assign to the file on OneDrive</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileAs(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads the provided file to OneDrive using the provided filename
+            </summary>
+            <param name="fileStream">Stream to the file to upload</param>
+            <param name="fileName">Filename to assign to the file on OneDrive</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem representing the uploaded file when successful or NULL when the upload failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateFolder(System.String,System.String)">
+            <summary>
+            Creates a new folder under the provided parent OneDrive item with the provided name
+            </summary>
+            <param name="parentPath">The path to the OneDrive folder under which the folder should be created</param>
+            <param name="folderName">Name to assign to the new folder</param>
+            <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateFolder(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Creates a new folder under the provided parent OneDrive item with the provided name
+            </summary>
+            <param name="parentItem">The OneDrive item under which the folder should be created</param>
+            <param name="folderName">Name to assign to the new folder</param>
+            <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetSharedWithMe">
+            <summary>
+            Returns all the items that have been shared by others with the current user
+            </summary>
+            <returns>Collection with items that have been shared by others with the current user</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetChildrenFromDriveByFolderId(System.String,System.String)">
+            <summary>
+            Retrieves the first batch of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+            </summary>
+            <param name="folderId">Id of the folder to retrieve the items of</param>
+            <param name="driveId">Id of the drive on which the folder resides</param>
+            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetChildrenFromDriveByFolderId(KoenZomers.OneDrive.Api.Entities.OneDriveDrive,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Retrieves the first batch of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+            </summary>
+            <param name="folder">Folder to retrieve the items of</param>
+            <param name="drive">Drive on which the folder resides</param>
+            <returns>OneDriveItemCollection containing the first batch of items in the folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllChildrenFromDriveByFolderId(System.String,System.String)">
+            <summary>
+            Retrieves all the of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+            </summary>
+            <param name="folderId">Id of the folder to retrieve the items of</param>
+            <param name="driveId">Id of the drive on which the folder resides</param>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetAllChildrenFromDriveByFolderId(KoenZomers.OneDrive.Api.Entities.OneDriveDrive,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Retrieves all the of children under the OneDrive folder with the provided id from the OneDrive with the provided id
+            </summary>
+            <param name="folder">Folder to retrieve the items of</param>
+            <param name="drive">Drive on which the folder resides</param>
+            <returns>OneDriveItem array containing all items in the requested folder</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.ShareItem(System.String,KoenZomers.OneDrive.Api.Enums.OneDriveLinkType)">
             <summary>
@@ -1830,12 +1487,6 @@
             <param name="linkType">Type of sharing to request</param>
             <param name="scope">Scope defining who has access to the shared item</param>
             <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetSharedWithMe">
-            <summary>
-            Returns all the items that have been shared by others with the current user
-            </summary>
-            <returns>Collection with items that have been shared by others with the current user</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.AddPermission(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDrivePermissionRequest)">
             <summary>
@@ -2093,15 +1744,6 @@
             <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
         </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CopyItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
-            <summary>
-            Sends a HTTP POST to OneDrive to copy an item on OneDrive
-            </summary>
-            <param name="oneDriveSource">The OneDrive Item to be copied</param>
-            <param name="oneDriveDestinationParent">The OneDrive parent item to copy the item into</param>
-            <param name="destinationName">The name of the item at the destination where it will be copied to</param>
-            <returns>True if successful, false if failed</returns>
-        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFile(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Enums.NameConflictBehavior)">
             <summary>
             Uploads the provided file to OneDrive keeping the original filename
@@ -2209,30 +1851,6 @@
             <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
             <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
         </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaResumableUploadInternal(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveUploadSession,System.Nullable{System.Int64})">
-            <summary>
-            Uploads a file to OneDrive using the resumable file upload method
-            </summary>
-            <param name="fileStream">Stream with the content to upload</param>
-            <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
-            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
-            <returns>OneDriveItem instance representing the uploaded item</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Initiates a resumable upload session to OneDrive to overwrite an existing file. It doesn't perform the actual upload yet.
-            </summary>
-            <param name="oneDriveItem">OneDriveItem item for which updated content will be uploaded</param>
-            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
-            <summary>
-            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
-            </summary>
-            <param name="fileName">Filename to store the uploaded content under</param>
-            <param name="oneDriveFolder">OneDriveItem container in which the file should be uploaded</param>
-            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
-        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetSiteRoot">
             <summary>
             Gets the root SharePoint site
@@ -2268,6 +1886,276 @@
             <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
             <param name="url">Url fragment after the Graph base Uri which indicated the type of information to return</param>
             <returns>OneDrive entity filled with the information retrieved from the Graph API</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.ShareItemInternal(System.String,KoenZomers.OneDrive.Api.Enums.OneDriveLinkType,System.Nullable{KoenZomers.OneDrive.Api.Enums.OneDriveSharingScope})">
+            <summary>
+            Shares a OneDrive item
+            </summary>
+            <param name="oneDriveRequestUrl">The OneDrive request url which creates the share</param>
+            <param name="linkType">Type of sharing to request</param>
+            <param name="scope">Scope defining who has access to the shared item (not supported with OneDrive Personal)</param>
+            <returns>OneDrivePermission entity representing the share or NULL if the operation fails</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateFolderInternal(System.String,System.String)">
+            <summary>
+            Creates a new folder under the provided parent OneDrive item with the provided name
+            </summary>
+            <param name="oneDriveRequestUrl">The OneDrive request url which creates a new folder</param>
+            <param name="folderName">Name to assign to the new folder</param>
+            <returns>OneDriveItem entity representing the newly created folder or NULL if the operation fails</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SearchInternal(System.String)">
+            <summary>
+            Searches OneDrive by calling the OneDrive API url as provided
+            </summary>
+            <param name="searchUrl">OneDrive API url representing the search to execute</param>
+            <returns>List with OneDriveItem objects resulting from the search query</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DownloadItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Downloads the contents of the provided OneDriveItem to the location provided
+            </summary>
+            <param name="item">OneDriveItem to download its contents of</param>
+            <param name="completeUrl">Complete URL from where to download the file</param>
+            <returns>Stream with the downloaded content</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaSimpleUpload(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="filePath">File reference to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UpdateFileViaSimpleUpload(System.IO.FileInfo,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="file">FileInfo reference to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UpdateFileViaSimpleUpload(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive overwriting an existing file using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="fileStream">Stream to the file to upload</param>
+            <param name="oneDriveItem">OneDriveItem of the existing item that should be updated on OneDrive</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaSimpleUpload(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="fileStream">Stream to the file to upload</param>
+            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="parentFolder">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaSimpleUploadInternal(System.IO.Stream,System.String)">
+            <summary>
+            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="fileStream">Stream to the file to upload</param>
+            <param name="oneDriveUrl">The URL to POST the file contents to</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaSimpleUpload(System.IO.FileInfo,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="file">File reference to the file to upload</param>
+            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaSimpleUpload(System.String,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Performs a file upload to OneDrive using the simple OneDrive API. Best for small files on reliable network connections.
+            </summary>
+            <param name="filePath">Path to the file to upload</param>
+            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="oneDriveItem">OneDriveItem of the folder to which the file should be uploaded</param>
+            <returns>The resulting OneDrive item representing the uploaded file</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaResumableUpload(System.String,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads a file to OneDrive using the resumable method. Better for large files or unstable network connections.
+            </summary>
+            <param name="filePath">Path to the file to upload</param>
+            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaResumableUpload(System.IO.FileInfo,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive using the resumable file upload method
+            </summary>
+            <param name="file">FileInfo instance pointing to the file to upload</param>
+            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaResumableUpload(System.IO.Stream,System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive using the resumable file upload method
+            </summary>
+            <param name="fileStream">Stream pointing to the file to upload</param>
+            <param name="fileName">The filename under which the file should be stored on OneDrive</param>
+            <param name="parentFolder">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UpdateFileViaResumableUpload(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Uploads a file to OneDrive updating the contents of an existing file using the resumable method. Better for large files or unstable network connections.
+            </summary>
+            <param name="filePath">Path to the file to upload</param>
+            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UpdateFileViaResumableUpload(System.IO.FileInfo,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive updating the contents of an existing file using the resumable file upload method
+            </summary>
+            <param name="file">FileInfo instance pointing to the file to upload</param>
+            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections. Provide NULL to use the default.</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UpdateFileViaResumableUpload(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive updating the contents of an existing file using the resumable file upload method
+            </summary>
+            <param name="fileStream">Stream pointing to the file to upload</param>
+            <param name="oneDriveItem">OneDrive item representing the folder to which the file should be uploaded</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.UploadFileViaResumableUploadInternal(System.IO.Stream,KoenZomers.OneDrive.Api.Entities.OneDriveUploadSession,System.Nullable{System.Int64})">
+            <summary>
+            Uploads a file to OneDrive using the resumable file upload method
+            </summary>
+            <param name="fileStream">Stream pointing to the file to upload</param>
+            <param name="oneDriveUploadSession">Upload session under which the upload will be performed</param>
+            <param name="fragmentSizeInBytes">Size in bytes of the fragments to use for uploading. Higher numbers are faster but require more stable connections, lower numbers are slower but work better with unstable connections.</param>
+            <returns>OneDriveItem instance representing the uploaded item</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Initiates a resumable upload session to OneDrive to overwrite an existing file. It doesn't perform the actual upload yet.
+            </summary>
+            <param name="oneDriveItem">OneDriveItem item for which updated content will be uploaded</param>
+            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateResumableUploadSession(System.String,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Initiates a resumable upload session to OneDrive. It doesn't perform the actual upload yet.
+            </summary>
+            <param name="fileName">Filename to store the uploaded content under</param>
+            <param name="oneDriveFolder">OneDriveItem container in which the file should be uploaded</param>
+            <returns>OneDriveUploadSession instance containing the details where to upload the content to</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetData``1(System.String)">
+            <summary>
+            Retrieves data from the OneDrive API
+            </summary>
+            <typeparam name="T">Type of OneDrive entity to expect to be returned</typeparam>
+            <param name="url">Url fragment after the OneDrive base Uri which indicated the type of information to return</param>
+            <returns>OneDrive entity filled with the information retrieved from the OneDrive API</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.DeleteItemInternal(System.String)">
+            <summary>
+            Sends a HTTP DELETE to OneDrive to delete a file
+            </summary>
+            <param name="oneDriveUrl">The OneDrive API url to call to delete an item</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CopyItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Sends a HTTP POST to OneDrive to copy an item on OneDrive
+            </summary>
+            <param name="oneDriveSource">The OneDrive Item to be copied</param>
+            <param name="oneDriveDestinationParent">The OneDrive parent item to copy the item into</param>
+            <param name="destinationName">The name of the item at the destination where it will be copied to</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.MoveItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem)">
+            <summary>
+            Sends a HTTP PATCH to OneDrive to move an item on OneDrive
+            </summary>
+            <param name="oneDriveSource">The OneDrive Item to be moved</param>
+            <param name="oneDriveDestinationParent">The OneDrive parent item to move the item to</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.RenameItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
+            <summary>
+            Sends a HTTP PATCH to OneDrive to rename an item on OneDrive
+            </summary>
+            <param name="oneDriveSource">The OneDrive Item to be renamed</param>
+            <param name="name">The new name to give to the OneDrive item</param>
+            <returns>True if successful, false if failed</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnOneDriveItem``1(KoenZomers.OneDrive.Api.Entities.OneDriveItemBase,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
+            <summary>
+            Sends a message to the OneDrive webservice and returns a OneDriveBaseItem with the response
+            </summary>
+            <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
+            <param name="oneDriveItem">OneDriveBaseItem of the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <returns>Typed OneDrive entity with the result from the webservice</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnOneDriveItem``1(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
+            <summary>
+            Sends a message to the OneDrive webservice and returns a OneDriveBaseItem with the response
+            </summary>
+            <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
+            <param name="bodyText">String with the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <returns>Typed OneDrive entity with the result from the webservice</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnString(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
+            <summary>
+            Sends a message to the OneDrive webservice and returns a string with the response
+            </summary>
+            <param name="bodyText">String with the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <returns>String containing the response of the webservice</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnBool(KoenZomers.OneDrive.Api.Entities.OneDriveItemBase,System.Net.Http.HttpMethod,System.String,System.Net.HttpStatusCode,System.Boolean)">
+            <summary>
+            Sends a message to the OneDrive webservice and returns a bool indicating if the response matched the expected HTTP status code result
+            </summary>
+            <param name="oneDriveItem">OneDriveBaseItem of the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
+            <returns>Bool indicating if the HTTP response status from the webservice matched the provided expectedHttpStatusCode</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnHttpResponse(System.String,System.Net.Http.HttpMethod,System.String,System.Boolean)">
+            <summary>
+            Sends a message to the OneDrive webservice and returns the HttpResponse instance
+            </summary>
+            <param name="bodyText">String with the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
+            <returns>HttpResponse of the webservice call. Note that the caller needs to dispose the returned instance.</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateHttpClient(System.String)">
+            <summary>
+            Instantiates a new HttpClient preconfigured for use. Note that the caller is responsible for disposing this object.
+            </summary>
+            <param name="bearerToken">Bearer token to add to the HTTP Client for authorization (optional)</param>
+            <returns>HttpClient instance</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConstructCompleteUrl(System.String)">
             <summary>
