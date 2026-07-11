@@ -166,7 +166,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private async void RefreshTokenButton_Click(object sender, EventArgs e)
         {
-
             {
                 MessageBox.Show("You need to enter a refresh token first in the refresh token field in order to be able to retrieve a new access token based on a refresh token.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
