@@ -11,17 +11,6 @@ using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace KoenZomers.OneDrive.AuthenticatorApp
 {
-    /// <summary>
-    /// P/Invoke helpers for native Win32 APIs used by this demo application
-    /// </summary>
-    internal static class NativeMethods
-    {
-        /// <summary>
-        /// Destroys an icon handle created via Bitmap.GetHicon(), which is not automatically freed by the .NET GC
-        /// </summary>
-        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool DestroyIcon(IntPtr handle);
-    }
 
     public partial class MainForm : Form
     {
@@ -64,13 +53,14 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         }
 
         /// <summary>
-        /// Loads the application logo from the KeePassOneDriveSync.png file next to the executable, shows it in the
-        /// top-right corner of the form, uses it as the form/taskbar icon, and caches a base64 copy so it can also
-        /// be embedded in the post-login HTML page shown by the system browser.
+        /// Loads the application logo from the KoenZomers.OneDrive.Api.png file next to the executable, shows it in the
+        /// top-right corner of the form, and caches a base64 copy so it can also be embedded in the post-login HTML
+        /// page shown by the system browser. The form/taskbar icon itself comes from the embedded .ico resource
+        /// (set via ApplicationIcon in the project file), so it does not need to be derived at runtime here.
         /// </summary>
         private void LoadLogo()
         {
-            var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeePassOneDriveSync.png");
+            var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KoenZomers.OneDrive.Api.png");
             if (!File.Exists(logoPath))
             {
                 return;
@@ -81,24 +71,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             using (var logoImage = System.Drawing.Image.FromFile(logoPath))
             {
                 LogoPictureBox.Image = new System.Drawing.Bitmap(logoImage);
-
-                using (var logoBitmap = new System.Drawing.Bitmap(logoImage, new System.Drawing.Size(32, 32)))
-                {
-                    var iconHandle = logoBitmap.GetHicon();
-                    try
-                    {
-                        using (var tempIcon = System.Drawing.Icon.FromHandle(iconHandle))
-                        {
-                            // Clone so the Icon owns its own handle - it is not safe to keep using an Icon
-                            // created via FromHandle after the underlying native handle has been destroyed.
-                            Icon = (System.Drawing.Icon)tempIcon.Clone();
-                        }
-                    }
-                    finally
-                    {
-                        NativeMethods.DestroyIcon(iconHandle);
-                    }
-                }
             }
         }
 

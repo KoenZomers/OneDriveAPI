@@ -11,6 +11,7 @@
     <AssemblyName>KoenZomers.OneDrive.AuthenticatorApp</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>KoenZomers.OneDrive.Api.ico</ApplicationIcon>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -103,10 +104,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="KoenZomers.OneDrive.Api.png" />
+    <None Include="KoenZomers.OneDrive.Api.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="KoenZomers.OneDrive.Api.ico" />
+    <Content Include="KoenZomers.OneDrive.Api.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
