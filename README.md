@@ -194,6 +194,8 @@ If you wish to use the OneDrive API through the Microsoft Graph API, you need to
 11. Set the [ClientId](https://github.com/KoenZomers/OneDriveAPI/blob/master/Api/OneDriveApi.cs) through your code to the application ID retrieved at the previous step. If you want to use the DemoApplication included with this code to test your new application registration, open its App.config file and replace the value for `<add key="GraphApiApplicationId" value="5bbbcf45-3ca9-47cf-8c2f-0ecdcf587332"/>` with the application ID retrieved at the previous step.
 12. Run the demo application and click on "Authorize"
 
+Please do not reuse the Client ID that is included in this library. It is only for testing purposes and can be removed at any time and should therefore not be used in production.
+
 ## Feedback
 
 Feedback is very welcome. If you believe something is not working well or could be improved, feel free to drop me an e-mail or [create an issue](https://github.com/KoenZomers/OneDriveAPI/issues).
