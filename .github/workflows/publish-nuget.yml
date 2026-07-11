@@ -28,7 +28,7 @@ jobs:
       run: dotnet restore Api\API.csproj
 
     - name: Build
-      run: dotnet build Api\API.csproj --configuration Release --no-restore
+      run: dotnet build Api\API.csproj --configuration Release --no-restore /p:GeneratePackageOnBuild=false
 
     - name: Pack (with specified version)
       if: ${{ github.event.inputs.version != '' }}
@@ -38,6 +38,9 @@ jobs:
       if: ${{ github.event.inputs.version == '' }}
       run: dotnet pack Api\API.csproj --configuration Release --no-build --output ./nupkg
 
+    - name: List generated packages
+      run: Get-ChildItem -Recurse ./nupkg
+
     - name: NuGet login (OIDC → temp API key)
       uses: NuGet/login@v1
       id: login
@@ -45,4 +48,4 @@ jobs:
         user: ${{ secrets.NUGET_USER }}
 
     - name: Publish to NuGet
-      run: dotnet nuget push ./nupkg/KoenZomers.OneDrive.Api.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
