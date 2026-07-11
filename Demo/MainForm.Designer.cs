@@ -642,13 +642,13 @@
             this.panel1.Location = new System.Drawing.Point(18, 34);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(293, 275);
+            this.panel1.Size = new System.Drawing.Size(293, 237);
             this.panel1.TabIndex = 20;
             // 
             // UseProxyCheckBox
             // 
             this.UseProxyCheckBox.AutoSize = true;
-            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 234);
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 210);
             this.UseProxyCheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UseProxyCheckBox.Name = "UseProxyCheckBox";
             this.UseProxyCheckBox.Size = new System.Drawing.Size(106, 24);
@@ -672,7 +672,7 @@
             this.SilentSignInButton.Location = new System.Drawing.Point(25, 100);
             this.SilentSignInButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SilentSignInButton.Name = "SilentSignInButton";
-            this.SilentSignInButton.Size = new System.Drawing.Size(246, 66);
+            this.SilentSignInButton.Size = new System.Drawing.Size(246, 52);
             this.SilentSignInButton.TabIndex = 22;
             this.SilentSignInButton.Text = "Silent Sign-in (cached account)";
             this.SilentSignInButton.UseVisualStyleBackColor = true;
@@ -680,7 +680,7 @@
             // 
             // ClearCacheButton
             // 
-            this.ClearCacheButton.Location = new System.Drawing.Point(25, 176);
+            this.ClearCacheButton.Location = new System.Drawing.Point(25, 156);
             this.ClearCacheButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ClearCacheButton.Name = "ClearCacheButton";
             this.ClearCacheButton.Size = new System.Drawing.Size(246, 40);

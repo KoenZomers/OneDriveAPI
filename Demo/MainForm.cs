@@ -66,11 +66,19 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
                 return;
             }
 
-            _logoBase64 = Convert.ToBase64String(File.ReadAllBytes(logoPath));
-
             using (var logoImage = System.Drawing.Image.FromFile(logoPath))
             {
                 LogoPictureBox.Image = new System.Drawing.Bitmap(logoImage);
+
+                // Downscale to a small thumbnail before base64-encoding it for the post-login HTML page. Embedding
+                // the full-size (multi-hundred-KB) image inline appears to cause MSAL's loopback HttpListener-based
+                // response to fail to render in some browsers, so keep this data URI small (a few KB at most).
+                using (var thumbnail = new System.Drawing.Bitmap(logoImage, new System.Drawing.Size(96, 96)))
+                using (var memoryStream = new MemoryStream())
+                {
+                    thumbnail.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                    _logoBase64 = Convert.ToBase64String(memoryStream.ToArray());
+                }
             }
         }
 
