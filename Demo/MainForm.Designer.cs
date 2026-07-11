@@ -659,7 +659,6 @@
             this.OneDriveTypeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.OneDriveTypeCombo.FormattingEnabled = true;
             this.OneDriveTypeCombo.Items.AddRange(new object[] {
-            "OneDrive for Business O365",
             "Graph API (Consumer & Business)"});
             this.OneDriveTypeCombo.Location = new System.Drawing.Point(17, 15);
             this.OneDriveTypeCombo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);

@@ -3,31 +3,23 @@ OneDrive API in .NET Standard 2.0 and .NET 8.0
 
 ![](https://img.shields.io/github/issues/koenzomers/OneDriveAPI.svg) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-Easy to use lightweight framework to communicate with OneDrive for Business and Microsoft 365 through the Microsoft Graph API (graph.microsoft.com) or the SharePoint/OneDrive for Business v2.0 endpoint. Authentication is handled through the [Microsoft Authentication Library (MSAL.NET)](https://www.nuget.org/packages/Microsoft.Identity.Client), giving you the flexibility to use any Microsoft Entra ID authentication flow (interactive, device code, authorization code, silent, refresh token migration, client credentials).
+Easy to use lightweight framework to communicate with OneDrive Personal, OneDrive for Business and Microsoft 365 through the Microsoft Graph API (graph.microsoft.com). Authentication is handled through the [Microsoft Authentication Library (MSAL.NET)](https://www.nuget.org/packages/Microsoft.Identity.Client), giving you the flexibility to use any Microsoft Entra ID authentication flow (interactive, device code, authorization code, silent, refresh token migration, client credentials).
 
-> ⚠️ **Version 3.0.0.0 is a major, breaking release.** Authentication has been migrated to MSAL and `OneDriveConsumerApi` (the legacy Live Connect based OneDrive Personal API) has been removed since it is not compatible with MSAL/Microsoft Entra ID. See [CHANGELOG.md](CHANGELOG.md) for full details and migration guidance.
+> ⚠️ **Version 3.0.0.0 is a major, breaking release.** Authentication has been migrated to MSAL. `OneDriveConsumerApi` (the legacy Live Connect based OneDrive Personal API) and `OneDriveForBusinessO365Api` (the legacy SharePoint REST v2.0 endpoint) have both been removed in favor of `OneDriveGraphApi`, per Microsoft's guidance that all SharePoint/OneDrive REST innovation is now driven through the Microsoft Graph API. See [CHANGELOG.md](CHANGELOG.md) for full details and migration guidance.
 
 The code contains a fully working demo Windows Forms application which shows you exactly how to use all of the functionality exposed in the OneDrive API.
 
 ![](./Images/SolutionExplorer.png)
 
-To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API using Microsoft Entra ID (recommended), simply use:
+To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API using Microsoft Entra ID, simply use:
 
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveGraphApi(applicationId);
 ```
 
-OR to get an instance to a OneDrive for Business account directly through the SharePoint/OneDrive for Business v2.0 endpoint, provide the client secret and the root SharePoint/OneDrive for Business resource Uri for your tenant (e.g. `https://contoso-my.sharepoint.com`), which is used to construct the MSAL v2 scope:
-
-```C#
-KoenZomers.OneDrive.Api oneDrive = new OneDriveForBusinessO365Api(clientId, clientSecret, "https://contoso-my.sharepoint.com");
-```
-
-If you're not sure which of these to use, go with the Microsoft Graph API (`OneDriveGraphApi`).
-
 ### Authentication
 
-Both API classes expose the underlying MSAL client application so you can use **any** MSAL-supported authentication flow, not just the ones wrapped by this library:
+`OneDriveGraphApi` exposes the underlying MSAL client application so you can use **any** MSAL-supported authentication flow, not just the ones wrapped by this library:
 
 - `oneDrive.PublicClientApplication` - populated when no client secret is configured (e.g. `OneDriveGraphApi` without a secret). Use this for `AcquireTokenInteractive`, `AcquireTokenByDeviceCode`, `AcquireTokenSilent`, etc.
 - `oneDrive.ConfidentialClientApplication` - populated when a client secret is configured. Use this for `AcquireTokenByAuthorizationCode`, `AcquireTokenForClient` (app-only), `AcquireTokenSilent`, etc.

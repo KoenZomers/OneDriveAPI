@@ -18,9 +18,10 @@ This is a **major version release** with breaking changes to the authentication 
   - Consumers who need OneDrive Personal access should use `OneDriveGraphApi` against the Microsoft Graph API (`https://graph.microsoft.com`), which supports both personal Microsoft accounts and organizational accounts through Microsoft Entra ID v2.0.
   - If you were using `OneDriveConsumerApi`, you will need to register a new app registration in the [Microsoft Entra admin center](https://entra.microsoft.com) (or [Azure Portal](https://portal.azure.com)) rather than the legacy [Live Connect developer center](https://account.live.com/developers/applications/index), and switch to `OneDriveGraphApi`.
 
-- **`OneDriveForBusinessO365Api` modernized to Microsoft Entra ID v2.0**
-  - Previously used the legacy Azure AD v1 "resource" parameter model together with a service discovery call to `https://api.office.com/discovery/v2.0/me/services/` to locate the OneDrive for Business / SharePoint endpoint (ADAL-style).
-  - Now uses MSAL v2.0 scope-based authentication (e.g. `https://{tenant}-my.sharepoint.com/.default`) consistent with `OneDriveGraphApi`, removing the dependency on the legacy discovery service.
+- **Removed `OneDriveForBusinessO365Api`**
+  - This class called the legacy SharePoint REST v2.0 endpoint (`https://{tenant}.sharepoint.com/_api/v2.0/...`) using the ADAL v1 "resource" parameter model together with the (now discontinued) Office 365 Discovery Service.
+  - Per Microsoft's official guidance, all innovation for SharePoint/OneDrive REST access is driven through the Microsoft Graph REST API; the SharePoint REST v2.0 endpoint is a legacy passthrough that receives no new functionality.
+  - Use `OneDriveGraphApi` instead, which covers OneDrive Personal, OneDrive for Business and SharePoint sites through the single, actively developed Microsoft Graph API (`https://graph.microsoft.com`).
 
 - **`OneDriveAccessToken` no longer represents a raw parsed OAuth token response**
   - Token data is now sourced from MSAL's `AuthenticationResult`. Code that directly constructed or inspected `OneDriveAccessToken` from manual token endpoint responses will need to be updated.
@@ -33,7 +34,7 @@ This is a **major version release** with breaking changes to the authentication 
 | Before (2.x) | After (3.x) |
 |---|---|
 | `new OneDriveConsumerApi(clientId, clientSecret)` | Not supported — use `new OneDriveGraphApi(clientId, clientSecret)` with a Microsoft Entra ID app registration |
-| `new OneDriveForBusinessO365Api(clientId, clientSecret)` + resource/service discovery | `new OneDriveForBusinessO365Api(clientId, clientSecret)` using MSAL v2 scopes — no code change needed for basic usage, but app registration must support the Microsoft Graph / SharePoint v2 scopes |
+| `new OneDriveForBusinessO365Api(clientId, clientSecret)` + resource/service discovery | Not supported — use `new OneDriveGraphApi(clientId, clientSecret)`, which covers the same OneDrive for Business / SharePoint functionality through the Microsoft Graph API |
 | `oneDriveApi.GetAuthenticationUri()` + manual browser + `GetAuthorizationTokenFromUrl` | Still supported for the authorization-code pattern, now backed by MSAL under the hood — or use the newly exposed MSAL client application instance directly for `AcquireTokenInteractive`, `AcquireTokenByDeviceCode`, etc. |
 | `oneDriveApi.AuthenticateUsingRefreshToken(refreshToken)` | Still supported, now performs the refresh through MSAL |
 

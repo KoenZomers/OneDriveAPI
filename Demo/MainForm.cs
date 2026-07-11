@@ -46,20 +46,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private void InitiateOneDriveApi()
         {
-            // Define the type of OneDrive API to instantiate based on the dropdown list selection    
-            switch (OneDriveTypeCombo.SelectedIndex)
-            {
-                case 0:
-                    OneDriveApi = new OneDriveForBusinessO365Api(
-                        _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientID"].Value,
-                        _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiClientSecret"].Value,
-                        _configuration.AppSettings.Settings["OneDriveForBusinessO365ApiResourceUri"].Value);
-                    break;
-
-                case 1:
-                    OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
-                    break;
-            }
+            OneDriveApi = new OneDriveGraphApi(_configuration.AppSettings.Settings["GraphApiApplicationId"].Value);
 
             OneDriveApi.ProxyConfiguration = UseProxyCheckBox.Checked ? System.Net.WebRequest.DefaultWebProxy : null;
         }

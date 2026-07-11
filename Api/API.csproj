@@ -13,7 +13,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageReleaseNotes>- BREAKING: Migrated authentication to Microsoft Authentication Library (MSAL) via Microsoft.Identity.Client
 - BREAKING: Removed OneDriveConsumerApi (legacy Live Connect protocol is not supported by MSAL/Microsoft Entra ID)
-- BREAKING: OneDriveForBusinessO365Api now uses Microsoft Entra ID v2.0 scope-based authentication instead of the legacy ADAL v1 resource/service-discovery model
+- BREAKING: Removed OneDriveForBusinessO365Api (legacy SharePoint REST v2.0 endpoint). Use OneDriveGraphApi instead, which covers the same functionality via the Microsoft Graph API, the Microsoft-recommended endpoint going forward
 - See CHANGELOG.md for full details</PackageReleaseNotes>
 		<PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
 		<Copyright>Koen Zomers</Copyright>
