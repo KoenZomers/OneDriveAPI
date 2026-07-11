@@ -786,7 +786,11 @@
             Character to start the querystring with. Defaults to not including it.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.SeperatorCharacter" -->
+        <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.SeperatorCharacter">
+            <summary>
+            Character used to separate the items in the querystring. Defaults to &amp;.
+            </summary>
+        </member>
         <member name="P:KoenZomers.OneDrive.Api.Helpers.QueryStringBuilder.KeyValueJoinCharacter">
             <summary>
             Character used to separate the keys from its value sin the querystring. Defaults to =.

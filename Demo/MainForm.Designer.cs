@@ -275,7 +275,9 @@
             this.GetOtherDriveButton.TabIndex = 44;
             this.GetOtherDriveButton.Text = "Other Drive";
             this.GetOtherDriveButton.UseVisualStyleBackColor = true;
+#pragma warning disable CS0612 // GetOtherDriveButton_Click is Obsolete to flag the deprecated GetSharedWithMe API it calls
             this.GetOtherDriveButton.Click += new System.EventHandler(this.GetOtherDriveButton_Click);
+#pragma warning restore CS0612
             // 
             // GetChildrenFromOtherDriveButton
             // 
@@ -286,7 +288,9 @@
             this.GetChildrenFromOtherDriveButton.TabIndex = 43;
             this.GetChildrenFromOtherDriveButton.Text = "Items o/share";
             this.GetChildrenFromOtherDriveButton.UseVisualStyleBackColor = true;
+#pragma warning disable CS0612 // GetChildrenFromOtherDriveButton_Click is Obsolete to flag the deprecated GetSharedWithMe API it calls
             this.GetChildrenFromOtherDriveButton.Click += new System.EventHandler(this.GetChildrenFromOtherDriveButton_Click);
+#pragma warning restore CS0612
             // 
             // GetFilesInFolderInAppFolderButton
             // 
@@ -421,7 +425,9 @@
             this.SharedWithMeButton.TabIndex = 31;
             this.SharedWithMeButton.Text = "Shared w/me";
             this.SharedWithMeButton.UseVisualStyleBackColor = true;
+#pragma warning disable CS0612 // SharedWithMeButton_Click is Obsolete to flag the deprecated GetSharedWithMe API it calls
             this.SharedWithMeButton.Click += new System.EventHandler(this.SharedWithMeButton_Click);
+#pragma warning restore CS0612
             // 
             // RenameButton
             // 

@@ -16,11 +16,12 @@
 - BREAKING: Removed OneDriveForBusinessO365Api (legacy SharePoint REST v2.0 endpoint). Use OneDriveGraphApi instead, which covers the same functionality via the Microsoft Graph API, the Microsoft-recommended endpoint going forward
 - BREAKING: Merged the abstract OneDriveApi base class into OneDriveGraphApi, now the sole, concrete API class in this library
 - See CHANGELOG.md for full details</PackageReleaseNotes>
-		<PackageLicenseUrl>https://github.com/KoenZomers/OneDriveAPI/blob/master/LICENSE.md</PackageLicenseUrl>
+		<PackageLicenseExpression>EPL-1.0</PackageLicenseExpression>
 		<Copyright>Koen Zomers</Copyright>
 		<RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
 		<AssemblyVersion>3.0.0.0</AssemblyVersion>
 		<FileVersion>3.0.0.0</FileVersion>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

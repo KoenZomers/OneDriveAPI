@@ -32,7 +32,7 @@ namespace KoenZomers.OneDrive.Api.Helpers
         public char? StartCharacter { get; set; }
 
         /// <summary>
-        /// Character used to separate the items in the querystring. Defaults to &.
+        /// Character used to separate the items in the querystring. Defaults to &amp;.
         /// </summary>
         public char SeperatorCharacter { get; set; }
 

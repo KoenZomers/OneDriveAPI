@@ -831,6 +831,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// Returns all OneDrive items in a folder on another drive that has been shared with the current user
         /// </summary>
+        /// <remarks>
+        /// Calls the now-deprecated GetSharedWithMe API (see OneDriveGraphApi.GetSharedWithMe for details).
+        /// This handler is marked Obsolete purely to suppress the resulting compiler warning at this call site.
+        /// </remarks>
+        [Obsolete]
         private async void GetChildrenFromOtherDriveButton_Click(object sender, EventArgs e)
         {
             // Retrieve the items shared with the current user
@@ -857,6 +862,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// Gets another drive which has an item shared with the current user
         /// </summary>
+        /// <remarks>
+        /// Calls the now-deprecated GetSharedWithMe API (see OneDriveGraphApi.GetSharedWithMe for details).
+        /// This handler is marked Obsolete purely to suppress the resulting compiler warning at this call site.
+        /// </remarks>
+        [Obsolete]
         private async void GetOtherDriveButton_Click(object sender, EventArgs e)
         {
             // Retrieve the items shared with the current user
