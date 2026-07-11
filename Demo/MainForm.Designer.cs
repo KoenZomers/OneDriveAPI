@@ -89,12 +89,12 @@
             this.AuthenticationBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 275);
+            this.AuthenticationBrowser.Location = new System.Drawing.Point(14, 289);
             this.AuthenticationBrowser.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthenticationBrowser.MinimumSize = new System.Drawing.Size(22, 25);
             this.AuthenticationBrowser.Name = "AuthenticationBrowser";
             this.AuthenticationBrowser.ScriptErrorsSuppressed = true;
-            this.AuthenticationBrowser.Size = new System.Drawing.Size(1969, 678);
+            this.AuthenticationBrowser.Size = new System.Drawing.Size(1969, 648);
             this.AuthenticationBrowser.TabIndex = 0;
             this.AuthenticationBrowser.Visible = false;
             // 
@@ -102,7 +102,7 @@
             // 
             this.CurrentUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CurrentUrlTextBox.Location = new System.Drawing.Point(14, 1351);
+            this.CurrentUrlTextBox.Location = new System.Drawing.Point(14, 1364);
             this.CurrentUrlTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CurrentUrlTextBox.Name = "CurrentUrlTextBox";
             this.CurrentUrlTextBox.Size = new System.Drawing.Size(2506, 26);
@@ -113,7 +113,7 @@
             // 
             this.CurrentUrlLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CurrentUrlLabel.AutoSize = true;
-            this.CurrentUrlLabel.Location = new System.Drawing.Point(15, 1326);
+            this.CurrentUrlLabel.Location = new System.Drawing.Point(15, 1339);
             this.CurrentUrlLabel.Name = "CurrentUrlLabel";
             this.CurrentUrlLabel.Size = new System.Drawing.Size(99, 20);
             this.CurrentUrlLabel.TabIndex = 5;
@@ -124,7 +124,7 @@
             // 
             this.AuthorizationCodeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AuthorizationCodeLabel.AutoSize = true;
-            this.AuthorizationCodeLabel.Location = new System.Drawing.Point(14, 1391);
+            this.AuthorizationCodeLabel.Location = new System.Drawing.Point(14, 1404);
             this.AuthorizationCodeLabel.Name = "AuthorizationCodeLabel";
             this.AuthorizationCodeLabel.Size = new System.Drawing.Size(145, 20);
             this.AuthorizationCodeLabel.TabIndex = 7;
@@ -135,7 +135,7 @@
             // 
             this.AuthorizationCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(12, 1414);
+            this.AuthorizationCodeTextBox.Location = new System.Drawing.Point(12, 1427);
             this.AuthorizationCodeTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AuthorizationCodeTextBox.Name = "AuthorizationCodeTextBox";
             this.AuthorizationCodeTextBox.Size = new System.Drawing.Size(2506, 26);
@@ -146,7 +146,7 @@
             // 
             this.AccessTokenLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AccessTokenLabel.AutoSize = true;
-            this.AccessTokenLabel.Location = new System.Drawing.Point(14, 850);
+            this.AccessTokenLabel.Location = new System.Drawing.Point(16, 953);
             this.AccessTokenLabel.Name = "AccessTokenLabel";
             this.AccessTokenLabel.Size = new System.Drawing.Size(109, 20);
             this.AccessTokenLabel.TabIndex = 9;
@@ -156,7 +156,7 @@
             // 
             this.AccessTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AccessTokenTextBox.Location = new System.Drawing.Point(12, 873);
+            this.AccessTokenTextBox.Location = new System.Drawing.Point(14, 976);
             this.AccessTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenTextBox.Name = "AccessTokenTextBox";
             this.AccessTokenTextBox.Size = new System.Drawing.Size(1980, 26);
@@ -168,12 +168,12 @@
             this.JsonResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 275);
+            this.JsonResultTextBox.Location = new System.Drawing.Point(14, 289);
             this.JsonResultTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.JsonResultTextBox.Multiline = true;
             this.JsonResultTextBox.Name = "JsonResultTextBox";
             this.JsonResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.JsonResultTextBox.Size = new System.Drawing.Size(1980, 560);
+            this.JsonResultTextBox.Size = new System.Drawing.Size(1980, 648);
             this.JsonResultTextBox.TabIndex = 10;
             this.JsonResultTextBox.Visible = false;
             // 
@@ -181,7 +181,7 @@
             // 
             this.RefreshTokenLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RefreshTokenLabel.AutoSize = true;
-            this.RefreshTokenLabel.Location = new System.Drawing.Point(15, 910);
+            this.RefreshTokenLabel.Location = new System.Drawing.Point(17, 1013);
             this.RefreshTokenLabel.Name = "RefreshTokenLabel";
             this.RefreshTokenLabel.Size = new System.Drawing.Size(114, 20);
             this.RefreshTokenLabel.TabIndex = 14;
@@ -191,7 +191,7 @@
             // 
             this.RefreshTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.RefreshTokenTextBox.Location = new System.Drawing.Point(14, 933);
+            this.RefreshTokenTextBox.Location = new System.Drawing.Point(16, 1036);
             this.RefreshTokenTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenTextBox.Name = "RefreshTokenTextBox";
             this.RefreshTokenTextBox.Size = new System.Drawing.Size(1980, 26);
@@ -201,7 +201,7 @@
             // 
             this.AccessTokenValidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AccessTokenValidLabel.AutoSize = true;
-            this.AccessTokenValidLabel.Location = new System.Drawing.Point(14, 970);
+            this.AccessTokenValidLabel.Location = new System.Drawing.Point(16, 1073);
             this.AccessTokenValidLabel.Name = "AccessTokenValidLabel";
             this.AccessTokenValidLabel.Size = new System.Drawing.Size(170, 20);
             this.AccessTokenValidLabel.TabIndex = 16;
@@ -211,7 +211,7 @@
             // 
             this.AccessTokenValidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AccessTokenValidTextBox.Location = new System.Drawing.Point(12, 993);
+            this.AccessTokenValidTextBox.Location = new System.Drawing.Point(14, 1096);
             this.AccessTokenValidTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.AccessTokenValidTextBox.Name = "AccessTokenValidTextBox";
             this.AccessTokenValidTextBox.Size = new System.Drawing.Size(1980, 26);
@@ -258,7 +258,7 @@
             this.OneDriveCommandsPanel.Location = new System.Drawing.Point(328, 33);
             this.OneDriveCommandsPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
-            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1655, 238);
+            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1666, 238);
             this.OneDriveCommandsPanel.TabIndex = 17;
             // 
             // GetOtherDriveButton
@@ -695,7 +695,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2010, 1120);
+            this.ClientSize = new System.Drawing.Size(2010, 1133);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.AccessTokenValidLabel);
@@ -716,8 +716,8 @@
             this.MinimumSize = new System.Drawing.Size(426, 374);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Text = "OneDrive API Test";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.OneDriveCommandsPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

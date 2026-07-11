@@ -702,7 +702,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>All OneDrive items resulting from the search</returns>
         public virtual async Task<IList<OneDriveItem>> Search(string query)
         {
-            return await SearchInternal(string.Concat("drive/root/view.search?q=", query));
+            return await SearchInternal($"drive/root/search(q='{query}')");
         }
 
         /// <summary>
@@ -713,7 +713,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>All OneDrive items resulting from the search</returns>
         public virtual async Task<IList<OneDriveItem>> Search(string query, string path)
         {
-            return await SearchInternal(string.Concat("drive/root:/", path, "/view.search?q=", query));
+            return await SearchInternal($"drive/root:/{path}:/search(q='{query}')");
         }
 
         /// <summary>
@@ -724,7 +724,7 @@ namespace KoenZomers.OneDrive.Api
         /// <returns>All OneDrive items resulting from the search</returns>
         public virtual async Task<IList<OneDriveItem>> Search(string query, OneDriveItem oneDriveItem)
         {
-            return await SearchInternal(string.Concat("drive/items/", oneDriveItem.Id, "/view.search?q=", query));
+            return await SearchInternal($"drive/items/{oneDriveItem.Id}/search(q='{query}')");
         }
 
         /// <summary>

@@ -667,16 +667,6 @@ namespace KoenZomers.OneDrive.Api
         #endregion
 
         /// <summary>
-        /// Searches for items on OneDrive with the provided query
-        /// </summary>
-        /// <param name="query">Search query to use</param>
-        /// <returns>All OneDrive items resulting from the search</returns>
-        public override async Task<IList<OneDriveItem>> Search(string query)
-        {
-            return await base.SearchInternal($"drive/root/search(q='{query}')");
-        }
-
-        /// <summary>
         /// Sends a HTTP POST to OneDrive to copy an item on OneDrive
         /// </summary>
         /// <param name="oneDriveSource">The OneDrive Item to be copied</param>

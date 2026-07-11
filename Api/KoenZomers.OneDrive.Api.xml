@@ -2092,13 +2092,6 @@
             <param name="nameConflictBehavior">Defines how to deal with the scenario where a similarly named file already exists at the target location</param>
             <returns>OneDriveItem instance representing the uploaded item</returns>
         </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.Search(System.String)">
-            <summary>
-            Searches for items on OneDrive with the provided query
-            </summary>
-            <param name="query">Search query to use</param>
-            <returns>All OneDrive items resulting from the search</returns>
-        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CopyItemInternal(KoenZomers.OneDrive.Api.Entities.OneDriveItem,KoenZomers.OneDrive.Api.Entities.OneDriveItem,System.String)">
             <summary>
             Sends a HTTP POST to OneDrive to copy an item on OneDrive
