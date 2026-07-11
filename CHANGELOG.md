@@ -48,6 +48,6 @@ See `README.md` for updated authentication examples.
 
 ---
 
-## [2.4.0.0] and earlier
+## Earlier releases
 
 See [VersionHistory.md](VersionHistory.md) for the full history of releases prior to this changelog.
