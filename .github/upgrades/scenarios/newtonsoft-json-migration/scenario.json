@@ -1,0 +1,9 @@
+{
+  "scenarioId": "newtonsoft-json-migration",
+  "operationId": "47c959c8-d7d9-427f-a2e7-014cdf6718f3",
+  "description": "Migrates .NET projects from Newtonsoft.Json to System.Text.Json. Use when user wants to replace Newtonsoft.Json, switch to System.Text.Json, migrate JSON library, or modernize JSON serialization.\n",
+  "startTime": "2026-07-11T13:16:12.8710596Z",
+  "lastUpdateTime": "2026-07-11T13:16:12.892112Z",
+  "properties": {},
+  "folderPath": ""
+}
