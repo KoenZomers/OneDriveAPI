@@ -180,18 +180,19 @@ See [CHANGELOG.md](CHANGELOG.md) for the 3.0.0.0 release notes and MSAL migratio
 
 If you wish to use the OneDrive API through the Microsoft Graph API, you need to register your own Client ID. Follow the steps below to do so.
 
-1. Go to https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
+1. Go to https://entra.microsoft.com and navigate to _Applications > App registrations_
 2. At the top, click on New registration
 3. Enter any name for the application that you would like
-4. Under _Supported account types_ select _Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)_
-5. Under _Platform configuration_ select _Client Application_
+4. Under _Supported account types_ select _Accounts in any organizational directory (Any Microsoft Entra ID directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)_
+5. Under _Platform configuration_ select _Public client/native (mobile & desktop)_
 6. Hit the _Register_ button at the bottom
 7. Click on _Add a platform_ followed by clicking on _Mobile and desktop applications_
-8. Select the two proposed options for _https://login.microsoftonline.com/common/oauth2/nativeclient_ and _https://login.live.com/oauth20_desktop.srf_ and click on _Configure_ at the bottom
+8. Enter the redirect URI _http://localhost_ (this is what this library uses by default; MSAL automatically picks a free port on this loopback address for its interactive/authorization-code flows) and click on _Configure_ at the bottom
+8b. Under _Authentication_, make sure _Allow public client flows_ is set to _Yes_ (required for the interactive sign-in flow used by the Demo application)
 9. In the left menu bar, click on _Overview_
 10. Copy the _Application (client) ID_ from the section at the top
-11. Set the [ClientId](https://github.com/KoenZomers/OneDriveAPI/blob/f32d39891614d47efc9b5cb50d9500ca239751a0/Api/OneDriveApi.cs#L28) through your code to the application ID retrieved at the previous step. If you want to use the DemoApplication included with this code to test your new application registration, open its App.config file and replace the value for `<add key="GraphApiApplicationId" value="5bbbcf45-3ca9-47cf-8c2f-0ecdcf587332"/>` with the application ID retrieved at the previous step.
-12. Run the demo application, select "Graph API (Consumer & Business)" and click on "Authorize"
+11. Set the [ClientId](https://github.com/KoenZomers/OneDriveAPI/blob/master/Api/OneDriveApi.cs) through your code to the application ID retrieved at the previous step. If you want to use the DemoApplication included with this code to test your new application registration, open its App.config file and replace the value for `<add key="GraphApiApplicationId" value="5bbbcf45-3ca9-47cf-8c2f-0ecdcf587332"/>` with the application ID retrieved at the previous step.
+12. Run the demo application and click on "Authorize"
 
 ## Feedback
 

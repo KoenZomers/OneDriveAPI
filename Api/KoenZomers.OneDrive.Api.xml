@@ -1746,7 +1746,10 @@
         </member>
         <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.AuthenticationRedirectUrl">
             <summary>
-            The url to provide as the redirect URL after successful authentication
+            The url to provide as the redirect URL after successful authentication.
+            Uses the loopback address recommended by Microsoft for MSAL desktop/public client applications;
+            MSAL will automatically pick a free port on this address for interactive/authorization-code flows.
+            Register this exact value (http://localhost) as a "Mobile and desktop applications" redirect URI on the app registration.
             </summary>
         </member>
         <member name="P:KoenZomers.OneDrive.Api.OneDriveGraphApi.Authority">

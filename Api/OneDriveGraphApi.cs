@@ -20,9 +20,12 @@ namespace KoenZomers.OneDrive.Api
         #region Constants
 
         /// <summary>
-        /// The url to provide as the redirect URL after successful authentication
+        /// The url to provide as the redirect URL after successful authentication.
+        /// Uses the loopback address recommended by Microsoft for MSAL desktop/public client applications;
+        /// MSAL will automatically pick a free port on this address for interactive/authorization-code flows.
+        /// Register this exact value (http://localhost) as a "Mobile and desktop applications" redirect URI on the app registration.
         /// </summary>
-        public override string AuthenticationRedirectUrl { get; set; } = "https://login.microsoftonline.com/common/oauth2/nativeclient";
+        public override string AuthenticationRedirectUrl { get; set; } = "http://localhost";
 
         /// <summary>
         /// The Microsoft Entra ID (Azure AD v2.0) authority to authenticate against
