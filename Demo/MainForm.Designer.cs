@@ -77,6 +77,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
             this.RefreshTokenButton = new System.Windows.Forms.Button();
+            this.SilentSignInButton = new System.Windows.Forms.Button();
             this.Step1Button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -631,6 +632,7 @@
             // 
             this.panel1.Controls.Add(this.UseProxyCheckBox);
             this.panel1.Controls.Add(this.RefreshTokenButton);
+            this.panel1.Controls.Add(this.SilentSignInButton);
             this.panel1.Controls.Add(this.Step1Button);
             this.panel1.Location = new System.Drawing.Point(18, 34);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -659,6 +661,17 @@
             this.RefreshTokenButton.Text = "Refresh";
             this.RefreshTokenButton.UseVisualStyleBackColor = true;
             this.RefreshTokenButton.Click += new System.EventHandler(this.RefreshTokenButton_Click);
+            // 
+            // SilentSignInButton
+            // 
+            this.SilentSignInButton.Location = new System.Drawing.Point(25, 105);
+            this.SilentSignInButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.SilentSignInButton.Name = "SilentSignInButton";
+            this.SilentSignInButton.Size = new System.Drawing.Size(246, 40);
+            this.SilentSignInButton.TabIndex = 22;
+            this.SilentSignInButton.Text = "Silent Sign-in (cached account)";
+            this.SilentSignInButton.UseVisualStyleBackColor = true;
+            this.SilentSignInButton.Click += new System.EventHandler(this.SilentSignInButton_Click);
             // 
             // Step1Button
             // 
@@ -717,7 +730,6 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "OneDrive API Test";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.OneDriveCommandsPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -777,6 +789,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox UseProxyCheckBox;
         private System.Windows.Forms.Button RefreshTokenButton;
+        private System.Windows.Forms.Button SilentSignInButton;
         private System.Windows.Forms.Button Step1Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

@@ -6,6 +6,8 @@ using KoenZomers.OneDrive.Api;
 using KoenZomers.OneDrive.Api.Entities;
 using KoenZomers.OneDrive.Api.Enums;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace KoenZomers.OneDrive.AuthenticatorApp
 {
@@ -51,6 +53,65 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         }
 
         /// <summary>
+        /// Registers MSAL's encrypted, file-based persistent token cache (via Microsoft.Identity.Client.Extensions.Msal) on
+        /// the current OneDriveApi's PublicClientApplication. Without this, MSAL only keeps tokens (and the refresh token
+        /// it manages internally) in memory, meaning a "silent" sign-in would only work until the application is closed.
+        /// With a persistent cache, MSAL can silently re-authenticate the cached account across application restarts too.
+        /// </summary>
+        private async Task RegisterPersistentTokenCacheAsync()
+        {
+            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KoenZomers.OneDrive.Api.Demo");
+            var storageProperties = new StorageCreationPropertiesBuilder("msal_token_cache.dat", cacheDirectory)
+                .WithLinuxUnprotectedFile() // Not used on Windows, but keeps this sample runnable cross-platform (e.g. under .NET 8 on Linux)
+                .Build();
+
+            var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties);
+            cacheHelper.RegisterCache(OneDriveApi.PublicClientApplication.UserTokenCache);
+        }
+
+        /// <summary>
+        /// Signs in silently using the account and refresh token that MSAL itself already has cached (either from an
+        /// earlier interactive sign-in in this session, or - thanks to the persistent cache - from a previous run of this
+        /// application). No browser is shown; if no cached account is available, the user is asked to Authorize first.
+        /// </summary>
+        private async void SilentSignInButton_Click(object sender, EventArgs e)
+        {
+            AccessTokenTextBox.Text = string.Empty;
+
+            InitiateOneDriveApi();
+            await RegisterPersistentTokenCacheAsync();
+
+            var accounts = await OneDriveApi.PublicClientApplication.GetAccountsAsync();
+            var account = accounts.FirstOrDefault();
+
+            if (account == null)
+            {
+                MessageBox.Show("No cached account was found to sign in with silently. Use \"Authorize\" first to sign in interactively; MSAL will then cache the account for future silent sign-ins.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                var result = await OneDriveApi.PublicClientApplication
+                    .AcquireTokenSilent(OneDriveApi.GetDefaultScopes(), account)
+                    .ExecuteAsync();
+
+                OneDriveApi.SetAuthenticationResult(result);
+
+                AccessTokenTextBox.Text = OneDriveApi.AccessToken.AccessToken;
+                AccessTokenValidTextBox.Text = OneDriveApi.AccessTokenValidUntil.HasValue ? OneDriveApi.AccessTokenValidUntil.Value.ToString("dd-MM-yyyy HH:mm:ss") : "Not valid";
+            }
+            catch (Microsoft.Identity.Client.MsalUiRequiredException)
+            {
+                MessageBox.Show("The cached account's session has expired and requires interactive sign-in again. Use \"Authorize\" to sign in.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Microsoft.Identity.Client.MsalException ex)
+            {
+                MessageBox.Show($"Failed to authenticate silently: {ex.Message}", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
         /// Starts the process to interactively authenticate a user and get an Access token. Uses MSAL's system browser
         /// interactive flow: it opens the default OS browser and listens for the redirect on http://localhost, just
         /// like the sign-in experience of many modern desktop applications.
@@ -62,6 +123,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
 
             // Create a new instance of the OneDriveApi framework
             InitiateOneDriveApi();
+            await RegisterPersistentTokenCacheAsync();
 
             try
             {
