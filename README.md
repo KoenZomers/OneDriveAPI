@@ -12,9 +12,7 @@ Easy to use lightweight framework to communicate with OneDrive Personal, OneDriv
 
 The code contains a fully working demo Windows Forms application which shows you exactly how to use all of the functionality exposed in the OneDrive API.
 
-![](./Images/SolutionExplorer.png)
-
-To get an instance to a OneDrive or OneDrive for Business through the Microsoft Graph API using Microsoft Entra ID, simply use:
+To get an instance to a Personal OneDrive or OneDrive for Business through the Microsoft Graph API using Microsoft Entra ID, simply use:
 
 ```C#
 KoenZomers.OneDrive.Api oneDrive = new OneDriveGraphApi(applicationId);
