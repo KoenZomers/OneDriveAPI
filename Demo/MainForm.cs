@@ -11,6 +11,18 @@ using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace KoenZomers.OneDrive.AuthenticatorApp
 {
+    /// <summary>
+    /// P/Invoke helpers for native Win32 APIs used by this demo application
+    /// </summary>
+    internal static class NativeMethods
+    {
+        /// <summary>
+        /// Destroys an icon handle created via Bitmap.GetHicon(), which is not automatically freed by the .NET GC
+        /// </summary>
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool DestroyIcon(IntPtr handle);
+    }
+
     public partial class MainForm : Form
     {
         #region Properties
@@ -30,6 +42,13 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         public string RefreshToken;
 
+        /// <summary>
+        /// Base64-encoded copy of the application logo (KeePassOneDriveSync.png), cached so it can be embedded as a
+        /// data URI in the post-login HTML page shown by the system browser, in addition to being used for the
+        /// form/taskbar icon and the PictureBox in the top-right corner.
+        /// </summary>
+        private string _logoBase64;
+
         #endregion
 
         public MainForm()
@@ -40,6 +59,47 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             RefreshToken = _configuration.AppSettings.Settings["OneDriveApiRefreshToken"].Value;
 
             RefreshTokenTextBox.Text = RefreshToken;
+
+            LoadLogo();
+        }
+
+        /// <summary>
+        /// Loads the application logo from the KeePassOneDriveSync.png file next to the executable, shows it in the
+        /// top-right corner of the form, uses it as the form/taskbar icon, and caches a base64 copy so it can also
+        /// be embedded in the post-login HTML page shown by the system browser.
+        /// </summary>
+        private void LoadLogo()
+        {
+            var logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KeePassOneDriveSync.png");
+            if (!File.Exists(logoPath))
+            {
+                return;
+            }
+
+            _logoBase64 = Convert.ToBase64String(File.ReadAllBytes(logoPath));
+
+            using (var logoImage = System.Drawing.Image.FromFile(logoPath))
+            {
+                LogoPictureBox.Image = new System.Drawing.Bitmap(logoImage);
+
+                using (var logoBitmap = new System.Drawing.Bitmap(logoImage, new System.Drawing.Size(32, 32)))
+                {
+                    var iconHandle = logoBitmap.GetHicon();
+                    try
+                    {
+                        using (var tempIcon = System.Drawing.Icon.FromHandle(iconHandle))
+                        {
+                            // Clone so the Icon owns its own handle - it is not safe to keep using an Icon
+                            // created via FromHandle after the underlying native handle has been destroyed.
+                            Icon = (System.Drawing.Icon)tempIcon.Clone();
+                        }
+                    }
+                    finally
+                    {
+                        NativeMethods.DestroyIcon(iconHandle);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -151,10 +211,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// <summary>
         /// Builds the HTML page shown in the system browser tab after MSAL's interactive sign-in flow completes on the
         /// http://localhost loopback listener, replacing MSAL's plain default page with branded, styled markup.
+        /// Includes the application logo (embedded as a base64 data URI) when available.
         /// </summary>
         /// <param name="success">True to render the success variant, false to render the error/failure variant</param>
         /// <returns>Self-contained HTML document (inline styles, no external resources) for the given result</returns>
-        private static string BuildAuthResultHtmlPage(bool success)
+        private string BuildAuthResultHtmlPage(bool success)
         {
             var icon = success ? "&#10003;" : "&#10007;";
             var accentColor = success ? "#107C10" : "#D13438";
@@ -162,6 +223,10 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             var message = success
                 ? "Authentication completed successfully. You can close this tab and return to the OneDrive API Demo application."
                 : "Something went wrong during sign-in. You can close this tab and return to the OneDrive API Demo application to try again.";
+
+            var logoHtml = string.IsNullOrEmpty(_logoBase64)
+                ? string.Empty
+                : $@"<img src=""data:image/png;base64,{_logoBase64}"" alt=""Logo"" class=""logo"" />";
 
             return $@"<!DOCTYPE html>
 <html lang=""en"">
@@ -186,6 +251,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
     padding: 48px 56px;
     max-width: 480px;
     text-align: center;
+  }}
+  .logo {{
+    max-width: 96px;
+    max-height: 96px;
+    margin-bottom: 24px;
   }}
   .icon {{
     display: inline-flex;
@@ -215,6 +285,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
 </head>
 <body>
   <div class=""card"">
+    {logoHtml}
     <div class=""icon"">{icon}</div>
     <h1>{title}</h1>
     <p>{message}</p>
@@ -228,6 +299,7 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private async void RefreshTokenButton_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(RefreshTokenTextBox.Text))
             {
                 MessageBox.Show("You need to enter a refresh token first in the refresh token field in order to be able to retrieve a new access token based on a refresh token.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
