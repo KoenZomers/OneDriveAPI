@@ -38,9 +38,6 @@ jobs:
       if: ${{ github.event.inputs.version == '' }}
       run: dotnet pack Api\API.csproj --configuration Release --no-build --output ./nupkg
 
-    - name: List generated packages
-      run: Get-ChildItem -Recurse ./nupkg
-
     - name: NuGet login (OIDC → temp API key)
       uses: NuGet/login@v1
       id: login
