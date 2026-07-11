@@ -68,6 +68,11 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
                 var result = await OneDriveApi.PublicClientApplication
                     .AcquireTokenInteractive(OneDriveApi.GetDefaultScopes())
                     .WithUseEmbeddedWebView(false)
+                    .WithSystemWebViewOptions(new Microsoft.Identity.Client.SystemWebViewOptions
+                    {
+                        HtmlMessageSuccess = BuildAuthResultHtmlPage(success: true),
+                        HtmlMessageError = BuildAuthResultHtmlPage(success: false)
+                    })
                     .ExecuteAsync();
 
                 OneDriveApi.SetAuthenticationResult(result);
@@ -79,6 +84,89 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             {
                 MessageBox.Show($"Failed to authenticate: {ex.Message}", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        /// <summary>
+        /// Builds the HTML page shown in the system browser tab after MSAL's interactive sign-in flow completes on the
+        /// http://localhost loopback listener, replacing MSAL's plain default page with branded, styled markup.
+        /// </summary>
+        /// <param name="success">True to render the success variant, false to render the error/failure variant</param>
+        /// <returns>Self-contained HTML document (inline styles, no external resources) for the given result</returns>
+        private static string BuildAuthResultHtmlPage(bool success)
+        {
+            var icon = success ? "&#10003;" : "&#10007;";
+            var accentColor = success ? "#107C10" : "#D13438";
+            var title = success ? "You're signed in" : "Sign-in failed";
+            var message = success
+                ? "Authentication completed successfully. You can close this tab and return to the OneDrive API Demo application."
+                : "Something went wrong during sign-in. You can close this tab and return to the OneDrive API Demo application to try again.";
+
+            return $@"<!DOCTYPE html>
+<html lang=""en"">
+<head>
+<meta charset=""utf-8"" />
+<title>{title}</title>
+<style>
+  body {{
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #f3f2f1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #201f1e;
+  }}
+  .card {{
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 48px 56px;
+    max-width: 480px;
+    text-align: center;
+  }}
+  .icon {{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: {accentColor};
+    color: #ffffff;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 24px;
+  }}
+  h1 {{
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }}
+  p {{
+    font-size: 14px;
+    line-height: 1.5;
+    color: #605e5c;
+    margin: 0 0 8px;
+  }}
+  .security-note {{
+    margin-top: 24px;
+    font-size: 12px;
+    color: #8a8886;
+    border-top: 1px solid #edebe9;
+    padding-top: 16px;
+  }}
+</style>
+</head>
+<body>
+  <div class=""card"">
+    <div class=""icon"">{icon}</div>
+    <h1>{title}</h1>
+    <p>{message}</p>
+    <div class=""security-note"">For your security: do not share the contents of this page, the address bar, or take screenshots.</div>
+  </div>
+</body>
+</html>";
         }
 
         /// <summary>
