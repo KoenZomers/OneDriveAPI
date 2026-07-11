@@ -31,13 +31,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         public string RefreshToken;
 
-        /// <summary>
-        /// Base64-encoded copy of the application logo (KeePassOneDriveSync.png), cached so it can be embedded as a
-        /// data URI in the post-login HTML page shown by the system browser, in addition to being used for the
-        /// form/taskbar icon and the PictureBox in the top-right corner.
-        /// </summary>
-        private string _logoBase64;
-
         #endregion
 
         public MainForm()
@@ -53,10 +46,9 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         }
 
         /// <summary>
-        /// Loads the application logo from the KoenZomers.OneDrive.Api.png file next to the executable, shows it in the
-        /// top-right corner of the form, and caches a base64 copy so it can also be embedded in the post-login HTML
-        /// page shown by the system browser. The form/taskbar icon itself comes from the embedded .ico resource
-        /// (set via ApplicationIcon in the project file), so it does not need to be derived at runtime here.
+        /// Loads the application logo from the KoenZomers.OneDrive.Api.png file next to the executable and shows it in
+        /// the top-right corner of the form. The form/taskbar icon itself comes from the embedded .ico resource (set
+        /// via ApplicationIcon in the project file), so it does not need to be derived at runtime here.
         /// </summary>
         private void LoadLogo()
         {
@@ -69,16 +61,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
             using (var logoImage = System.Drawing.Image.FromFile(logoPath))
             {
                 LogoPictureBox.Image = new System.Drawing.Bitmap(logoImage);
-
-                // Downscale to a small thumbnail before base64-encoding it for the post-login HTML page. Embedding
-                // the full-size (multi-hundred-KB) image inline appears to cause MSAL's loopback HttpListener-based
-                // response to fail to render in some browsers, so keep this data URI small (a few KB at most).
-                using (var thumbnail = new System.Drawing.Bitmap(logoImage, new System.Drawing.Size(96, 96)))
-                using (var memoryStream = new MemoryStream())
-                {
-                    thumbnail.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                    _logoBase64 = Convert.ToBase64String(memoryStream.ToArray());
-                }
             }
         }
 
@@ -244,10 +226,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
                 ? "Authentication completed successfully. You can close this tab and return to the OneDrive API Demo application."
                 : "Something went wrong during sign-in. You can close this tab and return to the OneDrive API Demo application to try again.";
 
-            var logoHtml = string.IsNullOrEmpty(_logoBase64)
-                ? string.Empty
-                : $@"<img src=""data:image/png;base64,{_logoBase64}"" alt=""Logo"" class=""logo"" />";
-
             return $@"<!DOCTYPE html>
 <html lang=""en"">
 <head>
@@ -271,11 +249,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
     padding: 48px 56px;
     max-width: 480px;
     text-align: center;
-  }}
-  .logo {{
-    max-width: 96px;
-    max-height: 96px;
-    margin-bottom: 24px;
   }}
   .icon {{
     display: inline-flex;
@@ -305,7 +278,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
 </head>
 <body>
   <div class=""card"">
-    {logoHtml}
     <div class=""icon"">{icon}</div>
     <h1>{title}</h1>
     <p>{message}</p>
