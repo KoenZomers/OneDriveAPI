@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.LogoPictureBox = new System.Windows.Forms.PictureBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.AuthenticationBrowser = new System.Windows.Forms.WebBrowser();
             this.CurrentUrlTextBox = new System.Windows.Forms.TextBox();
             this.CurrentUrlLabel = new System.Windows.Forms.Label();
@@ -79,9 +79,11 @@
             this.UseProxyCheckBox = new System.Windows.Forms.CheckBox();
             this.RefreshTokenButton = new System.Windows.Forms.Button();
             this.SilentSignInButton = new System.Windows.Forms.Button();
+            this.ClearCacheButton = new System.Windows.Forms.Button();
             this.Step1Button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.LogoPictureBox = new System.Windows.Forms.PictureBox();
             this.OneDriveCommandsPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoPictureBox)).BeginInit();
@@ -261,7 +263,7 @@
             this.OneDriveCommandsPanel.Location = new System.Drawing.Point(328, 33);
             this.OneDriveCommandsPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OneDriveCommandsPanel.Name = "OneDriveCommandsPanel";
-            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1666, 238);
+            this.OneDriveCommandsPanel.Size = new System.Drawing.Size(1379, 238);
             this.OneDriveCommandsPanel.TabIndex = 17;
             // 
             // GetOtherDriveButton
@@ -635,17 +637,18 @@
             this.panel1.Controls.Add(this.UseProxyCheckBox);
             this.panel1.Controls.Add(this.RefreshTokenButton);
             this.panel1.Controls.Add(this.SilentSignInButton);
+            this.panel1.Controls.Add(this.ClearCacheButton);
             this.panel1.Controls.Add(this.Step1Button);
             this.panel1.Location = new System.Drawing.Point(18, 34);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(293, 237);
+            this.panel1.Size = new System.Drawing.Size(293, 275);
             this.panel1.TabIndex = 20;
             // 
             // UseProxyCheckBox
             // 
             this.UseProxyCheckBox.AutoSize = true;
-            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 160);
+            this.UseProxyCheckBox.Location = new System.Drawing.Point(25, 234);
             this.UseProxyCheckBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.UseProxyCheckBox.Name = "UseProxyCheckBox";
             this.UseProxyCheckBox.Size = new System.Drawing.Size(106, 24);
@@ -658,7 +661,7 @@
             this.RefreshTokenButton.Location = new System.Drawing.Point(151, 14);
             this.RefreshTokenButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.RefreshTokenButton.Name = "RefreshTokenButton";
-            this.RefreshTokenButton.Size = new System.Drawing.Size(120, 51);
+            this.RefreshTokenButton.Size = new System.Drawing.Size(120, 73);
             this.RefreshTokenButton.TabIndex = 20;
             this.RefreshTokenButton.Text = "Refresh";
             this.RefreshTokenButton.UseVisualStyleBackColor = true;
@@ -666,7 +669,7 @@
             // 
             // SilentSignInButton
             // 
-            this.SilentSignInButton.Location = new System.Drawing.Point(25, 78);
+            this.SilentSignInButton.Location = new System.Drawing.Point(25, 100);
             this.SilentSignInButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SilentSignInButton.Name = "SilentSignInButton";
             this.SilentSignInButton.Size = new System.Drawing.Size(246, 66);
@@ -675,12 +678,23 @@
             this.SilentSignInButton.UseVisualStyleBackColor = true;
             this.SilentSignInButton.Click += new System.EventHandler(this.SilentSignInButton_Click);
             // 
+            // ClearCacheButton
+            // 
+            this.ClearCacheButton.Location = new System.Drawing.Point(25, 176);
+            this.ClearCacheButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ClearCacheButton.Name = "ClearCacheButton";
+            this.ClearCacheButton.Size = new System.Drawing.Size(246, 40);
+            this.ClearCacheButton.TabIndex = 23;
+            this.ClearCacheButton.Text = "Clear MSAL Token Cache";
+            this.ClearCacheButton.UseVisualStyleBackColor = true;
+            this.ClearCacheButton.Click += new System.EventHandler(this.ClearCacheButton_Click);
+            // 
             // Step1Button
             // 
             this.Step1Button.Location = new System.Drawing.Point(25, 14);
             this.Step1Button.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Step1Button.Name = "Step1Button";
-            this.Step1Button.Size = new System.Drawing.Size(120, 51);
+            this.Step1Button.Size = new System.Drawing.Size(120, 73);
             this.Step1Button.TabIndex = 19;
             this.Step1Button.Text = "Authorize";
             this.Step1Button.UseVisualStyleBackColor = true;
@@ -709,10 +723,12 @@
             // LogoPictureBox
             // 
             this.LogoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LogoPictureBox.Location = new System.Drawing.Point(1916, 6);
+            this.LogoPictureBox.BackColor = System.Drawing.Color.White;
+            this.LogoPictureBox.Location = new System.Drawing.Point(1713, 33);
             this.LogoPictureBox.Name = "LogoPictureBox";
-            this.LogoPictureBox.Size = new System.Drawing.Size(80, 80);
-            this.LogoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.LogoPictureBox.Size = new System.Drawing.Size(270, 235);
+            this.LogoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.LogoPictureBox.TabIndex = 23;
             this.LogoPictureBox.TabStop = false;
             // 
             // MainForm
@@ -737,6 +753,7 @@
             this.Controls.Add(this.AuthenticationBrowser);
             this.Controls.Add(this.OneDriveCommandsPanel);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(426, 374);
             this.Name = "MainForm";
@@ -803,10 +820,11 @@
         private System.Windows.Forms.CheckBox UseProxyCheckBox;
         private System.Windows.Forms.Button RefreshTokenButton;
         private System.Windows.Forms.Button SilentSignInButton;
-        private System.Windows.Forms.PictureBox LogoPictureBox;
+        private System.Windows.Forms.Button ClearCacheButton;
         private System.Windows.Forms.Button Step1Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.PictureBox LogoPictureBox;
     }
 }
 

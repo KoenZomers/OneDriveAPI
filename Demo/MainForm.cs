@@ -92,13 +92,53 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
         /// </summary>
         private async Task RegisterPersistentTokenCacheAsync()
         {
-            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KoenZomers.OneDrive.Api.Demo");
-            var storageProperties = new StorageCreationPropertiesBuilder("msal_token_cache.dat", cacheDirectory)
-                .WithLinuxUnprotectedFile() // Not used on Windows, but keeps this sample runnable cross-platform (e.g. under .NET 8 on Linux)
-                .Build();
+            var storageProperties = GetTokenCacheStorageProperties();
 
             var cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties);
             cacheHelper.RegisterCache(OneDriveApi.PublicClientApplication.UserTokenCache);
+        }
+
+        /// <summary>
+        /// Builds the storage properties describing where MSAL's persistent token cache file lives, shared between
+        /// registering the cache and clearing it.
+        /// </summary>
+        private static StorageCreationProperties GetTokenCacheStorageProperties()
+        {
+            var cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KoenZomers.OneDrive.Api.Demo");
+            return new StorageCreationPropertiesBuilder("msal_token_cache.dat", cacheDirectory)
+                .WithLinuxUnprotectedFile() // Not used on Windows, but keeps this sample runnable cross-platform (e.g. under .NET 8 on Linux)
+                .Build();
+        }
+
+        /// <summary>
+        /// Clears the MSAL token cache: removes every cached account (which also removes their tokens from the
+        /// in-memory cache) and deletes the persistent cache file on disk, so a future sign-in requires full
+        /// interactive authentication again rather than silently reusing a cached account.
+        /// </summary>
+        private async void ClearCacheButton_Click(object sender, EventArgs e)
+        {
+            InitiateOneDriveApi();
+            await RegisterPersistentTokenCacheAsync();
+
+            var accounts = (await OneDriveApi.PublicClientApplication.GetAccountsAsync()).ToList();
+            foreach (var account in accounts)
+            {
+                await OneDriveApi.PublicClientApplication.RemoveAsync(account);
+            }
+
+            // Belt-and-braces: also remove the persistent cache file directly in case any residual data remains
+            var storageProperties = GetTokenCacheStorageProperties();
+            if (File.Exists(storageProperties.CacheFilePath))
+            {
+                File.Delete(storageProperties.CacheFilePath);
+            }
+
+            // Reset the UI to reflect that we're signed out
+            AccessTokenTextBox.Text = string.Empty;
+            AccessTokenValidTextBox.Text = string.Empty;
+            RefreshTokenTextBox.Text = string.Empty;
+
+            MessageBox.Show($"Cleared {accounts.Count} cached account(s) and removed the persistent token cache file. A future sign-in will require interactive authentication.", "OneDrive API", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
