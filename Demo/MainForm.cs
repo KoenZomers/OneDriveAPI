@@ -149,13 +149,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
     color: #605e5c;
     margin: 0 0 8px;
   }}
-  .security-note {{
-    margin-top: 24px;
-    font-size: 12px;
-    color: #8a8886;
-    border-top: 1px solid #edebe9;
-    padding-top: 16px;
-  }}
 </style>
 </head>
 <body>
@@ -163,7 +156,6 @@ namespace KoenZomers.OneDrive.AuthenticatorApp
     <div class=""icon"">{icon}</div>
     <h1>{title}</h1>
     <p>{message}</p>
-    <div class=""security-note"">For your security: do not share the contents of this page, the address bar, or take screenshots.</div>
   </div>
 </body>
 </html>";
