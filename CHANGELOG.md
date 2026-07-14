@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.0.1.0] - Unreleased
+
+### Fixed
+
+- Fixed an issue with file upload size handling
+
 ## [3.0.0.0] - Unreleased
 
 ### ⚠️ Breaking Changes

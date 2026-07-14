@@ -89,7 +89,7 @@ namespace KoenZomers.OneDrive.Api
         /// <summary>
         /// Defines the maximum allowed file size that can be used for basic uploads. Should be set 4 MB as described in the API documentation at https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/item_uploadcontent
         /// </summary>
-        public static long MaximumBasicFileUploadSizeInBytes = 4 * 1024;
+        public static long MaximumBasicFileUploadSizeInBytes = 4 * 1024 * 1024;
 
         /// <summary>
         /// Size of the chunks to upload when using the resumable upload method. Must be a multiple of 327680 bytes. See https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/driveitem_createuploadsession#best-practices
