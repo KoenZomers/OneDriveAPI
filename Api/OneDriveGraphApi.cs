@@ -2468,9 +2468,6 @@ namespace KoenZomers.OneDrive.Api
                 throw new ArgumentNullException("oneDriveUploadSession");
             }
 
-            // Get an access token to perform the request to OneDrive
-            var accessToken = await GetAccessToken();
-
             // Amount of bytes succesfully sent
             long totalBytesSent = 0;
 
@@ -2489,8 +2486,10 @@ namespace KoenZomers.OneDrive.Api
                 // Defines a buffer which will be filled with bytes from the original file and then sent off to the OneDrive webservice
                 var fragmentBuffer = new byte[fragmentSizeInBytes ?? ResumableUploadChunkSizeInBytes];
 
-                // Create an HTTPClient instance to communicate with the REST API of OneDrive to perform the upload 
-                using (var client = CreateHttpClient(accessToken.AccessToken))
+                // Create an HTTPClient instance to communicate with the upload session's URL. Note that no bearer token is set here:
+                // oneDriveUploadSession.UploadUrl is a pre-authenticated, opaque URL with its own embedded access token, and Microsoft
+                // Graph rejects (some backends silently reject, others error) fragment uploads that also carry an Authorization header.
+                using (var client = CreateHttpClient())
                 {
                     // Keep looping through the source file length until we've sent all bytes to the OneDrive webservice
                     while (currentPosition < fileStream.Length)
