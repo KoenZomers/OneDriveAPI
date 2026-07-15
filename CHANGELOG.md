@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.0.2.0]
+
+- Fixed a potential issue with larger file uploads [#49](https://github.com/KoenZomers/OneDriveAPI/pull/49). Thanks YasarF!
+
 ## [3.0.1.0]
 
 ### Fixed
