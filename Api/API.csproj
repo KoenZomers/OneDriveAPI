@@ -5,19 +5,18 @@
 		<AssemblyName>KoenZomers.OneDrive.Api</AssemblyName>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>KoenZomers.OneDrive.Api.snk</AssemblyOriginatorKeyFile>
-		<Version>3.0.1.0</Version>
+		<Version>3.1.0.0</Version>
 		<Authors>Koen Zomers</Authors>
 		<Company>Koen Zomers</Company>
 		<Description>API in .NET Standard 2.0 and .NET 8.0 to communicate with OneDrive for Business and Microsoft 365 via the Microsoft Graph API</Description>
 		<PackageProjectUrl>https://github.com/KoenZomers/OneDriveAPI</PackageProjectUrl>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageReleaseNotes>- Bugfix: Fixed an issue with file upload size handling
-- See CHANGELOG.md for full details</PackageReleaseNotes>
+		<PackageReleaseNotes>- See CHANGELOG.md for full details</PackageReleaseNotes>
 		<PackageLicenseExpression>EPL-1.0</PackageLicenseExpression>
 		<Copyright>Koen Zomers</Copyright>
 		<RootNamespace>KoenZomers.OneDrive.Api</RootNamespace>
-		<AssemblyVersion>3.0.2.0</AssemblyVersion>
-		<FileVersion>3.0.2.0</FileVersion>
+		<AssemblyVersion>3.1.0.0</AssemblyVersion>
+		<FileVersion>3.1.0.0</FileVersion>
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
 

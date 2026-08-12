@@ -294,6 +294,16 @@
             Information about the owner of a shared item
             </summary>
         </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveItem.SharingToken">
+            <summary>
+            Microsoft Graph share token that can be used to access this item through the shares API.
+            </summary>
+        </member>
+        <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveItem.SharingUrl">
+            <summary>
+            Sharing URL that was used to retrieve this item.
+            </summary>
+        </member>
         <member name="P:KoenZomers.OneDrive.Api.Entities.OneDriveItemBase.OriginalJson">
             <summary>
             The original raw JSON message
@@ -1184,6 +1194,47 @@
             <param name="id">Unique identifier of the OneDrive item to retrieve</param>
             <param name="drive">Drive on which the item resides</param>
             <returns>OneDriveItem representing the file or NULL if the file was not found</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemBySharingUrl(System.String)">
+            <summary>
+            Retrieves a OneDrive item by using a sharing URL, such as a "Copy link" or "Share" URL.
+            </summary>
+            <param name="sharingUrl">Sharing URL that grants access to the OneDrive item</param>
+            <returns>OneDriveItem representing the shared item or NULL if the link could not be resolved</returns>
+            <exception cref="T:System.ArgumentException">Thrown when no sharing URL is provided</exception>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.ResolveSharingUrl(System.String)">
+            <summary>
+            Resolves a sharing URL to the final URL after redirects. This is useful for short sharing URLs such as 1drv.ms links.
+            </summary>
+            <param name="sharingUrl">Sharing URL to resolve</param>
+            <returns>Resolved sharing URL after redirects, or the original sharing URL if it could not be resolved</returns>
+            <exception cref="T:System.ArgumentException">Thrown when no sharing URL is provided</exception>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemBySharingToken(System.String)">
+            <summary>
+            Retrieves a OneDrive item by using a Microsoft Graph share token.
+            </summary>
+            <param name="sharingToken">Microsoft Graph share token, usually generated from a sharing URL</param>
+            <returns>OneDriveItem representing the shared item or NULL if the token could not be resolved</returns>
+            <exception cref="T:System.ArgumentException">Thrown when no sharing token is provided</exception>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetItemBySharingToken(System.String,System.String)">
+            <summary>
+            Retrieves a OneDrive item by using a Microsoft Graph share token and relationship.
+            </summary>
+            <param name="sharingToken">Microsoft Graph share token, usually generated from a sharing URL</param>
+            <param name="relationship">Relationship to retrieve from the shared item, such as driveItem or root</param>
+            <returns>OneDriveItem representing the shared item or NULL if the token could not be resolved</returns>
+            <exception cref="T:System.ArgumentException">Thrown when no sharing token is provided</exception>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateSharingUrlToken(System.String)">
+            <summary>
+            Creates the Microsoft Graph share token for a sharing URL.
+            </summary>
+            <param name="sharingUrl">Sharing URL to encode into a Microsoft Graph share token</param>
+            <returns>Microsoft Graph share token that can be used with the shares API</returns>
+            <exception cref="T:System.ArgumentException">Thrown when no sharing URL is provided</exception>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.GetFolderOrCreate(System.String)">
             <summary>
@@ -2123,6 +2174,18 @@
             <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
             <returns>Typed OneDrive entity with the result from the webservice</returns>
         </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnOneDriveItem``1(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode},System.String)">
+            <summary>
+            Sends a message to the OneDrive webservice with a Prefer header and returns a OneDriveBaseItem with the response.
+            </summary>
+            <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
+            <param name="bodyText">String with the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <param name="preferHeader">Prefer header value to send with the request</param>
+            <returns>Typed OneDrive entity with the result from the webservice</returns>
+        </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnString(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode})">
             <summary>
             Sends a message to the OneDrive webservice and returns a string with the response
@@ -2131,6 +2194,17 @@
             <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
             <param name="url">Url of the OneDrive webservice to send the message to</param>
             <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <returns>String containing the response of the webservice</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnString(System.String,System.Net.Http.HttpMethod,System.String,System.Nullable{System.Net.HttpStatusCode},System.String)">
+            <summary>
+            Sends a message to the OneDrive webservice with a Prefer header and returns a string with the response.
+            </summary>
+            <param name="bodyText">String with the message to send to the webservice</param>
+            <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+            <param name="url">Url of the OneDrive webservice to send the message to</param>
+            <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+            <param name="preferHeader">Prefer header value to send with the request</param>
             <returns>String containing the response of the webservice</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnBool(KoenZomers.OneDrive.Api.Entities.OneDriveItemBase,System.Net.Http.HttpMethod,System.String,System.Net.HttpStatusCode,System.Boolean)">
@@ -2144,7 +2218,7 @@
             <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
             <returns>Bool indicating if the HTTP response status from the webservice matched the provided expectedHttpStatusCode</returns>
         </member>
-        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnHttpResponse(System.String,System.Net.Http.HttpMethod,System.String,System.Boolean)">
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.SendMessageReturnHttpResponse(System.String,System.Net.Http.HttpMethod,System.String,System.Boolean,System.String)">
             <summary>
             Sends a message to the OneDrive webservice and returns the HttpResponse instance
             </summary>
@@ -2152,6 +2226,7 @@
             <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
             <param name="url">Url of the OneDrive webservice to send the message to</param>
             <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
+            <param name="preferHeader">Prefer header value to send with the request</param>
             <returns>HttpResponse of the webservice call. Note that the caller needs to dispose the returned instance.</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateHttpClient(System.String)">
@@ -2159,6 +2234,12 @@
             Instantiates a new HttpClient preconfigured for use. Note that the caller is responsible for disposing this object.
             </summary>
             <param name="bearerToken">Bearer token to add to the HTTP Client for authorization (optional)</param>
+            <returns>HttpClient instance</returns>
+        </member>
+        <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.CreateRedirectResolvingHttpClient">
+            <summary>
+            Instantiates a new HttpClient configured to inspect redirects without following them.
+            </summary>
             <returns>HttpClient instance</returns>
         </member>
         <member name="M:KoenZomers.OneDrive.Api.OneDriveGraphApi.ConstructCompleteUrl(System.String)">

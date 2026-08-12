@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented in this file.
 
+## [3.1.0.0]
+
+### Added
+
+- Added support for resolving OneDrive sharing URLs, including regular "Copy link" URLs and shortened `1drv.ms` links, into `OneDriveItem` instances through the Microsoft Graph `shares` API.
+- Added `GetItemBySharingUrl`, `ResolveSharingUrl`, `GetItemBySharingToken` overloads and `CreateSharingUrlToken` so callers can work directly with sharing links or precomputed Microsoft Graph share tokens.
+- Added `SharingUrl` and `SharingToken` metadata to `OneDriveItem` so items retrieved through sharing links retain the context needed for later content operations without serializing those values back to Graph.
+
+### Changed
+
+- Download and upload operations now recognize items retrieved through sharing links and call the appropriate `shares/{token}/driveItem` Microsoft Graph endpoints for content downloads, simple upload updates and resumable upload session creation.
+- Requests that redeem sharing links now send the required `Prefer` header values (`redeemSharingLinkIfNecessary` with a fallback to `redeemSharingLink`) through new internal request helper overloads.
+- URL construction now treats `shares/` requests as Microsoft Graph API calls, matching the existing handling for `drives/` requests.
+- Updated the package, assembly and file versions to 3.1.0.0 and refreshed the generated XML documentation for the new public API surface.
+
+### Fixed
+
+- `DownloadItemAndSaveAs` now returns `false` when a download stream cannot be opened instead of attempting to copy from a null stream.
+
 ## [3.0.2.0]
 
 ### Fixed

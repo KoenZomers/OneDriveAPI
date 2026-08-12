@@ -643,6 +643,141 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
+        /// Retrieves a OneDrive item by using a sharing URL, such as a "Copy link" or "Share" URL.
+        /// </summary>
+        /// <param name="sharingUrl">Sharing URL that grants access to the OneDrive item</param>
+        /// <returns>OneDriveItem representing the shared item or NULL if the link could not be resolved</returns>
+        /// <exception cref="ArgumentException">Thrown when no sharing URL is provided</exception>
+        public virtual async Task<OneDriveItem> GetItemBySharingUrl(string sharingUrl)
+        {
+            var sharingToken = CreateSharingUrlToken(sharingUrl);
+            var sharedItem = await GetItemBySharingToken(sharingToken);
+            if (sharedItem != null)
+            {
+                SetSharingDetails(sharedItem, sharingUrl, sharingToken);
+                return sharedItem;
+            }
+
+            sharedItem = await GetItemBySharingToken(sharingToken, "root");
+            if (sharedItem != null)
+            {
+                SetSharingDetails(sharedItem, sharingUrl, sharingToken);
+                return sharedItem;
+            }
+
+            var resolvedSharingUrl = await ResolveSharingUrl(sharingUrl);
+            if (string.Equals(sharingUrl.Trim(), resolvedSharingUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            var resolvedSharingToken = CreateSharingUrlToken(resolvedSharingUrl);
+            sharedItem = await GetItemBySharingToken(resolvedSharingToken);
+            if (sharedItem != null)
+            {
+                SetSharingDetails(sharedItem, resolvedSharingUrl, resolvedSharingToken);
+                return sharedItem;
+            }
+
+            sharedItem = await GetItemBySharingToken(resolvedSharingToken, "root");
+            if (sharedItem != null)
+            {
+                SetSharingDetails(sharedItem, resolvedSharingUrl, resolvedSharingToken);
+                return sharedItem;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Resolves a sharing URL to the final URL after redirects. This is useful for short sharing URLs such as 1drv.ms links.
+        /// </summary>
+        /// <param name="sharingUrl">Sharing URL to resolve</param>
+        /// <returns>Resolved sharing URL after redirects, or the original sharing URL if it could not be resolved</returns>
+        /// <exception cref="ArgumentException">Thrown when no sharing URL is provided</exception>
+        public virtual async Task<string> ResolveSharingUrl(string sharingUrl)
+        {
+            if (string.IsNullOrWhiteSpace(sharingUrl))
+            {
+                throw new ArgumentException("A sharing URL must be provided", nameof(sharingUrl));
+            }
+
+            using (var client = CreateRedirectResolvingHttpClient())
+            using (var request = new HttpRequestMessage(HttpMethod.Get, sharingUrl.Trim()))
+            using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+            {
+                if (response.Headers.Location == null)
+                {
+                    return sharingUrl.Trim();
+                }
+
+                return response.Headers.Location.IsAbsoluteUri
+                    ? response.Headers.Location.AbsoluteUri
+                    : new Uri(new Uri(sharingUrl.Trim()), response.Headers.Location).AbsoluteUri;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a OneDrive item by using a Microsoft Graph share token.
+        /// </summary>
+        /// <param name="sharingToken">Microsoft Graph share token, usually generated from a sharing URL</param>
+        /// <returns>OneDriveItem representing the shared item or NULL if the token could not be resolved</returns>
+        /// <exception cref="ArgumentException">Thrown when no sharing token is provided</exception>
+        public virtual async Task<OneDriveItem> GetItemBySharingToken(string sharingToken)
+        {
+            return await GetItemBySharingToken(sharingToken, "driveItem");
+        }
+
+        /// <summary>
+        /// Retrieves a OneDrive item by using a Microsoft Graph share token and relationship.
+        /// </summary>
+        /// <param name="sharingToken">Microsoft Graph share token, usually generated from a sharing URL</param>
+        /// <param name="relationship">Relationship to retrieve from the shared item, such as driveItem or root</param>
+        /// <returns>OneDriveItem representing the shared item or NULL if the token could not be resolved</returns>
+        /// <exception cref="ArgumentException">Thrown when no sharing token is provided</exception>
+        public virtual async Task<OneDriveItem> GetItemBySharingToken(string sharingToken, string relationship)
+        {
+            if (string.IsNullOrWhiteSpace(sharingToken))
+            {
+                throw new ArgumentException("A sharing token must be provided", nameof(sharingToken));
+            }
+
+            if (string.IsNullOrWhiteSpace(relationship))
+            {
+                throw new ArgumentException("A relationship must be provided", nameof(relationship));
+            }
+
+            var shareUrl = string.Concat(GraphApiBaseUrl, $"shares/{sharingToken}/{relationship}");
+            var sharedItem = await SendMessageReturnOneDriveItem<OneDriveItem>("", HttpMethod.Get, shareUrl, HttpStatusCode.OK, "redeemSharingLinkIfNecessary");
+            return sharedItem ?? await SendMessageReturnOneDriveItem<OneDriveItem>("", HttpMethod.Get, shareUrl, HttpStatusCode.OK, "redeemSharingLink");
+        }
+
+        /// <summary>
+        /// Creates the Microsoft Graph share token for a sharing URL.
+        /// </summary>
+        /// <param name="sharingUrl">Sharing URL to encode into a Microsoft Graph share token</param>
+        /// <returns>Microsoft Graph share token that can be used with the shares API</returns>
+        /// <exception cref="ArgumentException">Thrown when no sharing URL is provided</exception>
+        public static string CreateSharingUrlToken(string sharingUrl)
+        {
+            if (string.IsNullOrWhiteSpace(sharingUrl))
+            {
+                throw new ArgumentException("A sharing URL must be provided", nameof(sharingUrl));
+            }
+
+            return "u!" + Convert.ToBase64String(Encoding.UTF8.GetBytes(sharingUrl.Trim()))
+                .TrimEnd('=')
+                .Replace('/', '_')
+                .Replace('+', '-');
+        }
+
+        private static void SetSharingDetails(OneDriveItem item, string sharingUrl, string sharingToken)
+        {
+            item.SharingUrl = sharingUrl;
+            item.SharingToken = sharingToken;
+        }
+
+        /// <summary>
         /// Retrieves the OneDrive folder item or creates it if it doesn't exist yet
         /// </summary>
         /// <param name="path">Path of the OneDrive folder to retrieve or create. It will ensure that the whole provided path exists and create (sub)folders if they don't exist yet</param>
@@ -895,7 +1030,11 @@ namespace KoenZomers.OneDrive.Api
         {
             // Construct the complete URL to call
             string completeUrl;
-            if (oneDriveItem.RemoteItem != null)
+            if (!string.IsNullOrEmpty(oneDriveItem.SharingToken))
+            {
+                completeUrl = string.Concat("shares/", oneDriveItem.SharingToken, "/driveItem/content");
+            }
+            else if (oneDriveItem.RemoteItem != null)
             {
                 // Item to download is shared from another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
@@ -915,6 +1054,11 @@ namespace KoenZomers.OneDrive.Api
 
             using (var stream = await DownloadItemInternal(oneDriveItem, completeUrl))
             {
+                if (stream == null)
+                {
+                    return false;
+                }
+
                 using (var outputStream = new FileStream(saveAs, FileMode.Create))
                 {
                     await stream.CopyToAsync(outputStream);
@@ -943,7 +1087,11 @@ namespace KoenZomers.OneDrive.Api
         {
             // Construct the complete URL to call
             string completeUrl;
-            if (oneDriveItem.RemoteItem != null)
+            if (!string.IsNullOrEmpty(oneDriveItem.SharingToken))
+            {
+                completeUrl = string.Concat("shares/", oneDriveItem.SharingToken, "/driveItem/content");
+            }
+            else if (oneDriveItem.RemoteItem != null)
             {
                 // Item to download is shared from another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/content");
@@ -1969,7 +2117,11 @@ namespace KoenZomers.OneDrive.Api
         {
             // Construct the complete URL to call
             string completeUrl;
-            if (oneDriveItem.RemoteItem != null)
+            if (!string.IsNullOrEmpty(oneDriveItem.SharingToken))
+            {
+                completeUrl = string.Concat("shares/", oneDriveItem.SharingToken, "/driveItem:/", fileName, ":/createUploadSession");
+            }
+            else if (oneDriveItem.RemoteItem != null)
             {
                 // Item will be uploaded to another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, ":/", fileName, ":/createUploadSession");
@@ -2220,7 +2372,11 @@ namespace KoenZomers.OneDrive.Api
         {
             // Construct the complete URL to call
             string completeUrl;
-            if (oneDriveItem.RemoteItem != null)
+            if (!string.IsNullOrEmpty(oneDriveItem.SharingToken))
+            {
+                completeUrl = string.Concat("shares/", oneDriveItem.SharingToken, "/driveItem/content");
+            }
+            else if (oneDriveItem.RemoteItem != null)
             {
                 // Item will be uploaded to another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.Id, "/content");
@@ -2591,7 +2747,11 @@ namespace KoenZomers.OneDrive.Api
         {
             // Construct the complete URL to call
             string completeUrl;
-            if (oneDriveItem.RemoteItem != null)
+            if (!string.IsNullOrEmpty(oneDriveItem.SharingToken))
+            {
+                completeUrl = string.Concat("shares/", oneDriveItem.SharingToken, "/driveItem/createUploadSession");
+            }
+            else if (oneDriveItem.RemoteItem != null)
             {
                 // Item will be uploaded to another drive
                 completeUrl = string.Concat("drives/", oneDriveItem.RemoteItem.ParentReference.DriveId, "/items/", oneDriveItem.RemoteItem.Id, "/createUploadSession");
@@ -2873,6 +3033,38 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
+        /// Sends a message to the OneDrive webservice with a Prefer header and returns a OneDriveBaseItem with the response.
+        /// </summary>
+        /// <typeparam name="T">OneDriveBaseItem type of the expected response</typeparam>
+        /// <param name="bodyText">String with the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+        /// <param name="preferHeader">Prefer header value to send with the request</param>
+        /// <returns>Typed OneDrive entity with the result from the webservice</returns>
+        protected virtual async Task<T> SendMessageReturnOneDriveItem<T>(string bodyText, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode, string preferHeader) where T : OneDriveItemBase
+        {
+            var responseString = await SendMessageReturnString(bodyText, httpMethod, url, expectedHttpStatusCode, preferHeader);
+
+            if (string.IsNullOrEmpty(responseString)) return null;
+
+            try
+            {
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new JsonStringEnumConverter());
+
+                var responseOneDriveItem = JsonSerializer.Deserialize<T>(responseString, options);
+                responseOneDriveItem.OriginalJson = responseString;
+
+                return responseOneDriveItem;
+            }
+            catch (JsonException e)
+            {
+                throw new Exceptions.InvalidResponseException(responseString, e);
+            }
+        }
+
+        /// <summary>
         /// Sends a message to the OneDrive webservice and returns a string with the response
         /// </summary>
         /// <param name="bodyText">String with the message to send to the webservice</param>
@@ -2883,6 +3075,28 @@ namespace KoenZomers.OneDrive.Api
         protected virtual async Task<string> SendMessageReturnString(string bodyText, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode = null)
         {
             using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url))
+            {
+                if (!expectedHttpStatusCode.HasValue || (expectedHttpStatusCode.HasValue && response != null && response.StatusCode == expectedHttpStatusCode.Value))
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    return responseString;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Sends a message to the OneDrive webservice with a Prefer header and returns a string with the response.
+        /// </summary>
+        /// <param name="bodyText">String with the message to send to the webservice</param>
+        /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
+        /// <param name="url">Url of the OneDrive webservice to send the message to</param>
+        /// <param name="expectedHttpStatusCode">The expected Http result status code. Optional. If provided and the webservice returns a different response, the return type will be NULL to indicate failure.</param>
+        /// <param name="preferHeader">Prefer header value to send with the request</param>
+        /// <returns>String containing the response of the webservice</returns>
+        protected virtual async Task<string> SendMessageReturnString(string bodyText, HttpMethod httpMethod, string url, HttpStatusCode? expectedHttpStatusCode, string preferHeader)
+        {
+            using (var response = await SendMessageReturnHttpResponse(bodyText, httpMethod, url, false, preferHeader))
             {
                 if (!expectedHttpStatusCode.HasValue || (expectedHttpStatusCode.HasValue && response != null && response.StatusCode == expectedHttpStatusCode.Value))
                 {
@@ -2923,8 +3137,9 @@ namespace KoenZomers.OneDrive.Api
         /// <param name="httpMethod">HttpMethod to use to send with the webservice (i.e. POST, GET, PUT, etc.)</param>
         /// <param name="url">Url of the OneDrive webservice to send the message to</param>
         /// <param name="preferRespondAsync">Provide true if the Prefer Async header should be sent along with the request. This is required for some requests. Optional, default = false = do not send the async header.</param>
+        /// <param name="preferHeader">Prefer header value to send with the request</param>
         /// <returns>HttpResponse of the webservice call. Note that the caller needs to dispose the returned instance.</returns>
-        protected virtual async Task<HttpResponseMessage> SendMessageReturnHttpResponse(string bodyText, HttpMethod httpMethod, string url, bool preferRespondAsync = false)
+        protected virtual async Task<HttpResponseMessage> SendMessageReturnHttpResponse(string bodyText, HttpMethod httpMethod, string url, bool preferRespondAsync = false, string preferHeader = null)
         {
             // Get an access token to perform the request to OneDrive
             var accessToken = await GetAccessToken();
@@ -2942,6 +3157,10 @@ namespace KoenZomers.OneDrive.Api
                         {
                             // Add a header to prefer the operation to happen while we continue processing our code
                             request.Headers.Add("Prefer", "respond-async");
+                        }
+                        else if (!string.IsNullOrWhiteSpace(preferHeader))
+                        {
+                            request.Headers.Add("Prefer", preferHeader);
                         }
 
                         // Check if a body to send along with the request has been provided
@@ -2993,6 +3212,28 @@ namespace KoenZomers.OneDrive.Api
         }
 
         /// <summary>
+        /// Instantiates a new HttpClient configured to inspect redirects without following them.
+        /// </summary>
+        /// <returns>HttpClient instance</returns>
+        protected HttpClient CreateRedirectResolvingHttpClient()
+        {
+            var httpClientHandler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false,
+                UseDefaultCredentials = ProxyCredential == null,
+                UseProxy = ProxyConfiguration != null,
+                Proxy = ProxyConfiguration
+            };
+
+            if (ProxyCredential != null && httpClientHandler.Proxy != null)
+            {
+                httpClientHandler.Proxy.Credentials = ProxyCredential;
+            }
+
+            return new HttpClient(httpClientHandler);
+        }
+
+        /// <summary>
         /// Constructs the complete Url to be called based on the part of the url provided that contains the command
         /// </summary>
         /// <param name="commandUrl">Part of the URL to call that contains the command to execute for the API that is being called</param>
@@ -3003,7 +3244,7 @@ namespace KoenZomers.OneDrive.Api
             {
                 return commandUrl;
             }
-            return string.Concat(commandUrl.StartsWith("drives/", StringComparison.InvariantCultureIgnoreCase) ? GraphApiBaseUrl : OneDriveApiBaseUrl, commandUrl);
+            return string.Concat(commandUrl.StartsWith("drives/", StringComparison.InvariantCultureIgnoreCase) || commandUrl.StartsWith("shares/", StringComparison.InvariantCultureIgnoreCase) ? GraphApiBaseUrl : OneDriveApiBaseUrl, commandUrl);
         }
 
         #endregion

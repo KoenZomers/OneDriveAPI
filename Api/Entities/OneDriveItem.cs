@@ -170,5 +170,17 @@ namespace KoenZomers.OneDrive.Api.Entities
         /// </summary>
         [JsonPropertyName("shared")]
         public OneDriveSharedItem Shared { get; set; }
+
+        /// <summary>
+        /// Microsoft Graph share token that can be used to access this item through the shares API.
+        /// </summary>
+        [JsonIgnore]
+        public string SharingToken { get; set; }
+
+        /// <summary>
+        /// Sharing URL that was used to retrieve this item.
+        /// </summary>
+        [JsonIgnore]
+        public string SharingUrl { get; set; }
     }
 }
